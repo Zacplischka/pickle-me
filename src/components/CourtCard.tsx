@@ -3,6 +3,7 @@ import { MapPin, Trophy, Users, Info, Star, Phone, Globe } from "lucide-react";
 import { Court } from "@/lib/data";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/Button";
+import { OpeningHours } from "@/components/OpeningHours";
 
 interface CourtCardProps {
     court: Court;
@@ -121,6 +122,13 @@ export function CourtCard({ court }: CourtCardProps) {
                                 <span>Website</span>
                             </a>
                         )}
+                    </div>
+                )}
+
+                {/* Opening Hours */}
+                {court.google_opening_hours && (
+                    <div className="mt-2">
+                        <OpeningHours hours={court.google_opening_hours as { weekday_text?: string[] }} />
                     </div>
                 )}
 
