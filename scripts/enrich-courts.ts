@@ -11,6 +11,14 @@ if (!supabaseUrl || !supabaseServiceKey) {
 
 const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
+// Parse CLI arguments
+const args = process.argv.slice(2);
+const flags = {
+  all: args.includes("--all"),
+  retry: args.includes("--retry"),
+  limit: parseInt(args.find(a => a.startsWith("--limit="))?.split("=")[1] || "0", 10),
+};
+
 interface Court {
   id: string;
   name: string;
@@ -21,11 +29,31 @@ interface Court {
 }
 
 async function fetchCourtsToEnrich(): Promise<Court[]> {
-  const { data, error } = await supabase
+  let query = supabase
     .from("courts")
-    .select("id, name, suburb, lat, lng, enrichment_status")
-    .or("enrichment_status.is.null,enrichment_status.eq.pending,enrichment_status.eq.error")
-    .order("name");
+    .select("id, name, suburb, lat, lng, enrichment_status");
+
+  if (flags.all) {
+    // Re-enrich ALL courts
+    console.log("Mode: Re-enriching ALL courts");
+  } else if (flags.retry) {
+    // Only retry failures
+    console.log("Mode: Retrying failed enrichments");
+    query = query.or("enrichment_status.eq.error,enrichment_status.eq.not_found");
+  } else {
+    // Default: only pending/null
+    console.log("Mode: Processing pending courts only");
+    query = query.or("enrichment_status.is.null,enrichment_status.eq.pending");
+  }
+
+  query = query.order("name");
+
+  if (flags.limit > 0) {
+    console.log(`Limiting to ${flags.limit} courts`);
+    query = query.limit(flags.limit);
+  }
+
+  const { data, error } = await query;
 
   if (error) {
     throw new Error(`Failed to fetch courts: ${error.message}`);
