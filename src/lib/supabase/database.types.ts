@@ -14,7 +14,17 @@ export type Database = {
           address: string | null
           courts_count: string | null
           created_at: string | null
+          enriched_at: string | null
+          enrichment_status: string | null
           features: string[] | null
+          google_formatted_address: string | null
+          google_opening_hours: Json | null
+          google_phone: string | null
+          google_photos: Json | null
+          google_place_id: string | null
+          google_rating: number | null
+          google_user_ratings_total: number | null
+          google_website: string | null
           id: string
           image_url: string | null
           lat: number | null
@@ -35,7 +45,17 @@ export type Database = {
           address?: string | null
           courts_count?: string | null
           created_at?: string | null
+          enriched_at?: string | null
+          enrichment_status?: string | null
           features?: string[] | null
+          google_formatted_address?: string | null
+          google_opening_hours?: Json | null
+          google_phone?: string | null
+          google_photos?: Json | null
+          google_place_id?: string | null
+          google_rating?: number | null
+          google_user_ratings_total?: number | null
+          google_website?: string | null
           id?: string
           image_url?: string | null
           lat?: number | null
@@ -56,7 +76,17 @@ export type Database = {
           address?: string | null
           courts_count?: string | null
           created_at?: string | null
+          enriched_at?: string | null
+          enrichment_status?: string | null
           features?: string[] | null
+          google_formatted_address?: string | null
+          google_opening_hours?: Json | null
+          google_phone?: string | null
+          google_photos?: Json | null
+          google_place_id?: string | null
+          google_rating?: number | null
+          google_user_ratings_total?: number | null
+          google_website?: string | null
           id?: string
           image_url?: string | null
           lat?: number | null
