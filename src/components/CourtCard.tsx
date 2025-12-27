@@ -64,7 +64,7 @@ export function CourtCard({ court }: CourtCardProps) {
                     <div className="flex items-center gap-2 mt-2">
                         <div className="flex items-center gap-1">
                             <Star className="w-4 h-4 fill-amber-400 text-amber-400" />
-                            <span className="font-semibold text-sm">{court.google_rating.toFixed(1)}</span>
+                            <span className="font-semibold text-sm text-foreground">{court.google_rating.toFixed(1)}</span>
                         </div>
                         {court.google_user_ratings_total && (
                             <span className="text-xs text-muted-foreground">

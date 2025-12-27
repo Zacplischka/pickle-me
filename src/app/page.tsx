@@ -53,7 +53,7 @@ export default async function Home() {
               <div className="inline-flex items-center rounded-md bg-secondary/10 px-3 py-1 text-sm font-medium text-secondary ring-1 ring-inset ring-secondary/20">
                 <Map className="mr-1.5 h-4 w-4" /> Interactive Map
               </div>
-              <h2 className="text-3xl font-bold tracking-tight">Explore Courts Near You</h2>
+              <h2 className="text-3xl font-bold tracking-tight text-foreground">Explore Courts Near You</h2>
               <p className="text-muted-foreground text-lg">
                 Visually explore court locations across Melbourne and regional Victoria. Find clubs, public courts, and indoor centres with our interactive map.
               </p>
@@ -84,7 +84,7 @@ export default async function Home() {
       {/* Recent Additions */}
       <section className="py-16 bg-background">
         <div className="container mx-auto px-4 md:px-6">
-          <h2 className="text-2xl md:text-3xl font-bold tracking-tight mb-8">Recently Added</h2>
+          <h2 className="text-2xl md:text-3xl font-bold tracking-tight text-foreground mb-8">Recently Added</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {recentCourts.map((court) => (
               <CourtCard key={court.id} court={court} />
