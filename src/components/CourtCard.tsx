@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { MapPin, Trophy, Users, Info, Star } from "lucide-react";
+import { MapPin, Trophy, Users, Info, Star, Phone, Globe } from "lucide-react";
 import { Court } from "@/lib/data";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/Button";
@@ -95,6 +95,34 @@ export function CourtCard({ court }: CourtCardProps) {
                         </span>
                     )}
                 </div>
+
+                {/* Contact Links */}
+                {(court.google_phone || court.google_website || court.website) && (
+                    <div className="flex items-center gap-3 text-xs">
+                        {court.google_phone && (
+                            <a
+                                href={`tel:${court.google_phone}`}
+                                className="flex items-center gap-1 text-muted-foreground hover:text-primary transition-colors"
+                                onClick={(e) => e.stopPropagation()}
+                            >
+                                <Phone className="w-3.5 h-3.5" />
+                                <span>Call</span>
+                            </a>
+                        )}
+                        {(court.google_website || court.website) && (
+                            <a
+                                href={court.google_website || court.website || "#"}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="flex items-center gap-1 text-muted-foreground hover:text-primary transition-colors"
+                                onClick={(e) => e.stopPropagation()}
+                            >
+                                <Globe className="w-3.5 h-3.5" />
+                                <span>Website</span>
+                            </a>
+                        )}
+                    </div>
+                )}
 
                 <div className="mt-auto pt-2 flex items-center justify-between gap-3">
                     <Button variant="outline" size="sm" className="w-full">
