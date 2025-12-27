@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { MapPin, Trophy, Users, Info } from "lucide-react";
+import { MapPin, Trophy, Users, Info, Star } from "lucide-react";
 import { Court } from "@/lib/data";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/Button";
@@ -52,6 +52,21 @@ export function CourtCard({ court }: CourtCardProps) {
                         )}
                     </div>
                 </div>
+
+                {/* Rating Section */}
+                {court.google_rating && (
+                    <div className="flex items-center gap-2 mt-2">
+                        <div className="flex items-center gap-1">
+                            <Star className="w-4 h-4 fill-amber-400 text-amber-400" />
+                            <span className="font-semibold text-sm">{court.google_rating.toFixed(1)}</span>
+                        </div>
+                        {court.google_user_ratings_total && (
+                            <span className="text-xs text-muted-foreground">
+                                ({court.google_user_ratings_total.toLocaleString()} reviews)
+                            </span>
+                        )}
+                    </div>
+                )}
 
                 <div className="grid grid-cols-2 gap-2 my-1">
                     {court.surface && (
