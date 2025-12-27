@@ -21,7 +21,11 @@ export function CourtCard({ court }: CourtCardProps) {
             {/* Image Section */}
             <div className="aspect-[4/3] w-full overflow-hidden bg-muted relative">
                 <img
-                    src={court.image_url || "https://images.unsplash.com/photo-1626245353528-77402061e858?q=80&w=2664&auto=format&fit=crop"}
+                    src={
+                        (court.google_photos as { name?: string }[])?.[0]?.name
+                            ? `https://places.googleapis.com/v1/${(court.google_photos as { name?: string }[])[0].name}/media?key=${process.env.NEXT_PUBLIC_GOOGLE_PLACES_API_KEY}&maxHeightPx=800&maxWidthPx=800`
+                            : court.image_url || "https://images.unsplash.com/photo-1626245353528-77402061e858?q=80&w=2664&auto=format&fit=crop"
+                    }
                     alt={court.name}
                     className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
                 />
