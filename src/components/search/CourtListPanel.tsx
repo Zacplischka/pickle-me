@@ -1,7 +1,6 @@
 "use client";
 
-import { useState } from "react";
-import { ChevronLeft, ChevronRight, X } from "lucide-react";
+import { ChevronRight, X } from "lucide-react";
 import { Court } from "@/lib/data";
 import { CourtCard } from "@/components/CourtCard";
 import { Button } from "@/components/ui/Button";
