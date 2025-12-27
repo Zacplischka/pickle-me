@@ -24,6 +24,8 @@ export function MobileCourtSheet({ courts }: MobileCourtSheetProps) {
             <button
                 onClick={() => setIsExpanded(!isExpanded)}
                 className="w-full flex flex-col items-center py-3 border-b border-border/60"
+                aria-label={isExpanded ? "Collapse court list" : "Expand court list"}
+                aria-expanded={isExpanded}
             >
                 <GripHorizontal className="h-5 w-5 text-muted-foreground mb-1" />
                 <div className="flex items-center gap-2">
@@ -41,7 +43,7 @@ export function MobileCourtSheet({ courts }: MobileCourtSheetProps) {
                 "overflow-y-auto p-4 space-y-3",
                 isExpanded ? "h-[calc(70vh-60px)]" : "h-[60px]"
             )}>
-                {courts.slice(0, isExpanded ? undefined : 2).map((court) => (
+                {(isExpanded ? courts : courts.slice(0, 2)).map((court) => (
                     <CourtCard key={court.id} court={court} variant="compact" />
                 ))}
             </div>

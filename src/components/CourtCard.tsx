@@ -1,7 +1,7 @@
 "use client";
 
-import Link from "next/link";
-import { MapPin, Trophy, Users, Info, Star, Phone, Globe } from "lucide-react";
+import Image from "next/image";
+import { MapPin, Trophy, Users, Star, Phone, Globe } from "lucide-react";
 import { Court } from "@/lib/data";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/Button";
@@ -25,14 +25,16 @@ export function CourtCard({ court, variant = "default" }: CourtCardProps) {
         <div className="group relative flex flex-col rounded-xl border border-border bg-card overflow-hidden transition-all hover:shadow-lg hover:border-border/80">
             {/* Image Section */}
             <div className={cn("aspect-[4/3] w-full overflow-hidden bg-muted relative", isCompact && "aspect-[3/2]")}>
-                <img
+                <Image
                     src={
                         (court.google_photos as { name?: string }[])?.[0]?.name
                             ? `https://places.googleapis.com/v1/${(court.google_photos as { name?: string }[])[0].name}/media?key=${process.env.NEXT_PUBLIC_GOOGLE_PLACES_API_KEY}&maxHeightPx=800&maxWidthPx=800`
                             : court.image_url || "https://images.unsplash.com/photo-1626245353528-77402061e858?q=80&w=2664&auto=format&fit=crop"
                     }
                     alt={court.name}
-                    className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                    fill
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                    className="object-cover transition-transform duration-300 group-hover:scale-105"
                 />
                 <div className="absolute top-2 right-2 flex gap-2">
                     {court.type && (

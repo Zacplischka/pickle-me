@@ -2,10 +2,8 @@
 
 import Link from "next/link";
 import { Menu, Search, MapPin } from "lucide-react";
-import { Button } from "@/components/ui/Button"; // Will create this next
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { cn } from "@/lib/utils";
 
 export function Navbar() {
     const [isOpen, setIsOpen] = useState(false);
