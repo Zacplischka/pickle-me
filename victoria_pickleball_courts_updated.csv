@@ -1,0 +1,86 @@
+Region,Venue Name,Suburb / Location,Type,Courts,Surface,Line Marking / Metadata,Notes
+Inner / City,The Jar Pickleball Club,South Melbourne,Commercial,4,Carpet,Dedicated (Perm. Nets),First dedicated indoor club in CBD fringe.
+Inner / City,MSAC (Southside),Albert Park,State Centre,2–8,Wood,Shared (Badminton Overlay),Multi-sport visual noise; high-performance floor.
+Inner / City,Melb. Sports Centre (Parkville),Parkville,State Centre,Var.,Wood,Shared (Netball/Badm),Home of Melbourne Uni Pickleball Club.
+Inner / City,Clifton Hill Pickleball,Clifton Hill,Club,4,Syn/Hard,Shared (Tennis Overlay),Outdoor facility shared with tennis/netball.
+Inner / City,Carlton Baths,Carlton,Council,Shared,Wood,Shared (Multi-sport),YMCA managed; social sessions.
+Inner / City,Kensington Comm. Rec. Centre,Kensington,Council,Shared,Wood,Shared (Multi-sport),YMCA managed; social sessions.
+Inner / City,North Melb. Rec. Centre,Nth Melbourne,Council,Shared,Wood,Shared (Multi-sport),YMCA managed; social sessions.
+South East,Pickle Play,Bentleigh East,Commercial,8,Acrylic,Dedicated (Perm. Nets),Full fencing; wellness centre (sauna/ice).
+South East,Pickleholic,Clayton,Commercial,7,Hard,Dedicated (Stadium),"""Stadium"" concept near Monash Uni. "
+South East,Melbourne Pickle Club,Moorabbin,Commercial,4,Acrylic,Dedicated (24/7 Access),3-coat acrylic; 24/7 automated access.
+South East,Kingston Pickleball Centre,Cheltenham,Commercial,3,Cushioned,Dedicated,Premium cushioned surface.
+South East,Badminton Connect,Noble Park,Commercial,Multi,Wood,Shared (Badminton Overlay),High visual conflict with badminton lines.
+South East,Badminton Connect,Hallam,Commercial,Multi,Wood,Shared (Badminton Overlay),High visual conflict with badminton lines.
+South East,Springers Leisure Centre,Keysborough,Council,4,Wood,Shared (Multi-sport),Home to U3A groups.
+South East,Bayside Pickleball Club,Hampton,Club,4,Wood,Shared (Netball/Badm),Waitlists common; permanent lines reported.
+South East,Stonnington Sports Centre,Malvern East,Council,Shared,Wood,Shared (Multi-sport),Margaret Connellan Stadium.
+East,Level Up Pickleball,Wantirna South,Commercial,4,Acrylic,Dedicated,Located inside Westfield Knox (Ozone).
+East,Maroondah Nets,Heathmont,Council,21,Mixed,Mixed (9 Indoor / 12 Out),Massive capacity; outdoor courts free-to-play.
+East,Eastern Indoor Sports,Knoxfield,Commercial,10,Rubber,Mixed (4 Dedicated),4 Rebound Ace courts + 6 multipurpose.
+East,Pickleball Manningham,Doncaster East,Club,2,Wood,Shared (Perm. Lines),Leeds St Sports Centre (Moved from DISC).
+East,Box Hill Action Indoor,Box Hill Sth,Commercial,2,Wood,Shared (Perm. Lines),Action Sports franchise integration.
+East,Vermont South Club,Vermont Sth,Club,Shared,Syn Grass,Shared (Tennis/Bowls),Multi-sport club integration.
+East,Kilsyth Sports Centre,Kilsyth,Council,Shared,Wood,Shared (Badminton),Badminton stronghold.
+North,Pickleball Palace,Pascoe Vale,Commercial,5,Acrylic,Dedicated,"Premium ""Northside"" hub; cafe/lounge. "
+North,Swing & Serve,Bundoora,Commercial,Shared,Hard,Dedicated (Hybrid),"""Eatertainment"" venue with beer garden. "
+North,Darebin Comm. Sports Stadium,Reservoir,Council,Shared,Wood,Shared (Multi-sport),Traditional stadium model.
+North,Narrandjeri Stadium,Thornbury,Council,Shared,Mixed,Mixed (Indoor/Outdoor),Floodlit outdoor courts available.
+North,Keilor Basketball Stadium,Keilor Park,Council,3,Wood,Shared (Basketball),Flexible courts; YMCA managed.
+North,Essendon Pickleball,Essendon,Club,Shared,Wood/Hard,Shared,Operating at Essendon North Primary etc.
+West,Pickle Haus,Brooklyn,Commercial,12,Hard,Dedicated,"""Eatertainment"" focus (Golf/Dining). "
+West,The Real Dill,Ravenhall,Commercial,6,Hard,Dedicated,5 Play courts + 1 Practice court.
+West,Eagle Stadium,Werribee,Council,3,Wood,Shared (Show Court),"1,500 seat show court capacity. "
+West,Altona Badminton Centre,Altona North,Commercial,3,Wood,Shared (Badminton Overlay),Critical Friction: 15cm Kitchen/Service line gap.
+West,Badminton Connect,Truganina,Commercial,Multi,Wood,Shared (Badminton Overlay),High visual conflict.
+West,RecWest Braybrook,Braybrook,Council,Shared,Wood,Shared (Badminton),Social racquet sessions.
+Peninsula,Civic Reserve Rec Centre,Mornington,Council,4,Wood,Shared (Perm. Lines),Known for free-to-play community access.
+Peninsula,Peninsula Pickle Pit,Mornington,Private,Shared,Wood,Shared,Located inside Adrenalin Gym.
+Peninsula,Percy Cerutty Oval,Portsea,Council,4,Hard,Dedicated (Outdoor),Rare dedicated outdoor hardcourts.
+Peninsula,Jubilee Park Stadium,Frankston,Council,6,Wood,Shared (Multi-sport),New $36M facility; VNL Netball venue.
+Peninsula,Sorrento Comm. Centre,Sorrento,Council,Shared,Wood,Shared,
+Regional,Geelong (Leisuretime),Norlane,Council,8,Wood,Shared (Multi-sport),Major regional hub; online booking portal.
+Regional,Badminton Geelong,Norlane,Club,6,Wood,Shared (Badminton Overlay),Separate entity within Leisuretime precinct.
+Regional,Drysdale Primary,Drysdale,School,Shared,Wood,Shared,Indoor sessions for Bellarine club.
+Regional,Torquay Pickleball,Torquay,Council,Shared,Wood,Shared,Wurdi Baierr Stadium.
+Regional,Warrnambool City Pickleball,Warrnambool,Council,8,Wood,Shared (Perm. Lines),Hosted Warrnambool Open; high capacity.
+Regional,Ballarat Badminton Centre,Ballarat,Commercial,Shared,Wood,Shared (Badminton Overlay),Home of Ballarat Pickleball Club.
+Regional,Golden Plains (Woady Yaloak),Smythesdale,Council,Shared,Wood,Shared (Football/Netball),Rural recreation reserve integration.
+Regional,Bendigo (Red Energy Arena),Bendigo,Council,Shared,Wood,Shared (Stadium),Major regional stadium.
+Regional,Sneaky Cat (Wodonga),Wodonga,Private,7,Rebound Ace,Dedicated (Perm. Nets),Premium indoor facility at Tennis Centre.
+Regional,Wangaratta Hardcourt,Wangaratta,Club,2,Hard,Shared (Outdoor),Outdoor hard courts.
+Regional,VISY Community Centre,Shepparton,Council,8,Wood,Shared (Perm. Lines),Home of Shepparton Pickleball Club.
+Regional,Sale Tennis Club,Sale,Club,Shared,Syn Clay,Shared (Tennis Overlay),Note: Synthetic clay (slow/slide surface).
+Regional,Maffra Lawn Tennis,Maffra,Club,6,Syn Grass,Shared (Tennis Overlay),"Uses synthetic grass courts, not the lawn ones. "
+Regional,GRISS,Traralgon,Council,3,Wood,Shared (Multi-sport),Resurfacing scheduled Dec 2025.
+Regional,Beechworth Pickleball,Beechworth,Club,Shared,Hard,Shared (Outdoor),Baarmutha Park Netball Courts.
+Regional,Koondrook Pickleball,Koondrook,Club,3,Hard,Shared (Outdoor),Outdoor pool/courts complex.
+Regional,Mildura Sporting Precinct,Mildura,Council,2,Wood,Shared (Perm. Lines),
+Inner / City,Albert Park Indoor Sports Centre,Albert Park,Council,4,Wood,Shared (Multi-sport),Separate from MSAC; dedicated indoor facility.
+South East,Ashburton Pool and Recreation Centre,Ashburton,Council,3,Wood,Shared (Multi-sport),Part of aquatic and recreation complex.
+South East,Beaumaris Lawn Tennis Club,Beaumaris,Club,8,Hard,Mixed (6 Shared / 2 Dedicated),6 courts share tennis lines; 2 dedicated pickleball.
+South East,Cranbourne South Tennis Club,Cranbourne South,Club,2,Hard,Shared (Tennis Overlay),Outdoor tennis facility with pickleball overlay.
+East,State Pickleball Centre,Bayswater,Commercial,Var.,Hard,Dedicated,Premier purpose-built facility; professional-grade courts.
+East,Knoxfield Pickleball and Tennis Club,Knoxfield,Club,Shared,Hard,Shared (Tennis Overlay),Tennis club with pickleball sessions.
+North,SmashX,Preston,Commercial,Var.,Rubber,Dedicated (Outdoor),Outdoor courts on rubber mats; year-round play.
+North,Dinx Pickleball,Fairfield,Commercial,Shared,Wood,Shared,Community-focused pickleball venue.
+North,St Albans Pickleball Club,St Albans,Club,Shared,Mixed,Shared,Western suburbs community club.
+North,Whittlesea Tennis & Pickleball Club,Whittlesea,Club,Shared,Hard,Shared (Tennis Overlay),Tennis club offering pickleball sessions.
+West,Altona Sports Centre,Altona Meadows,Council,2,Wood,Shared (Multi-sport),Council facility with social pickleball sessions.
+West,Cobblebank Stadium,Cobblebank,Council,3,Wood,Shared (Multi-sport),Outer west growth corridor facility.
+West,Sunbury Lawn Tennis Club,Sunbury,Club,4,Hard,Shared (Tennis Overlay),Part of Craigieburn/Sunbury network.
+Peninsula,Sorrento Community Centre,Sorrento,Council,3,Wood,Shared,Updated info: 3 quality indoor courts for hire.
+Peninsula,Southern Peninsula Pickleball Club,Portsea,Club,Var.,Mixed,Mixed,Club operating across southern peninsula venues.
+Regional,Anglesea Tennis Club,Anglesea,Club,2,Hard,Shared (Tennis Overlay),Coastal tennis club with pickleball.
+Regional,Ballarat Regional Tennis Centre,Wendouree,Council,6,Hard,Shared (Tennis Overlay),Major regional tennis facility.
+Regional,Bright Pickleball Courts,Bright,Council,4,Hard,Dedicated (Outdoor),Alpine region dedicated outdoor courts.
+Regional,Camperdown Community Stadium,Camperdown,Council,2,Wood,Shared (Multi-sport),Western district regional facility.
+Regional,Colac Indoor Sports Centre,Elliminyt,Council,4,Wood,Shared (Multi-sport),Colac region indoor sports complex.
+Regional,Echuca Moama Pickleball Club,Echuca,Club,Shared,Mixed,Shared,Border region club serving twin towns.
+Regional,Euroa District Pickleball Group,Euroa,Club,Shared,Mixed,Shared,Regional community group.
+Regional,Healesville Pickleball,Healesville,Club,Shared,Mixed,Shared,Yarra Valley community sessions.
+Regional,Ocean Grove Pickleball Club,Ocean Grove,Club,Shared,Mixed,Shared,Bellarine Peninsula club.
+Regional,Queenscliff Pickleball Club,Queenscliff,Club,Shared,Hard,Shared (Tennis Overlay),Coastal club at tennis facility.
+Regional,Strathdale Park Pickleball Club,Strathdale,Club,Shared,Hard,Shared (Tennis Overlay),Bendigo region tennis club.
+Regional,Toora Community Pickleball,Toora,Club,Shared,Mixed,Shared,South Gippsland community group.
+Regional,Woodside Community Public Hall,Woodside,Council,Shared,Wood,Shared (Multi-sport),Gippsland community hall.
