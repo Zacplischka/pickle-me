@@ -37,7 +37,7 @@ export function CourtListPanel({ courts, isOpen, onToggle }: CourtListPanelProps
                 {/* Scrollable Court List */}
                 <div className="h-[calc(100%-73px)] overflow-y-auto p-4 space-y-4">
                     {courts.map((court) => (
-                        <CourtCard key={court.id} court={court} />
+                        <CourtCard key={court.id} court={court} variant="compact" />
                     ))}
                 </div>
             </div>

@@ -9,9 +9,12 @@ import { OpeningHours } from "@/components/OpeningHours";
 
 interface CourtCardProps {
     court: Court;
+    variant?: "default" | "compact";
 }
 
-export function CourtCard({ court }: CourtCardProps) {
+export function CourtCard({ court, variant = "default" }: CourtCardProps) {
+    const isCompact = variant === "compact";
+
     const typeColor = court.type === "Indoor"
         ? "bg-primary/90 text-primary-foreground"
         : court.type === "Outdoor"
@@ -21,7 +24,7 @@ export function CourtCard({ court }: CourtCardProps) {
     return (
         <div className="group relative flex flex-col rounded-xl border border-border bg-card overflow-hidden transition-all hover:shadow-lg hover:border-border/80">
             {/* Image Section */}
-            <div className="aspect-[4/3] w-full overflow-hidden bg-muted relative">
+            <div className={cn("aspect-[4/3] w-full overflow-hidden bg-muted relative", isCompact && "aspect-[3/2]")}>
                 <img
                     src={
                         (court.google_photos as { name?: string }[])?.[0]?.name
@@ -46,7 +49,7 @@ export function CourtCard({ court }: CourtCardProps) {
             </div>
 
             {/* Content Section */}
-            <div className="flex flex-1 flex-col p-5 gap-3">
+            <div className={cn("flex flex-1 flex-col p-5 gap-3", isCompact && "p-3")}>
                 <div>
                     <h3 className="font-bold text-lg leading-tight text-foreground group-hover:text-primary transition-colors">
                         {court.name}
@@ -89,18 +92,20 @@ export function CourtCard({ court }: CourtCardProps) {
                     )}
                 </div>
 
-                <div className="flex flex-wrap gap-1.5 mb-2 h-14 overflow-hidden content-start">
-                    {(court.features || []).slice(0, 4).map((feature) => (
-                        <span key={feature} className="px-1.5 py-0.5 rounded border border-border text-[10px] text-muted-foreground bg-background">
-                            {feature}
-                        </span>
-                    ))}
-                    {(court.features || []).length > 4 && (
-                        <span className="px-1.5 py-0.5 rounded border border-border text-[10px] text-muted-foreground bg-background">
-                            +{(court.features || []).length - 4} more
-                        </span>
-                    )}
-                </div>
+                {!isCompact && (
+                    <div className="flex flex-wrap gap-1.5 mb-2 h-14 overflow-hidden content-start">
+                        {(court.features || []).slice(0, 4).map((feature) => (
+                            <span key={feature} className="px-1.5 py-0.5 rounded border border-border text-[10px] text-muted-foreground bg-background">
+                                {feature}
+                            </span>
+                        ))}
+                        {(court.features || []).length > 4 && (
+                            <span className="px-1.5 py-0.5 rounded border border-border text-[10px] text-muted-foreground bg-background">
+                                +{(court.features || []).length - 4} more
+                            </span>
+                        )}
+                    </div>
+                )}
 
                 {/* Contact Links */}
                 {(court.google_phone || court.google_website || court.website) && (
