@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Court } from "@/lib/data";
 import { CourtListPanel } from "./CourtListPanel";
+import { MobileCourtSheet } from "./MobileCourtSheet";
 import MapWrapper from "@/components/map/MapWrapper";
 
 interface SearchLayoutProps {
@@ -19,12 +20,19 @@ export function SearchLayout({ courts }: SearchLayoutProps) {
                 <MapWrapper courts={courts} />
             </div>
 
-            {/* Overlay Court List Panel */}
-            <CourtListPanel
-                courts={courts}
-                isOpen={isPanelOpen}
-                onToggle={() => setIsPanelOpen(!isPanelOpen)}
-            />
+            {/* Desktop: Overlay Court List Panel */}
+            <div className="hidden md:block">
+                <CourtListPanel
+                    courts={courts}
+                    isOpen={isPanelOpen}
+                    onToggle={() => setIsPanelOpen(!isPanelOpen)}
+                />
+            </div>
+
+            {/* Mobile: Bottom Sheet */}
+            <div className="md:hidden">
+                <MobileCourtSheet courts={courts} />
+            </div>
         </div>
     );
 }
