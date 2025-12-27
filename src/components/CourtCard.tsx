@@ -115,7 +115,7 @@ export function CourtCard({ court }: CourtCardProps) {
                         )}
                         {(court.google_website || court.website) && (
                             <a
-                                href={court.google_website || court.website || "#"}
+                                href={(court.google_website || court.website)!}
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="flex items-center gap-1 text-muted-foreground hover:text-primary transition-colors"
