@@ -131,7 +131,7 @@ export function CourtCard({ court }: CourtCardProps) {
                 {/* Opening Hours */}
                 {court.google_opening_hours && (
                     <div className="mt-2">
-                        <OpeningHours hours={court.google_opening_hours as { weekday_text?: string[] }} />
+                        <OpeningHours hours={court.google_opening_hours as { weekdayDescriptions?: string[] }} />
                     </div>
                 )}
 

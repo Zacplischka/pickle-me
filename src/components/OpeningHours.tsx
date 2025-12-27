@@ -5,21 +5,21 @@ import { useState } from "react";
 
 interface OpeningHoursProps {
     hours: {
-        weekday_text?: string[];
+        weekdayDescriptions?: string[];
     } | null;
 }
 
 export function OpeningHours({ hours }: OpeningHoursProps) {
     const [expanded, setExpanded] = useState(false);
 
-    if (!hours?.weekday_text?.length) {
+    if (!hours?.weekdayDescriptions?.length) {
         return null;
     }
 
     const today = new Date().getDay();
-    // Google returns Sunday as first (0), but weekday_text starts with Monday
+    // Google returns Sunday as first (0), but weekdayDescriptions starts with Monday
     const todayIndex = today === 0 ? 6 : today - 1;
-    const todayHours = hours.weekday_text[todayIndex];
+    const todayHours = hours.weekdayDescriptions[todayIndex];
 
     return (
         <div className="text-xs">
@@ -35,7 +35,7 @@ export function OpeningHours({ hours }: OpeningHoursProps) {
             </button>
             {expanded && (
                 <div className="mt-2 pl-5 space-y-0.5 text-muted-foreground">
-                    {hours.weekday_text.map((day, i) => (
+                    {hours.weekdayDescriptions.map((day, i) => (
                         <div
                             key={i}
                             className={i === todayIndex ? "font-semibold text-foreground" : ""}
