@@ -1,4 +1,6 @@
-import "dotenv/config";
+import * as dotenv from "dotenv";
+dotenv.config({ path: ".env.local" });
+dotenv.config({ path: ".env" });
 import { createClient } from "@supabase/supabase-js";
 import { searchPlaces, getPlaceDetails, delay } from "./lib/google-places";
 
