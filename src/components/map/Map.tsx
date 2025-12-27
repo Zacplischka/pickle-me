@@ -89,10 +89,26 @@ export default function Map({ courts }: MapProps) {
                             <div className="p-1 min-w-[200px]">
                                 <h3 className="font-bold text-sm mb-1">{court.name}</h3>
                                 <p className="text-xs text-muted-foreground mb-2">{court.suburb}</p>
-                                {court.type && (
-                                    <span className="text-xs bg-secondary/10 text-secondary px-2 py-1 rounded-full font-medium">
-                                        {court.type}
-                                    </span>
+                                <div className="flex items-center gap-2 mb-2">
+                                    {court.type && (
+                                        <span className="text-xs bg-secondary/10 text-secondary px-2 py-1 rounded-full font-medium">
+                                            {court.type}
+                                        </span>
+                                    )}
+                                    {court.google_rating && (
+                                        <span className="text-xs flex items-center gap-1">
+                                            <span className="text-amber-500">★</span>
+                                            {court.google_rating.toFixed(1)}
+                                        </span>
+                                    )}
+                                </div>
+                                {court.google_phone && (
+                                    <a
+                                        href={`tel:${court.google_phone}`}
+                                        className="text-xs text-primary hover:underline block"
+                                    >
+                                        {court.google_phone}
+                                    </a>
                                 )}
                             </div>
                         </Popup>
