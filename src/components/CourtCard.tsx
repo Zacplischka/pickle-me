@@ -50,11 +50,10 @@ export function CourtCard({ court }: CourtCardProps) {
                         {court.name}
                     </h3>
                     <div className="flex items-center gap-1.5 mt-1 text-muted-foreground">
-                        <MapPin className="w-3.5 h-3.5" />
-                        <span className="text-xs font-medium">{court.suburb}</span>
-                        {court.region && (
-                            <span className="text-xs text-muted-foreground/70">• {court.region}</span>
-                        )}
+                        <MapPin className="w-3.5 h-3.5 flex-shrink-0" />
+                        <span className="text-xs font-medium truncate">
+                            {court.google_formatted_address || `${court.suburb}${court.region ? `, ${court.region}` : ""}`}
+                        </span>
                     </div>
                 </div>
 
