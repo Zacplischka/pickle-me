@@ -24,6 +24,9 @@ export async function getFeaturedCourts(limit = 3): Promise<Court[]> {
     .from("courts")
     .select("*")
     .not("image_url", "is", null)
+    .not("google_rating", "is", null)
+    .order("google_rating", { ascending: false })
+    .order("google_user_ratings_total", { ascending: false })
     .limit(limit);
 
   if (error) {
