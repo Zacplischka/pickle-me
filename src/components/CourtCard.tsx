@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import { MapPin, Trophy, Users, Info, Star, Phone, Globe } from "lucide-react";
 import { Court } from "@/lib/data";
