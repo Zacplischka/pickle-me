@@ -3,6 +3,10 @@ import { Inter } from "next/font/google";
 import { ThemeProvider } from "next-themes";
 import "./globals.css";
 import { cn } from "@/lib/utils";
+import { Navbar } from "@/components/layout/Navbar";
+import { Footer } from "@/components/layout/Footer";
+import { CourtsProvider } from "@/lib/contexts/CourtsContext";
+import { getCourts } from "@/lib/data";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -14,14 +18,13 @@ export const metadata: Metadata = {
   description: "The most comprehensive directory of pickleball courts in Victoria, Australia. Find indoor and outdoor courts near you.",
 };
 
-import { Navbar } from "@/components/layout/Navbar";
-import { Footer } from "@/components/layout/Footer";
-
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const courts = await getCourts();
+
   return (
     <html lang="en" suppressHydrationWarning>
       <body
@@ -36,11 +39,13 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <Navbar />
-          <main className="flex-1">
-            {children}
-          </main>
-          <Footer />
+          <CourtsProvider courts={courts}>
+            <Navbar />
+            <main className="flex-1">
+              {children}
+            </main>
+            <Footer />
+          </CourtsProvider>
         </ThemeProvider>
       </body>
     </html>
