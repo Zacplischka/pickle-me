@@ -1,18 +1,52 @@
 "use client";
 
-import { ChevronRight, X } from "lucide-react";
-import { Court } from "@/lib/data";
+import { useState, useMemo, useCallback } from "react";
+import { ChevronRight, X, Navigation } from "lucide-react";
 import { CourtCard } from "@/components/CourtCard";
 import { Button } from "@/components/ui/Button";
-import { cn } from "@/lib/utils";
+import { cn, LatLng } from "@/lib/utils";
+import { CourtWithDistance } from "./SearchLayout";
+
+const COURTS_PER_PAGE = 10;
 
 interface CourtListPanelProps {
-    courts: Court[];
+    courts: CourtWithDistance[];
     isOpen: boolean;
     onToggle: () => void;
+    userLocation: LatLng | null;
+    onCourtSelect: (courtId: string) => void;
+    selectedCourtId: string | null;
 }
 
-export function CourtListPanel({ courts, isOpen, onToggle }: CourtListPanelProps) {
+export function CourtListPanel({ courts, isOpen, onToggle, userLocation, onCourtSelect, selectedCourtId }: CourtListPanelProps) {
+    const [page, setPage] = useState(1);
+
+    const totalPages = Math.ceil(courts.length / COURTS_PER_PAGE);
+    const displayedCourts = useMemo(
+        () => courts.slice(0, page * COURTS_PER_PAGE),
+        [courts, page]
+    );
+
+    const hasMore = page < totalPages;
+
+    const loadMore = useCallback(() => {
+        if (hasMore) {
+            setPage((p) => p + 1);
+        }
+    }, [hasMore]);
+
+    // Infinite scroll handler
+    const handleScroll = useCallback(
+        (e: React.UIEvent<HTMLDivElement>) => {
+            const target = e.currentTarget;
+            const scrollBottom = target.scrollHeight - target.scrollTop - target.clientHeight;
+            if (scrollBottom < 200 && hasMore) {
+                loadMore();
+            }
+        },
+        [hasMore, loadMore]
+    );
+
     return (
         <>
             {/* Panel */}
@@ -27,7 +61,15 @@ export function CourtListPanel({ courts, isOpen, onToggle }: CourtListPanelProps
                 <div className="sticky top-0 bg-background border-b border-border p-4 flex items-center justify-between z-10">
                     <div>
                         <h2 className="font-semibold text-foreground">Courts</h2>
-                        <p className="text-sm text-muted-foreground">{courts.length} results</p>
+                        <p className="text-sm text-muted-foreground">
+                            {courts.length} results
+                            {userLocation && (
+                                <span className="inline-flex items-center gap-1 ml-2 text-primary">
+                                    <Navigation className="w-3 h-3" />
+                                    sorted by distance
+                                </span>
+                            )}
+                        </p>
                     </div>
                     <Button variant="ghost" size="sm" onClick={onToggle}>
                         <X className="h-4 w-4" />
@@ -35,10 +77,31 @@ export function CourtListPanel({ courts, isOpen, onToggle }: CourtListPanelProps
                 </div>
 
                 {/* Scrollable Court List */}
-                <div className="h-[calc(100%-73px)] overflow-y-auto p-4 space-y-4">
-                    {courts.map((court) => (
-                        <CourtCard key={court.id} court={court} variant="compact" />
+                <div
+                    onScroll={handleScroll}
+                    className="h-[calc(100%-73px)] overflow-y-auto p-4 space-y-4"
+                >
+                    {displayedCourts.map((court) => (
+                        <CourtCard
+                            key={court.id}
+                            court={court}
+                            variant="compact"
+                            onClick={() => onCourtSelect(court.id)}
+                            isSelected={selectedCourtId === court.id}
+                        />
                     ))}
+                    {hasMore && (
+                        <div className="py-4 text-center">
+                            <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={loadMore}
+                                className="w-full"
+                            >
+                                Load more ({courts.length - displayedCourts.length} remaining)
+                            </Button>
+                        </div>
+                    )}
                 </div>
             </div>
 

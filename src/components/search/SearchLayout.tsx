@@ -71,8 +71,8 @@ export function SearchLayout({
 
     return (
         <div className="relative flex-1 w-full overflow-hidden">
-            {/* Full-width Map */}
-            <div className="absolute inset-0">
+            {/* Full-width Map - z-0 creates stacking context to contain Leaflet's internal z-indexes */}
+            <div className="absolute inset-0 z-0">
                 <MapWrapper
                     courts={courts}
                     onLocationFound={handleLocationFound}

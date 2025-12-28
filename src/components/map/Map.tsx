@@ -124,7 +124,7 @@ function LocationMarker({ onLocationFound }: LocationMarkerProps) {
                 </>
             )}
             {/* Location button */}
-            <div className="absolute bottom-6 right-6 z-[1000]">
+            <div className="absolute bottom-6 right-6 z-10">
                 <Button
                     onClick={handleLocate}
                     disabled={isLocating}
