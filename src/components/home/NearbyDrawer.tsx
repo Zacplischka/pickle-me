@@ -47,8 +47,7 @@ export function NearbyDrawer({
         distance: calculateDistance(userLocation, { lat: court.lat, lng: court.lng }),
       }))
       .filter((court) => court.distance <= radius)
-      .sort((a, b) => a.distance - b.distance)
-      .slice(0, 5);
+      .sort((a, b) => a.distance - b.distance);
   }, [courts, userLocation, radius]);
 
   const handleSeeAllOnMap = () => {
@@ -132,6 +131,9 @@ export function NearbyDrawer({
                 {/* Courts List */}
                 {nearbyCourts.length > 0 ? (
                   <div className="space-y-3">
+                    <p className="text-sm text-muted-foreground mb-2">
+                      {nearbyCourts.length} court{nearbyCourts.length !== 1 ? "s" : ""} found
+                    </p>
                     {nearbyCourts.map((court) => (
                       <NearbyCourtCard
                         key={court.id}
