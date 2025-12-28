@@ -1,0 +1,276 @@
+"use client";
+
+import { useState, useMemo, useRef, useEffect, useCallback } from "react";
+import { useRouter } from "next/navigation";
+import { Search, MapPin, X } from "lucide-react";
+import { Court } from "@/lib/supabase/database.types";
+import { Suggestion } from "@/lib/types/search";
+import { extractSuburbs, searchSuggestions } from "@/lib/search";
+import { cn } from "@/lib/utils";
+
+interface SearchInputProps {
+  courts: Court[];
+  variant: "hero" | "navbar";
+  placeholder?: string;
+  onClose?: () => void;
+}
+
+export function SearchInput({
+  courts,
+  variant,
+  placeholder = "Suburb, postcode, or court name...",
+  onClose,
+}: SearchInputProps) {
+  const router = useRouter();
+  const inputRef = useRef<HTMLInputElement>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  const [query, setQuery] = useState("");
+  const [isOpen, setIsOpen] = useState(false);
+  const [activeIndex, setActiveIndex] = useState(-1);
+
+  const suburbs = useMemo(() => extractSuburbs(courts), [courts]);
+
+  const suggestions = useMemo(
+    () => searchSuggestions(courts, suburbs, query),
+    [courts, suburbs, query]
+  );
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node) &&
+        inputRef.current &&
+        !inputRef.current.contains(event.target as Node)
+      ) {
+        setIsOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  // Scroll active suggestion into view
+  useEffect(() => {
+    if (activeIndex >= 0) {
+      const activeElement = document.getElementById(`suggestion-${activeIndex}`);
+      activeElement?.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    }
+  }, [activeIndex]);
+
+  const handleSelect = useCallback(
+    (suggestion: Suggestion) => {
+      if (suggestion.type === "court") {
+        router.push(`/search?court=${suggestion.court.id}`);
+      } else {
+        router.push(`/search?suburb=${encodeURIComponent(suggestion.suburb)}`);
+      }
+      setIsOpen(false);
+      setQuery("");
+      onClose?.();
+    },
+    [router, onClose]
+  );
+
+  const handleSubmit = useCallback(() => {
+    if (activeIndex >= 0 && activeIndex < suggestions.length) {
+      handleSelect(suggestions[activeIndex]);
+    } else if (query.trim()) {
+      router.push(`/search?q=${encodeURIComponent(query.trim())}`);
+      setIsOpen(false);
+      setQuery("");
+      onClose?.();
+    }
+  }, [activeIndex, suggestions, query, router, handleSelect, onClose]);
+
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent) => {
+      if (!isOpen) {
+        if (e.key === "ArrowDown" || e.key === "ArrowUp") {
+          setIsOpen(true);
+          return;
+        }
+      }
+
+      switch (e.key) {
+        case "ArrowDown":
+          e.preventDefault();
+          setActiveIndex((prev) =>
+            prev < suggestions.length - 1 ? prev + 1 : prev
+          );
+          break;
+        case "ArrowUp":
+          e.preventDefault();
+          setActiveIndex((prev) => (prev > 0 ? prev - 1 : -1));
+          break;
+        case "Enter":
+          e.preventDefault();
+          handleSubmit();
+          break;
+        case "Escape":
+          setIsOpen(false);
+          setActiveIndex(-1);
+          inputRef.current?.blur();
+          break;
+      }
+    },
+    [isOpen, suggestions.length, handleSubmit]
+  );
+
+  const isHero = variant === "hero";
+
+  return (
+    <div className={cn("relative", isHero ? "w-full" : "")}>
+      <div
+        className={cn(
+          "flex items-center",
+          isHero
+            ? "w-full max-w-2xl p-2 bg-card/80 backdrop-blur-md border border-border rounded-2xl shadow-2xl flex-col md:flex-row gap-2"
+            : "px-3 py-1.5 bg-muted/50 hover:bg-muted rounded-full transition-colors"
+        )}
+      >
+        <div
+          className={cn(
+            "relative flex items-center",
+            isHero ? "flex-1 w-full" : ""
+          )}
+        >
+          <MapPin
+            className={cn(
+              "absolute text-muted-foreground",
+              isHero ? "left-4 w-5 h-5" : "left-2 w-4 h-4"
+            )}
+          />
+          <input
+            ref={inputRef}
+            type="text"
+            value={query}
+            onChange={(e) => {
+              setQuery(e.target.value);
+              setActiveIndex(-1);
+              if (e.target.value.trim()) {
+                setIsOpen(true);
+              }
+            }}
+            onFocus={() => setIsOpen(true)}
+            onKeyDown={handleKeyDown}
+            placeholder={isHero ? placeholder : "Search courts..."}
+            className={cn(
+              "bg-transparent border-none text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-0",
+              isHero
+                ? "w-full h-12 pl-12 pr-4 text-lg"
+                : "w-48 h-8 pl-8 pr-2 text-sm"
+            )}
+            role="combobox"
+            aria-expanded={isOpen}
+            aria-haspopup="listbox"
+            aria-controls="search-suggestions"
+            aria-activedescendant={
+              activeIndex >= 0 ? `suggestion-${activeIndex}` : undefined
+            }
+          />
+          {query && (
+            <button
+              onClick={() => {
+                setQuery("");
+                inputRef.current?.focus();
+              }}
+              className={cn(
+                "absolute text-muted-foreground hover:text-foreground",
+                isHero ? "right-4" : "right-2"
+              )}
+              aria-label="Clear search"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          )}
+        </div>
+        {isHero && (
+          <button
+            onClick={handleSubmit}
+            className="h-12 md:w-auto w-full bg-secondary hover:bg-secondary/90 text-secondary-foreground font-semibold text-lg px-8 rounded-xl shadow-lg shadow-secondary/20 flex items-center justify-center gap-2"
+            aria-label="Search for courts"
+          >
+            <Search className="w-5 h-5" />
+            Find Courts
+          </button>
+        )}
+      </div>
+
+      {/* Dropdown */}
+      {isOpen && suggestions.length > 0 && (
+        <div
+          ref={dropdownRef}
+          id="search-suggestions"
+          role="listbox"
+          className={cn(
+            "absolute z-50 mt-2 bg-card border border-border rounded-xl shadow-xl overflow-hidden",
+            isHero ? "w-full max-w-2xl left-0" : "w-72 right-0"
+          )}
+        >
+          {suggestions.map((suggestion, index) => (
+            <button
+              key={
+                suggestion.type === "court"
+                  ? `court-${suggestion.court.id}`
+                  : `suburb-${suggestion.suburb}`
+              }
+              id={`suggestion-${index}`}
+              role="option"
+              aria-selected={index === activeIndex}
+              onClick={() => handleSelect(suggestion)}
+              onMouseEnter={() => setActiveIndex(index)}
+              className={cn(
+                "w-full px-4 py-3 flex items-center gap-3 text-left transition-colors",
+                index === activeIndex
+                  ? "bg-muted"
+                  : "hover:bg-muted/50"
+              )}
+            >
+              {suggestion.type === "court" ? (
+                <>
+                  <span className="text-lg">🏸</span>
+                  <div className="flex-1 min-w-0">
+                    <div className="font-medium text-foreground truncate">
+                      {suggestion.court.name}
+                    </div>
+                    <div className="text-sm text-muted-foreground truncate">
+                      {suggestion.court.suburb}
+                    </div>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <MapPin className="w-5 h-5 text-muted-foreground flex-shrink-0" />
+                  <div className="flex-1 min-w-0">
+                    <div className="font-medium text-foreground">
+                      {suggestion.suburb}
+                    </div>
+                    <div className="text-sm text-muted-foreground">
+                      {suggestion.count} court{suggestion.count !== 1 ? "s" : ""}
+                    </div>
+                  </div>
+                </>
+              )}
+            </button>
+          ))}
+        </div>
+      )}
+
+      {/* No results message */}
+      {isOpen && query.trim() && suggestions.length === 0 && (
+        <div
+          ref={dropdownRef}
+          className={cn(
+            "absolute z-50 mt-2 bg-card border border-border rounded-xl shadow-xl p-4 text-center text-muted-foreground",
+            isHero ? "w-full max-w-2xl left-0" : "w-72 right-0"
+          )}
+        >
+          No courts or suburbs match &ldquo;{query}&rdquo;
+        </div>
+      )}
+    </div>
+  );
+}
