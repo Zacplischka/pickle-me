@@ -33,17 +33,6 @@ export function NearbyDrawer({
 }: NearbyDrawerProps) {
   const router = useRouter();
   const [radius, setRadius] = useState(10);
-  const [displayRadius, setDisplayRadius] = useState(10);
-
-  // Update display radius on slider drag
-  const handleRadiusChange = (value: number) => {
-    setDisplayRadius(value);
-  };
-
-  // Commit radius on slider release
-  const handleRadiusCommit = () => {
-    setRadius(displayRadius);
-  };
 
   // Filter and sort courts by distance
   const nearbyCourts = useMemo((): CourtWithDistance[] => {
@@ -135,10 +124,8 @@ export function NearbyDrawer({
                 {/* Radius Slider */}
                 <div className="mb-6">
                   <RadiusSlider
-                    value={displayRadius}
-                    onChange={handleRadiusChange}
-                    onMouseUp={handleRadiusCommit}
-                    onTouchEnd={handleRadiusCommit}
+                    value={radius}
+                    onChange={setRadius}
                   />
                 </div>
 
