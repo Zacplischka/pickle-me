@@ -1,13 +1,16 @@
 "use client";
 
 import Link from "next/link";
-import { Menu, Search, MapPin } from "lucide-react";
+import { Menu, MapPin } from "lucide-react";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
+import { SearchInput } from "@/components/search/SearchInput";
+import { useCourts } from "@/lib/contexts/CourtsContext";
 
 export function Navbar() {
     const [isOpen, setIsOpen] = useState(false);
+    const courts = useCourts();
 
     return (
         <nav className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -37,10 +40,9 @@ export function Navbar() {
 
                 {/* Actions */}
                 <div className="flex items-center gap-4">
-                    <button className="hidden md:flex items-center gap-2 px-3 py-1.5 text-sm text-muted-foreground bg-muted/50 hover:bg-muted rounded-full transition-colors">
-                        <Search className="w-4 h-4" />
-                        <span className="opacity-60">Search courts...</span>
-                    </button>
+                    <div className="hidden md:block">
+                        <SearchInput courts={courts} variant="navbar" />
+                    </div>
 
                     <div className="hidden md:block">
                         <ThemeToggle />
