@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, useCallback, useEffect } from "react";
+import { useState, useMemo, useCallback } from "react";
 import { Court } from "@/lib/data";
 import { CourtListPanel } from "./CourtListPanel";
 import { MobileCourtSheet } from "./MobileCourtSheet";
@@ -29,20 +29,6 @@ export function SearchLayout({
     const [selectedCourtId, setSelectedCourtId] = useState<string | null>(
         initialSelectedCourtId || null
     );
-
-    // Update location when initialUserLocation changes
-    useEffect(() => {
-        if (initialUserLocation) {
-            setUserLocation(initialUserLocation);
-        }
-    }, [initialUserLocation]);
-
-    // Update selection when initialSelectedCourtId changes
-    useEffect(() => {
-        if (initialSelectedCourtId) {
-            setSelectedCourtId(initialSelectedCourtId);
-        }
-    }, [initialSelectedCourtId]);
 
     const handleLocationFound = useCallback((location: LatLng) => {
         setUserLocation(location);
