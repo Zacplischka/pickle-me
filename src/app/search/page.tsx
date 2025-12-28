@@ -1,6 +1,6 @@
 import { getCourts } from "@/lib/data";
 import { Button } from "@/components/ui/Button";
-import { SlidersHorizontal, ChevronDown, X } from "lucide-react";
+import { SlidersHorizontal, ChevronDown, X, MapPin } from "lucide-react";
 import { SearchLayout } from "@/components/search/SearchLayout";
 import Link from "next/link";
 
@@ -9,12 +9,22 @@ interface SearchPageProps {
         q?: string;
         suburb?: string;
         court?: string;
+        lat?: string;
+        lng?: string;
+        radius?: string;
     }>;
 }
 
 export default async function SearchPage({ searchParams }: SearchPageProps) {
     const params = await searchParams;
     const allCourts = await getCourts();
+
+    // Parse location params
+    const userLocation =
+        params.lat && params.lng
+            ? { lat: parseFloat(params.lat), lng: parseFloat(params.lng) }
+            : null;
+    const radius = params.radius ? parseInt(params.radius, 10) : null;
 
     // Filter courts based on search params
     let filteredCourts = allCourts;
@@ -34,6 +44,8 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
                 (court.region && court.region.toLowerCase().includes(query))
         );
         activeFilter = { type: "Search", value: params.q };
+    } else if (userLocation && radius) {
+        activeFilter = { type: "Near You", value: `${radius} km` };
     }
 
     // Pre-select court if specified
@@ -53,6 +65,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
                             <div className="h-6 w-px bg-border mx-1" />
                             <Link href="/search">
                                 <Button variant="secondary" size="sm" className="h-8 rounded-full text-xs gap-1">
+                                    {activeFilter.type === "Near You" && <MapPin className="h-3 w-3" />}
                                     {activeFilter.type}: {activeFilter.value}
                                     <X className="h-3 w-3" />
                                 </Button>
@@ -89,6 +102,8 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
             <SearchLayout
                 courts={filteredCourts}
                 initialSelectedCourtId={selectedCourtId}
+                initialUserLocation={userLocation}
+                initialRadius={radius}
             />
         </div>
     );

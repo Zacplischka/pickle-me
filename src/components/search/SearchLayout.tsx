@@ -10,18 +10,32 @@ import { LatLng, calculateDistance } from "@/lib/utils";
 interface SearchLayoutProps {
     courts: Court[];
     initialSelectedCourtId?: string | null;
+    initialUserLocation?: LatLng | null;
+    initialRadius?: number | null;
 }
 
 export interface CourtWithDistance extends Court {
     distance?: number;
 }
 
-export function SearchLayout({ courts, initialSelectedCourtId }: SearchLayoutProps) {
+export function SearchLayout({
+    courts,
+    initialSelectedCourtId,
+    initialUserLocation = null,
+    initialRadius = null,
+}: SearchLayoutProps) {
     const [isPanelOpen, setIsPanelOpen] = useState(true);
-    const [userLocation, setUserLocation] = useState<LatLng | null>(null);
+    const [userLocation, setUserLocation] = useState<LatLng | null>(initialUserLocation);
     const [selectedCourtId, setSelectedCourtId] = useState<string | null>(
         initialSelectedCourtId || null
     );
+
+    // Update location when initialUserLocation changes
+    useEffect(() => {
+        if (initialUserLocation) {
+            setUserLocation(initialUserLocation);
+        }
+    }, [initialUserLocation]);
 
     // Update selection when initialSelectedCourtId changes
     useEffect(() => {
@@ -41,7 +55,7 @@ export function SearchLayout({ courts, initialSelectedCourtId }: SearchLayoutPro
     const courtsWithDistance = useMemo((): CourtWithDistance[] => {
         if (!userLocation) return courts;
 
-        return courts
+        let result = courts
             .map((court): CourtWithDistance => {
                 if (court.lat !== null && court.lng !== null) {
                     const distance = calculateDistance(userLocation, {
@@ -58,7 +72,16 @@ export function SearchLayout({ courts, initialSelectedCourtId }: SearchLayoutPro
                 if (b.distance === undefined) return -1;
                 return a.distance - b.distance;
             });
-    }, [courts, userLocation]);
+
+        // Filter by radius if provided
+        if (initialRadius) {
+            result = result.filter(
+                (court) => court.distance !== undefined && court.distance <= initialRadius
+            );
+        }
+
+        return result;
+    }, [courts, userLocation, initialRadius]);
 
     return (
         <div className="relative flex-1 w-full overflow-hidden">
@@ -69,10 +92,11 @@ export function SearchLayout({ courts, initialSelectedCourtId }: SearchLayoutPro
                     onLocationFound={handleLocationFound}
                     selectedCourtId={selectedCourtId}
                     onCourtSelected={setSelectedCourtId}
+                    initialCenter={initialUserLocation}
                 />
             </div>
 
-            {/* Desktop: Overlay Court List Panel - key resets when location changes */}
+            {/* Desktop: Overlay Court List Panel */}
             <div className="hidden md:block">
                 <CourtListPanel
                     key={userLocation ? `${userLocation.lat}-${userLocation.lng}` : "no-location"}
@@ -85,7 +109,7 @@ export function SearchLayout({ courts, initialSelectedCourtId }: SearchLayoutPro
                 />
             </div>
 
-            {/* Mobile: Bottom Sheet - key resets when location changes */}
+            {/* Mobile: Bottom Sheet */}
             <div className="md:hidden">
                 <MobileCourtSheet
                     key={userLocation ? `mobile-${userLocation.lat}-${userLocation.lng}` : "mobile-no-location"}
