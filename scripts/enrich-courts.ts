@@ -2,7 +2,7 @@ import * as dotenv from "dotenv";
 dotenv.config({ path: ".env.local" });
 dotenv.config({ path: ".env" });
 import { createClient } from "@supabase/supabase-js";
-import { searchPlaces, getPlaceDetails, delay } from "./lib/google-places";
+import { searchPlaces, getPlaceDetails, delay, PlaceDetails } from "./lib/google-places";
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
@@ -28,6 +28,69 @@ interface Court {
   lat: number | null;
   lng: number | null;
   enrichment_status: string | null;
+}
+
+// Extract human-readable features from Google Places data
+function extractFeatures(details: PlaceDetails): string[] {
+  const features: string[] = [];
+
+  // Accessibility
+  if (details.accessibilityOptions?.wheelchairAccessibleEntrance) {
+    features.push("Wheelchair accessible entrance");
+  }
+  if (details.accessibilityOptions?.wheelchairAccessibleParking) {
+    features.push("Wheelchair accessible parking");
+  }
+  if (details.accessibilityOptions?.wheelchairAccessibleRestroom) {
+    features.push("Wheelchair accessible restroom");
+  }
+
+  // Parking
+  if (details.parkingOptions?.freeParkingLot) {
+    features.push("Free parking lot");
+  }
+  if (details.parkingOptions?.paidParkingLot) {
+    features.push("Paid parking lot");
+  }
+  if (details.parkingOptions?.freeStreetParking) {
+    features.push("Free street parking");
+  }
+
+  // Amenities
+  if (details.restroom) {
+    features.push("Restrooms");
+  }
+  if (details.goodForChildren) {
+    features.push("Good for children");
+  }
+  if (details.outdoorSeating) {
+    features.push("Outdoor seating");
+  }
+
+  // Payment options
+  if (details.paymentOptions?.acceptsCreditCards) {
+    features.push("Accepts credit cards");
+  }
+  if (details.paymentOptions?.acceptsNfc) {
+    features.push("Accepts contactless payment");
+  }
+
+  return features;
+}
+
+// Convert Google price level to a simpler format
+function extractPriceLevel(priceLevel?: PlaceDetails["priceLevel"]): string | null {
+  if (!priceLevel) return null;
+
+  const mapping: Record<string, string> = {
+    "PRICE_LEVEL_FREE": "Free",
+    "PRICE_LEVEL_INEXPENSIVE": "$",
+    "PRICE_LEVEL_MODERATE": "$$",
+    "PRICE_LEVEL_EXPENSIVE": "$$$",
+    "PRICE_LEVEL_VERY_EXPENSIVE": "$$$$",
+  };
+
+  return mapping[priceLevel] || null;
 }
 
 async function fetchCourtsToEnrich(): Promise<Court[]> {
@@ -108,6 +171,15 @@ async function enrichCourt(court: Court): Promise<void> {
       authorAttributions: photo.authorAttributions,
     }));
 
+    // Extract features and price level from Google data
+    const features = extractFeatures(details);
+    const googlePriceLevel = extractPriceLevel(details.priceLevel);
+
+    console.log(`  Features found: ${features.length > 0 ? features.join(", ") : "none"}`);
+    if (googlePriceLevel) {
+      console.log(`  Price level: ${googlePriceLevel}`);
+    }
+
     // Update court with enriched data
     const { error: updateError } = await supabase
       .from("courts")
@@ -120,6 +192,9 @@ async function enrichCourt(court: Court): Promise<void> {
         google_photos: photos.length > 0 ? photos : null,
         google_opening_hours: details.regularOpeningHours || null,
         google_formatted_address: details.formattedAddress || null,
+        // Facilities and features
+        features: features.length > 0 ? features : null,
+        google_price_level: googlePriceLevel,
         // Also update lat/lng if we didn't have them and Google provides them
         lat: court.lat || details.location?.latitude || null,
         lng: court.lng || details.location?.longitude || null,

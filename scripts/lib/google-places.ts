@@ -44,6 +44,34 @@ export interface PlaceDetails {
       photoUri: string;
     }>;
   }>;
+  // Facility & amenity fields
+  accessibilityOptions?: {
+    wheelchairAccessibleEntrance?: boolean;
+    wheelchairAccessibleParking?: boolean;
+    wheelchairAccessibleRestroom?: boolean;
+    wheelchairAccessibleSeating?: boolean;
+  };
+  parkingOptions?: {
+    freeParkingLot?: boolean;
+    paidParkingLot?: boolean;
+    freeStreetParking?: boolean;
+    paidStreetParking?: boolean;
+    valetParking?: boolean;
+    freeGarageParking?: boolean;
+    paidGarageParking?: boolean;
+  };
+  paymentOptions?: {
+    acceptsCreditCards?: boolean;
+    acceptsDebitCards?: boolean;
+    acceptsCashOnly?: boolean;
+    acceptsNfc?: boolean;
+  };
+  priceLevel?: "PRICE_LEVEL_FREE" | "PRICE_LEVEL_INEXPENSIVE" | "PRICE_LEVEL_MODERATE" | "PRICE_LEVEL_EXPENSIVE" | "PRICE_LEVEL_VERY_EXPENSIVE";
+  types?: string[];
+  primaryType?: string;
+  goodForChildren?: boolean;
+  restroom?: boolean;
+  outdoorSeating?: boolean;
 }
 
 export async function searchPlaces(
@@ -108,6 +136,16 @@ export async function getPlaceDetails(placeId: string): Promise<PlaceDetails | n
     "websiteUri",
     "regularOpeningHours",
     "photos",
+    // Facility & amenity fields
+    "accessibilityOptions",
+    "parkingOptions",
+    "paymentOptions",
+    "priceLevel",
+    "types",
+    "primaryType",
+    "goodForChildren",
+    "restroom",
+    "outdoorSeating",
   ].join(",");
 
   const response = await fetch(`${PLACES_API_BASE}/places/${placeId}`, {
