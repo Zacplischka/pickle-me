@@ -11,9 +11,10 @@ import type { AuthUser } from "@/lib/supabase/auth";
 interface UserMenuProps {
   user: AuthUser;
   displayName?: string;
+  avatarUrl?: string | null;
 }
 
-export function UserMenu({ user, displayName }: UserMenuProps) {
+export function UserMenu({ user, displayName, avatarUrl }: UserMenuProps) {
   const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
@@ -44,8 +45,12 @@ export function UserMenu({ user, displayName }: UserMenuProps) {
         onClick={() => setIsOpen(!isOpen)}
         className="flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-muted transition-colors"
       >
-        <div className="w-8 h-8 rounded-full bg-primary/10 text-primary flex items-center justify-center text-sm font-semibold">
-          {initials}
+        <div className="w-8 h-8 rounded-full bg-primary/10 text-primary flex items-center justify-center text-sm font-semibold overflow-hidden">
+          {avatarUrl ? (
+            <img src={avatarUrl} alt={name} className="w-full h-full object-cover" />
+          ) : (
+            initials
+          )}
         </div>
         <span className="hidden sm:block text-sm font-medium text-foreground max-w-[100px] truncate">
           {name}

@@ -63,7 +63,7 @@ export default function PublicProfilePage() {
   }
 
   return (
-    <main className="min-h-screen bg-background py-8 px-4">
+    <div className="min-h-screen bg-background py-8 px-4">
       <div className="max-w-4xl mx-auto space-y-6">
         <ProfileHeader profile={profile} isOwnProfile={isOwnProfile} />
 
@@ -93,6 +93,6 @@ export default function PublicProfilePage() {
           )}
         </div>
       </div>
-    </main>
+    </div>
   );
 }

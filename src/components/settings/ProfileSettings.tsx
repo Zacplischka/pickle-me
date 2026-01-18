@@ -45,11 +45,11 @@ export function ProfileSettings({ displayName, avatarUrl, onUpdate }: ProfileSet
 
     // Upload to avatars bucket
     const fileExt = file.name.split(".").pop();
-    const fileName = `${user.id}-${Date.now()}.${fileExt}`;
-    const filePath = `avatars/${fileName}`;
+    const fileName = `${Date.now()}.${fileExt}`;
+    const filePath = `${user.id}/${fileName}`;
 
     const { error: uploadError } = await supabase.storage
-      .from("public")
+      .from("avatars")
       .upload(filePath, file, { upsert: true });
 
     if (uploadError) {
@@ -60,7 +60,7 @@ export function ProfileSettings({ displayName, avatarUrl, onUpdate }: ProfileSet
 
     // Get public URL
     const { data: { publicUrl } } = supabase.storage
-      .from("public")
+      .from("avatars")
       .getPublicUrl(filePath);
 
     // Update profile

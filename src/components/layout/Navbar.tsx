@@ -77,7 +77,7 @@ export function Navbar() {
                     <div className="hidden md:block">
                         {mounted && !loading ? (
                             user ? (
-                                <UserMenu user={user} displayName={profile?.display_name || undefined} />
+                                <UserMenu user={user} displayName={profile?.display_name || undefined} avatarUrl={profile?.avatar_url} />
                             ) : (
                                 <button
                                     onClick={() => setShowAuthModal(true)}
@@ -152,8 +152,12 @@ export function Navbar() {
                                             className="flex items-center gap-2 py-2"
                                             onClick={() => setIsOpen(false)}
                                         >
-                                            <div className="w-8 h-8 rounded-full bg-primary/10 text-primary flex items-center justify-center text-sm font-semibold">
-                                                {(profile?.display_name || user.email?.split("@")[0] || "U").slice(0, 2).toUpperCase()}
+                                            <div className="w-8 h-8 rounded-full bg-primary/10 text-primary flex items-center justify-center text-sm font-semibold overflow-hidden">
+                                                {profile?.avatar_url ? (
+                                                    <img src={profile.avatar_url} alt="Avatar" className="w-full h-full object-cover" />
+                                                ) : (
+                                                    (profile?.display_name || user.email?.split("@")[0] || "U").slice(0, 2).toUpperCase()
+                                                )}
                                             </div>
                                             <span className="text-sm font-medium text-foreground">
                                                 {profile?.display_name || user.email?.split("@")[0]}
