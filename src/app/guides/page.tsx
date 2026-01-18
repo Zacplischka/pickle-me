@@ -1,5 +1,3 @@
-
-import { Button } from "@/components/ui/Button";
 import Link from "next/link";
 import Image from "next/image";
 import { BookOpen, ShoppingBag, AlertTriangle, CheckCircle2, Ruler } from "lucide-react";
@@ -56,7 +54,7 @@ export default function GuidesPage() {
                                     <div className="bg-card border border-border/60 rounded-xl p-6">
                                         <h3 className="text-xl font-semibold mb-3">1. The Serve</h3>
                                         <p className="text-muted-foreground">
-                                            The serve must be hit <strong>underhand</strong> and contact the ball below the waist. It must differ diagonally to the opponent's service court. You only get one serve attempt.
+                                            The serve must be hit <strong>underhand</strong> and contact the ball below the waist. It must differ diagonally to the opponent&apos;s service court. You only get one serve attempt.
                                         </p>
                                     </div>
 
@@ -73,7 +71,7 @@ export default function GuidesPage() {
                                             <span className="text-xs font-normal px-2 py-0.5 rounded-full bg-accent/20 text-accent-foreground">Important</span>
                                         </h3>
                                         <p className="text-muted-foreground">
-                                            The 7-foot zone on both sides of the net is the "Kitchen". You cannot volley the ball (hit it in the air) while standing in this zone. You can only enter the kitchen to hit a ball that has already bounced.
+                                            The 7-foot zone on both sides of the net is the &quot;Kitchen&quot;. You cannot volley the ball (hit it in the air) while standing in this zone. You can only enter the kitchen to hit a ball that has already bounced.
                                         </p>
                                     </div>
 
@@ -137,7 +135,7 @@ export default function GuidesPage() {
                                 <div className="bg-card p-6 rounded-xl border border-border/60">
                                     <h3 className="font-semibold text-lg mb-2">Shoes</h3>
                                     <p className="text-sm text-muted-foreground mb-4">
-                                        <strong>Do not wear running shoes.</strong> You need "court shoes" (tennis or indoor court) that provide lateral support to prevent ankle injuries.
+                                        <strong>Do not wear running shoes.</strong> You need &quot;court shoes&quot; (tennis or indoor court) that provide lateral support to prevent ankle injuries.
                                     </p>
                                     <ul className="space-y-2 text-sm">
                                         <li className="flex gap-2">

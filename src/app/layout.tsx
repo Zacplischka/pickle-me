@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { CourtsProvider } from "@/lib/contexts/CourtsContext";
+import { AuthProvider } from "@/lib/contexts/AuthContext";
 import { getCourts } from "@/lib/data";
 
 const inter = Inter({
@@ -39,13 +40,15 @@ export default async function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <CourtsProvider courts={courts}>
-            <Navbar />
-            <main className="flex-1">
-              {children}
-            </main>
-            <Footer />
-          </CourtsProvider>
+          <AuthProvider>
+            <CourtsProvider courts={courts}>
+              <Navbar />
+              <main className="flex-1">
+                {children}
+              </main>
+              <Footer />
+            </CourtsProvider>
+          </AuthProvider>
         </ThemeProvider>
       </body>
     </html>

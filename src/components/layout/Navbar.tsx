@@ -2,16 +2,21 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { Menu, MapPin } from "lucide-react";
+import { Menu, MapPin, User } from "lucide-react";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import { SearchInput } from "@/components/search/SearchInput";
 import { useCourts } from "@/lib/contexts/CourtsContext";
+import { useAuth } from "@/lib/contexts/AuthContext";
+import { AuthModal } from "@/components/auth/AuthModal";
+import { UserMenu } from "@/components/auth/UserMenu";
 
 export function Navbar() {
     const [isOpen, setIsOpen] = useState(false);
+    const [showAuthModal, setShowAuthModal] = useState(false);
     const courts = useCourts();
+    const { user, profile, loading } = useAuth();
 
     return (
         <nav className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -61,6 +66,23 @@ export function Navbar() {
                     >
                         List a Court
                     </Link>
+
+                    {/* Auth UI */}
+                    <div className="hidden md:block">
+                        {!loading && (
+                            user ? (
+                                <UserMenu user={user} displayName={profile?.display_name || undefined} />
+                            ) : (
+                                <button
+                                    onClick={() => setShowAuthModal(true)}
+                                    className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-foreground/80 hover:text-foreground transition-colors"
+                                >
+                                    <User className="w-4 h-4" />
+                                    Sign In
+                                </button>
+                            )
+                        )}
+                    </div>
 
                     {/* Mobile Menu Button */}
                     <button
@@ -113,10 +135,39 @@ export function Navbar() {
                             >
                                 List a Court
                             </Link>
+                            {/* Mobile Auth */}
+                            {!loading && (
+                                user ? (
+                                    <div className="flex items-center gap-2 py-2">
+                                        <div className="w-8 h-8 rounded-full bg-primary/10 text-primary flex items-center justify-center text-sm font-semibold">
+                                            {(profile?.display_name || user.email?.split("@")[0] || "U").slice(0, 2).toUpperCase()}
+                                        </div>
+                                        <span className="text-sm font-medium text-foreground">
+                                            {profile?.display_name || user.email?.split("@")[0]}
+                                        </span>
+                                    </div>
+                                ) : (
+                                    <button
+                                        onClick={() => {
+                                            setIsOpen(false);
+                                            setShowAuthModal(true);
+                                        }}
+                                        className="w-full text-center border border-border text-foreground rounded-md py-2 text-sm font-medium"
+                                    >
+                                        Sign In
+                                    </button>
+                                )
+                            )}
                         </div>
                     </motion.div>
                 )}
             </AnimatePresence>
+
+            {/* Auth Modal */}
+            <AuthModal
+                isOpen={showAuthModal}
+                onClose={() => setShowAuthModal(false)}
+            />
         </nav>
     );
 }

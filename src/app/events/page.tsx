@@ -1,6 +1,6 @@
 
 import { Button } from "@/components/ui/Button";
-import { Calendar, MapPin, Clock, ArrowRight, Mail } from "lucide-react";
+import { Calendar, MapPin, Clock, Mail } from "lucide-react";
 import Link from "next/link";
 
 const EVENTS = [

@@ -20,7 +20,7 @@ export default function ListCourtPage() {
               List a Pickleball Court
             </h1>
             <p className="text-muted-foreground mt-3 text-lg">
-              Know of a pickleball court that's not on our map? Help us grow Victoria's most comprehensive court directory by submitting it below.
+              Know of a pickleball court that&apos;s not on our map? Help us grow Victoria&apos;s most comprehensive court directory by submitting it below.
             </p>
           </div>
         </div>

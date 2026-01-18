@@ -139,18 +139,6 @@ export function Hero() {
             >
               Indoor Courts
             </Link>
-            <Link
-              href="/search?suburb=Melbourne"
-              className="underline decoration-secondary decoration-2 underline-offset-4 cursor-pointer hover:text-foreground"
-            >
-              Melbourne
-            </Link>
-            <Link
-              href="/search?q=free"
-              className="underline decoration-secondary decoration-2 underline-offset-4 cursor-pointer hover:text-foreground"
-            >
-              Free to Play
-            </Link>
           </div>
         </div>
       </section>

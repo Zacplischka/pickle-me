@@ -68,7 +68,7 @@ export default async function Home() {
           <div className="text-center max-w-2xl mx-auto mb-12">
             <h2 className="text-3xl font-bold tracking-tight text-foreground mb-4">Why Pickleball?</h2>
             <p className="text-lg text-muted-foreground">
-              Discover why it's the fastest-growing sport in Australia. Accessible, social, and seriously fun.
+              Discover why it&apos;s the fastest-growing sport in Australia. Accessible, social, and seriously fun.
             </p>
           </div>
 
@@ -79,7 +79,7 @@ export default async function Home() {
               </div>
               <h3 className="text-xl font-semibold mb-3">Meet New People</h3>
               <p className="text-muted-foreground">
-                The most social sport you'll ever play. Courts are smaller, games are quick, and the community is incredibly welcoming.
+                The most social sport you&apos;ll ever play. Courts are smaller, games are quick, and the community is incredibly welcoming.
               </p>
             </div>
 
@@ -89,7 +89,7 @@ export default async function Home() {
               </div>
               <h3 className="text-xl font-semibold mb-3">Fun Cardio</h3>
               <p className="text-muted-foreground">
-                Get your heart rate up without realizing it. It's fast-paced but low-impact, perfect for all ages and fitness levels.
+                Get your heart rate up without realizing it. It&apos;s fast-paced but low-impact, perfect for all ages and fitness levels.
               </p>
             </div>
 
@@ -99,7 +99,7 @@ export default async function Home() {
               </div>
               <h3 className="text-xl font-semibold mb-3">Easy to Learn</h3>
               <p className="text-muted-foreground">
-                Pick up a paddle and you'll be playing points in 15 minutes. Difficult to master, but incredibly easy to start.
+                Pick up a paddle and you&apos;ll be playing points in 15 minutes. Difficult to master, but incredibly easy to start.
               </p>
             </div>
           </div>
@@ -214,7 +214,7 @@ export default async function Home() {
           </div>
 
           <h2 className="text-3xl md:text-5xl font-bold tracking-tight mb-8 max-w-3xl mx-auto">
-            "The community is what keeps me coming back. I've made best friends on the court."
+            &quot;The community is what keeps me coming back. I&apos;ve made best friends on the court.&quot;
           </h2>
 
           <div className="flex items-center justify-center gap-4">

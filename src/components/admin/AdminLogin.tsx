@@ -3,7 +3,6 @@
 import { useState } from "react";
 import Image from "next/image";
 import { Button } from "@/components/ui/Button";
-import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 export function AdminLogin() {
@@ -70,15 +69,8 @@ export function AdminLogin() {
               />
             </div>
 
-            <Button type="submit" className="w-full" disabled={isLoading}>
-              {isLoading ? (
-                <>
-                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  Logging in...
-                </>
-              ) : (
-                "Login"
-              )}
+            <Button type="submit" className="w-full" loading={isLoading}>
+              {isLoading ? "Logging in..." : "Login"}
             </Button>
           </form>
         </div>

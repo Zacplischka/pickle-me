@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { MapPin, Trophy, Users, Star, Phone, Globe, Navigation } from "lucide-react";
 import { Court } from "@/lib/data";
 import { cn, formatDistance } from "@/lib/utils";
@@ -200,18 +201,36 @@ export function CourtCard({ court, variant = "default", onClick, isSelected, isL
                 )}
 
                 <div className="mt-auto pt-2 flex items-center justify-between gap-3">
-                    <Button variant="outline" size="sm" className="w-full">
-                        View Details
-                    </Button>
-                    <Button
-                        variant="default"
-                        size="sm"
-                        className="w-full bg-secondary hover:bg-secondary/90 text-white disabled:opacity-50 disabled:cursor-not-allowed"
-                        onClick={handleBookNowClick}
-                        disabled={!bookingUrl}
-                    >
-                        Book Now
-                    </Button>
+                    {isLinked ? (
+                        <Button variant="outline" size="sm" className="w-full">
+                            View Details
+                        </Button>
+                    ) : (
+                        <Link href={`/court/${court.id}`} onClick={(e) => e.stopPropagation()}>
+                            <Button variant="outline" size="sm" className="w-full">
+                                View Details
+                            </Button>
+                        </Link>
+                    )}
+                    {isLinked ? (
+                        <Button
+                            variant="default"
+                            size="sm"
+                            className="w-full bg-secondary hover:bg-secondary/90 text-white"
+                        >
+                            Book Now
+                        </Button>
+                    ) : (
+                        <Button
+                            variant="default"
+                            size="sm"
+                            className="w-full bg-secondary hover:bg-secondary/90 text-white disabled:opacity-50 disabled:cursor-not-allowed"
+                            onClick={handleBookNowClick}
+                            disabled={!bookingUrl}
+                        >
+                            Book Now
+                        </Button>
+                    )}
                 </div>
             </div>
 

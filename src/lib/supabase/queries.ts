@@ -1,5 +1,24 @@
 import { createClient, createAdminClient } from "./server";
-import type { Court, CourtSubmission, CourtSubmissionInsert, CourtInsert } from "./database.types";
+import type {
+  Court,
+  CourtSubmission,
+  CourtSubmissionInsert,
+  CourtInsert,
+  CourtFeedback,
+  CourtFeedbackInsert,
+  CourtPhoto,
+  CourtPhotoInsert,
+  Profile
+} from "./database.types";
+
+// Extended types with profile info
+export type CourtFeedbackWithProfile = CourtFeedback & {
+  profiles: Pick<Profile, "display_name" | "avatar_url"> | null;
+};
+
+export type CourtPhotoWithProfile = CourtPhoto & {
+  profiles: Pick<Profile, "display_name" | "avatar_url"> | null;
+};
 
 export async function getCourts(): Promise<Court[]> {
   const supabase = await createClient();
@@ -219,6 +238,206 @@ export async function rejectSubmission(
 
   if (error) {
     console.error("Error rejecting submission:", error);
+    return { success: false, error: error.message };
+  }
+
+  return { success: true };
+}
+
+// ============ Court Feedback ============
+
+export async function getCourtFeedback(courtId: string): Promise<CourtFeedbackWithProfile[]> {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase
+    .from("court_feedback")
+    .select(`
+      *,
+      profiles (display_name, avatar_url)
+    `)
+    .eq("court_id", courtId)
+    .eq("status", "active")
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    console.error("Error fetching court feedback:", error);
+    return [];
+  }
+
+  return (data || []) as CourtFeedbackWithProfile[];
+}
+
+export async function createFeedback(
+  feedback: CourtFeedbackInsert
+): Promise<{ success: boolean; data?: CourtFeedback; error?: string }> {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase
+    .from("court_feedback")
+    .insert(feedback)
+    .select()
+    .single();
+
+  if (error) {
+    console.error("Error creating feedback:", error);
+    return { success: false, error: error.message };
+  }
+
+  return { success: true, data };
+}
+
+export async function updateFeedback(
+  feedbackId: string,
+  updates: Partial<CourtFeedbackInsert>
+): Promise<{ success: boolean; error?: string }> {
+  const supabase = await createClient();
+
+  const { error } = await supabase
+    .from("court_feedback")
+    .update({ ...updates, updated_at: new Date().toISOString() })
+    .eq("id", feedbackId);
+
+  if (error) {
+    console.error("Error updating feedback:", error);
+    return { success: false, error: error.message };
+  }
+
+  return { success: true };
+}
+
+export async function deleteFeedback(
+  feedbackId: string
+): Promise<{ success: boolean; error?: string }> {
+  const supabase = await createClient();
+
+  // Soft delete by setting status to hidden
+  const { error } = await supabase
+    .from("court_feedback")
+    .update({ status: "hidden", updated_at: new Date().toISOString() })
+    .eq("id", feedbackId);
+
+  if (error) {
+    console.error("Error deleting feedback:", error);
+    return { success: false, error: error.message };
+  }
+
+  return { success: true };
+}
+
+// ============ Court Photos ============
+
+export async function getCourtPhotos(courtId: string): Promise<CourtPhotoWithProfile[]> {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase
+    .from("court_photos")
+    .select(`
+      *,
+      profiles (display_name, avatar_url)
+    `)
+    .eq("court_id", courtId)
+    .eq("status", "active")
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    console.error("Error fetching court photos:", error);
+    return [];
+  }
+
+  return (data || []) as CourtPhotoWithProfile[];
+}
+
+export async function createPhoto(
+  photo: CourtPhotoInsert
+): Promise<{ success: boolean; data?: CourtPhoto; error?: string }> {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase
+    .from("court_photos")
+    .insert(photo)
+    .select()
+    .single();
+
+  if (error) {
+    console.error("Error creating photo:", error);
+    return { success: false, error: error.message };
+  }
+
+  return { success: true, data };
+}
+
+// ============ Admin Feedback & Photos ============
+
+export async function getAllFeedback(): Promise<CourtFeedbackWithProfile[]> {
+  const supabase = createAdminClient();
+
+  const { data, error } = await supabase
+    .from("court_feedback")
+    .select(`
+      *,
+      profiles (display_name, avatar_url)
+    `)
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    console.error("Error fetching all feedback:", error);
+    return [];
+  }
+
+  return (data || []) as CourtFeedbackWithProfile[];
+}
+
+export async function getAllPhotos(): Promise<CourtPhotoWithProfile[]> {
+  const supabase = createAdminClient();
+
+  const { data, error } = await supabase
+    .from("court_photos")
+    .select(`
+      *,
+      profiles (display_name, avatar_url)
+    `)
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    console.error("Error fetching all photos:", error);
+    return [];
+  }
+
+  return (data || []) as CourtPhotoWithProfile[];
+}
+
+export async function updateFeedbackStatus(
+  feedbackId: string,
+  status: "active" | "hidden" | "resolved"
+): Promise<{ success: boolean; error?: string }> {
+  const supabase = createAdminClient();
+
+  const { error } = await supabase
+    .from("court_feedback")
+    .update({ status, updated_at: new Date().toISOString() })
+    .eq("id", feedbackId);
+
+  if (error) {
+    console.error("Error updating feedback status:", error);
+    return { success: false, error: error.message };
+  }
+
+  return { success: true };
+}
+
+export async function updatePhotoStatus(
+  photoId: string,
+  status: "active" | "hidden"
+): Promise<{ success: boolean; error?: string }> {
+  const supabase = createAdminClient();
+
+  const { error } = await supabase
+    .from("court_photos")
+    .update({ status })
+    .eq("id", photoId);
+
+  if (error) {
+    console.error("Error updating photo status:", error);
     return { success: false, error: error.message };
   }
 

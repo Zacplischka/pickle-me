@@ -23,7 +23,8 @@ export function ThemeToggle({ variant = "default" }: ThemeToggleProps) {
     const dropdownRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
-        setMounted(true);
+        // Defer state update to avoid cascading renders warning
+        requestAnimationFrame(() => setMounted(true));
     }, []);
 
     useEffect(() => {

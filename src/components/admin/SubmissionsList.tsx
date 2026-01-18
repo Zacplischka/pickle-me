@@ -3,7 +3,7 @@
 import { useState } from "react";
 import type { CourtSubmission } from "@/lib/supabase/database.types";
 import { Button } from "@/components/ui/Button";
-import { Check, X, Loader2, MapPin, Clock, ExternalLink } from "lucide-react";
+import { Check, X, MapPin, Clock, ExternalLink } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 // Format date consistently to avoid hydration mismatches
@@ -118,28 +118,20 @@ function SubmissionCard({ submission }: { submission: CourtSubmission }) {
                 variant="outline"
                 size="sm"
                 onClick={() => setShowRejectModal(true)}
-                disabled={isRejecting || isApproving}
+                loading={isRejecting}
+                disabled={isApproving}
               >
-                {isRejecting ? (
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                ) : (
-                  <>
-                    <X className="w-4 h-4 mr-1" /> Reject
-                  </>
-                )}
+                {!isRejecting && <X className="w-4 h-4 mr-1" />}
+                Reject
               </Button>
               <Button
                 size="sm"
                 onClick={handleApprove}
-                disabled={isApproving || isRejecting}
+                loading={isApproving}
+                disabled={isRejecting}
               >
-                {isApproving ? (
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                ) : (
-                  <>
-                    <Check className="w-4 h-4 mr-1" /> Approve
-                  </>
-                )}
+                {!isApproving && <Check className="w-4 h-4 mr-1" />}
+                Approve
               </Button>
             </div>
           )}
@@ -272,13 +264,9 @@ function RejectModal({
           <Button
             variant="destructive"
             onClick={() => onReject(reason || undefined)}
-            disabled={isLoading}
+            loading={isLoading}
           >
-            {isLoading ? (
-              <Loader2 className="w-4 h-4 animate-spin" />
-            ) : (
-              "Reject"
-            )}
+            Reject
           </Button>
         </div>
       </div>

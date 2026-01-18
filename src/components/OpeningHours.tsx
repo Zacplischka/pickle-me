@@ -7,10 +7,11 @@ interface OpeningHoursProps {
     hours: {
         weekdayDescriptions?: string[];
     } | null;
+    expanded?: boolean;
 }
 
-export function OpeningHours({ hours }: OpeningHoursProps) {
-    const [expanded, setExpanded] = useState(false);
+export function OpeningHours({ hours, expanded: defaultExpanded = false }: OpeningHoursProps) {
+    const [expanded, setExpanded] = useState(defaultExpanded);
 
     if (!hours?.weekdayDescriptions?.length) {
         return null;

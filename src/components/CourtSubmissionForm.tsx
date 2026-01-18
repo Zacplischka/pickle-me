@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/Button";
 import { submitCourt } from "@/app/list-court/actions";
-import { CheckCircle, Loader2 } from "lucide-react";
+import { CheckCircle } from "lucide-react";
 
 const REGIONS = [
   "Melbourne CBD",
@@ -53,7 +53,7 @@ export function CourtSubmissionForm() {
         </div>
         <h2 className="text-2xl font-bold text-foreground mb-2">Thank You!</h2>
         <p className="text-muted-foreground mb-6">
-          Your court submission has been received. We'll review it and add it to the directory if approved.
+          Your court submission has been received. We&apos;ll review it and add it to the directory if approved.
         </p>
         <Button
           onClick={() => {
@@ -270,15 +270,8 @@ export function CourtSubmissionForm() {
         <p className="text-sm text-muted-foreground">
           <span className="text-destructive">*</span> Required fields
         </p>
-        <Button type="submit" disabled={isSubmitting} size="lg">
-          {isSubmitting ? (
-            <>
-              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-              Submitting...
-            </>
-          ) : (
-            "Submit Court"
-          )}
+        <Button type="submit" loading={isSubmitting} size="lg">
+          {isSubmitting ? "Submitting..." : "Submit Court"}
         </Button>
       </div>
     </form>

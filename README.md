@@ -1,36 +1,106 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# MyPickle.me
+
+**Victoria's most comprehensive pickleball court directory**
+
+Live site: [https://mypickle.me](https://mypickle.me)
+
+---
+
+## About
+
+MyPickle.me helps players discover indoor and outdoor pickleball courts across Victoria, Australia. Whether you're a beginner looking for your first game or a seasoned player searching for new venues, MyPickle.me makes it easy to find courts near you with detailed information including ratings, opening hours, court surfaces, accessibility features, and booking options.
+
+Built by the community for the community, the platform connects Victorian pickleball enthusiasts with 50+ venues—from dedicated pickleball centres to tennis clubs and recreation facilities.
+
+## Features
+
+- Interactive map with court locations and clustering
+- Search courts by suburb or postcode
+- Court details: ratings, reviews, opening hours, photos
+- Filter by indoor/outdoor, surface type, accessibility
+- Mobile-friendly responsive design
+- Community court submissions
+
+## Tech Stack
+
+- **Framework:** Next.js 16 (App Router)
+- **UI:** React 19, Tailwind CSS
+- **Database:** Supabase (PostgreSQL)
+- **Maps:** Leaflet with react-leaflet
+- **Deployment:** Vercel
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
+
+- Node.js 18+
+- npm or yarn
+- Supabase account
+- Google Places API key (for court enrichment)
+
+### Installation
 
 ```bash
+# Clone the repository
+git clone https://github.com/your-username/pickle-me.git
+cd pickle-me
+
+# Install dependencies
+npm install
+
+# Set up environment variables
+cp .env.example .env.local
+# Edit .env.local with your values
+
+# Start development server
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) to view the app.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Environment Variables
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Create a `.env.local` file with:
 
-## Learn More
+```
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
+GOOGLE_PLACES_API_KEY=your_google_places_key
+ADMIN_PASSWORD=your_admin_password
+```
 
-To learn more about Next.js, take a look at the following resources:
+## Scripts
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+npm run dev       # Start development server
+npm run build     # Production build
+npm run lint      # Run ESLint
+npm run seed      # Seed courts to Supabase
+npm run enrich    # Enrich courts with Google Places data
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Project Structure
 
-## Deploy on Vercel
+```
+src/
+├── app/                    # Next.js pages and routes
+├── components/
+│   ├── layout/            # Navbar, Footer
+│   ├── map/               # Map components (client-side)
+│   ├── home/              # Hero section
+│   └── ui/                # UI primitives
+└── lib/
+    ├── supabase/          # Database clients and queries
+    └── utils.ts           # Utility functions
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+scripts/                   # Seed and enrichment scripts
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Deployment
+
+The app is deployed on [Vercel](https://vercel.com) with a [Supabase](https://supabase.com) PostgreSQL database.
+
+## License
+
+MIT

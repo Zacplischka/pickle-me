@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { Star, MapPin } from "lucide-react";
 import { Court } from "@/lib/supabase/database.types";
 import { formatDistance } from "@/lib/utils";
@@ -12,17 +12,15 @@ interface NearbyCourtCardProps {
 }
 
 export function NearbyCourtCard({ court, distance, onSelect }: NearbyCourtCardProps) {
-  const router = useRouter();
-
   const handleClick = () => {
     onSelect();
-    router.push(`/search?court=${court.id}`);
   };
 
   return (
-    <button
+    <Link
+      href={`/court/${court.id}`}
       onClick={handleClick}
-      className="w-full p-4 bg-card hover:bg-muted/50 border border-border rounded-xl text-left transition-colors"
+      className="block w-full p-4 bg-card hover:bg-muted/50 border border-border rounded-xl text-left transition-colors"
     >
       <div className="flex items-start justify-between gap-3">
         <div className="flex-1 min-w-0">
@@ -51,6 +49,6 @@ export function NearbyCourtCard({ court, distance, onSelect }: NearbyCourtCardPr
           </span>
         </div>
       )}
-    </button>
+    </Link>
   );
 }

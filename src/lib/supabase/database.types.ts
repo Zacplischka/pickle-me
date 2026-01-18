@@ -9,6 +9,108 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      court_feedback: {
+        Row: {
+          id: string
+          court_id: string
+          user_id: string
+          type: 'correction' | 'review' | 'comment'
+          correction_type: 'wrong_info' | 'no_pickleball' | 'closed' | 'other' | null
+          correction_details: string | null
+          rating: number | null
+          content: string | null
+          status: 'active' | 'hidden' | 'resolved'
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          court_id: string
+          user_id: string
+          type: 'correction' | 'review' | 'comment'
+          correction_type?: 'wrong_info' | 'no_pickleball' | 'closed' | 'other' | null
+          correction_details?: string | null
+          rating?: number | null
+          content?: string | null
+          status?: 'active' | 'hidden' | 'resolved'
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          court_id?: string
+          user_id?: string
+          type?: 'correction' | 'review' | 'comment'
+          correction_type?: 'wrong_info' | 'no_pickleball' | 'closed' | 'other' | null
+          correction_details?: string | null
+          rating?: number | null
+          content?: string | null
+          status?: 'active' | 'hidden' | 'resolved'
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "court_feedback_court_id_fkey"
+            columns: ["court_id"]
+            isOneToOne: false
+            referencedRelation: "courts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "court_feedback_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      court_photos: {
+        Row: {
+          id: string
+          court_id: string
+          user_id: string
+          url: string
+          caption: string | null
+          status: 'active' | 'hidden'
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          court_id: string
+          user_id: string
+          url: string
+          caption?: string | null
+          status?: 'active' | 'hidden'
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          court_id?: string
+          user_id?: string
+          url?: string
+          caption?: string | null
+          status?: 'active' | 'hidden'
+          created_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "court_photos_court_id_fkey"
+            columns: ["court_id"]
+            isOneToOne: false
+            referencedRelation: "courts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "court_photos_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
       court_submissions: {
         Row: {
           address: string | null
@@ -76,6 +178,27 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      profiles: {
+        Row: {
+          id: string
+          display_name: string | null
+          avatar_url: string | null
+          created_at: string
+        }
+        Insert: {
+          id: string
+          display_name?: string | null
+          avatar_url?: string | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          display_name?: string | null
+          avatar_url?: string | null
+          created_at?: string
+        }
+        Relationships: []
       }
       courts: {
         Row: {
@@ -199,3 +322,15 @@ export type CourtUpdate = Database["public"]["Tables"]["courts"]["Update"]
 export type CourtSubmission = Database["public"]["Tables"]["court_submissions"]["Row"]
 export type CourtSubmissionInsert = Database["public"]["Tables"]["court_submissions"]["Insert"]
 export type CourtSubmissionUpdate = Database["public"]["Tables"]["court_submissions"]["Update"]
+
+export type Profile = Database["public"]["Tables"]["profiles"]["Row"]
+export type ProfileInsert = Database["public"]["Tables"]["profiles"]["Insert"]
+export type ProfileUpdate = Database["public"]["Tables"]["profiles"]["Update"]
+
+export type CourtFeedback = Database["public"]["Tables"]["court_feedback"]["Row"]
+export type CourtFeedbackInsert = Database["public"]["Tables"]["court_feedback"]["Insert"]
+export type CourtFeedbackUpdate = Database["public"]["Tables"]["court_feedback"]["Update"]
+
+export type CourtPhoto = Database["public"]["Tables"]["court_photos"]["Row"]
+export type CourtPhotoInsert = Database["public"]["Tables"]["court_photos"]["Insert"]
+export type CourtPhotoUpdate = Database["public"]["Tables"]["court_photos"]["Update"]
