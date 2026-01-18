@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { User, LogOut, Settings, ChevronDown } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { signOut } from "@/lib/supabase/auth";
@@ -14,6 +16,7 @@ interface UserMenuProps {
 export function UserMenu({ user, displayName }: UserMenuProps) {
   const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
+  const router = useRouter();
 
   const name = displayName || user.email?.split("@")[0] || "User";
   const initials = name.slice(0, 2).toUpperCase();
@@ -66,26 +69,22 @@ export function UserMenu({ user, displayName }: UserMenuProps) {
 
             {/* Menu Items */}
             <div className="p-1">
-              <button
-                onClick={() => {
-                  setIsOpen(false);
-                  // TODO: Navigate to profile page when implemented
-                }}
+              <Link
+                href="/profile"
+                onClick={() => setIsOpen(false)}
                 className="w-full flex items-center gap-2 px-3 py-2 text-sm text-foreground hover:bg-muted rounded-md transition-colors"
               >
                 <User className="w-4 h-4" />
                 Profile
-              </button>
-              <button
-                onClick={() => {
-                  setIsOpen(false);
-                  // TODO: Navigate to settings page when implemented
-                }}
+              </Link>
+              <Link
+                href="/settings"
+                onClick={() => setIsOpen(false)}
                 className="w-full flex items-center gap-2 px-3 py-2 text-sm text-foreground hover:bg-muted rounded-md transition-colors"
               >
                 <Settings className="w-4 h-4" />
                 Settings
-              </button>
+              </Link>
             </div>
 
             {/* Sign Out */}

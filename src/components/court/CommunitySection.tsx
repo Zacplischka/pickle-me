@@ -1,13 +1,15 @@
 "use client";
 
 import { useState } from "react";
-import { Star, MessageCircle, AlertTriangle, Camera, Plus } from "lucide-react";
+import Link from "next/link";
+import { Star, MessageCircle, AlertTriangle, Camera, Plus, Pencil, Trash2 } from "lucide-react";
 import { useAuth } from "@/lib/contexts/AuthContext";
 import { AuthModal } from "@/components/auth/AuthModal";
 import { ReviewForm } from "./ReviewForm";
 import { CommentForm } from "./CommentForm";
 import { ReportIssueForm } from "./ReportIssueForm";
 import { PhotoUpload } from "./PhotoUpload";
+import { deleteUserFeedback } from "@/lib/supabase/profile";
 import type { CourtFeedbackWithProfile } from "@/lib/supabase/queries";
 
 interface CommunitySectionProps {
@@ -25,8 +27,30 @@ export function CommunitySection({ courtId, reviews, comments }: CommunitySectio
   const [showReviewForm, setShowReviewForm] = useState(false);
   const [showReportForm, setShowReportForm] = useState(false);
   const [showPhotoUpload, setShowPhotoUpload] = useState(false);
+  const [editingReview, setEditingReview] = useState<CourtFeedbackWithProfile | null>(null);
+  const [editingComment, setEditingComment] = useState<CourtFeedbackWithProfile | null>(null);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
 
   const { user } = useAuth();
+
+  const handleDelete = async (feedbackId: string, userId: string) => {
+    if (confirmDeleteId !== feedbackId) {
+      setConfirmDeleteId(feedbackId);
+      return;
+    }
+
+    setDeletingId(feedbackId);
+    const result = await deleteUserFeedback(feedbackId, userId);
+
+    if (result.success) {
+      // Refresh the page to show updated content
+      window.location.reload();
+    }
+
+    setDeletingId(null);
+    setConfirmDeleteId(null);
+  };
 
   const handleAction = (action: () => void) => {
     if (!user) {
@@ -121,17 +145,25 @@ export function CommunitySection({ courtId, reviews, comments }: CommunitySectio
                 </button>
               </div>
             ) : (
-              reviews.map((review) => (
+              reviews.map((review) => {
+              const isOwnReview = user?.id === review.user_id;
+              return (
                 <div key={review.id} className="p-4 bg-card rounded-xl border border-border">
                   <div className="flex items-start justify-between gap-4">
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-full bg-primary/10 text-primary flex items-center justify-center text-sm font-semibold">
+                      <Link
+                        href={`/profile/${review.user_id}`}
+                        className="w-10 h-10 rounded-full bg-primary/10 text-primary flex items-center justify-center text-sm font-semibold hover:bg-primary/20 transition-colors"
+                      >
                         {(review.profiles?.display_name || "U").slice(0, 2).toUpperCase()}
-                      </div>
+                      </Link>
                       <div>
-                        <p className="font-medium text-foreground">
+                        <Link
+                          href={`/profile/${review.user_id}`}
+                          className="font-medium text-foreground hover:text-primary transition-colors"
+                        >
                           {review.profiles?.display_name || "Anonymous"}
-                        </p>
+                        </Link>
                         <p className="text-xs text-muted-foreground">{formatDate(review.created_at)}</p>
                       </div>
                     </div>
@@ -151,36 +183,113 @@ export function CommunitySection({ courtId, reviews, comments }: CommunitySectio
                   {review.content && (
                     <p className="mt-3 text-sm text-foreground">{review.content}</p>
                   )}
+                  {isOwnReview && (
+                    <div className="flex items-center gap-2 mt-3 pt-3 border-t border-border">
+                      <button
+                        onClick={() => setEditingReview(review)}
+                        className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-muted rounded-md transition-colors"
+                      >
+                        <Pencil className="w-3.5 h-3.5" />
+                        Edit
+                      </button>
+                      <button
+                        onClick={() => handleDelete(review.id, review.user_id)}
+                        disabled={deletingId === review.id}
+                        className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${
+                          confirmDeleteId === review.id
+                            ? "text-white bg-red-500 hover:bg-red-600"
+                            : "text-muted-foreground hover:text-red-500 hover:bg-red-500/10"
+                        }`}
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                        {confirmDeleteId === review.id ? "Confirm" : "Delete"}
+                      </button>
+                      {confirmDeleteId === review.id && (
+                        <button
+                          onClick={() => setConfirmDeleteId(null)}
+                          className="px-3 py-1.5 text-xs font-medium text-muted-foreground hover:text-foreground rounded-md transition-colors"
+                        >
+                          Cancel
+                        </button>
+                      )}
+                    </div>
+                  )}
                 </div>
-              ))
+              );
+            })
             )}
           </>
         )}
 
         {activeTab === "comments" && (
           <>
-            <CommentForm courtId={courtId} onAuthRequired={() => setShowAuthModal(true)} />
+            <CommentForm
+              courtId={courtId}
+              onAuthRequired={() => setShowAuthModal(true)}
+              editComment={editingComment}
+              onCancelEdit={() => setEditingComment(null)}
+            />
             {comments.length === 0 ? (
               <div className="text-center py-8 text-muted-foreground text-sm">
                 No comments yet. Start the conversation!
               </div>
             ) : (
-              comments.map((comment) => (
-                <div key={comment.id} className="p-4 bg-card rounded-xl border border-border">
-                  <div className="flex items-center gap-3 mb-2">
-                    <div className="w-8 h-8 rounded-full bg-primary/10 text-primary flex items-center justify-center text-xs font-semibold">
-                      {(comment.profiles?.display_name || "U").slice(0, 2).toUpperCase()}
+              comments.map((comment) => {
+                const isOwnComment = user?.id === comment.user_id;
+                return (
+                  <div key={comment.id} className="p-4 bg-card rounded-xl border border-border">
+                    <div className="flex items-center gap-3 mb-2">
+                      <Link
+                        href={`/profile/${comment.user_id}`}
+                        className="w-8 h-8 rounded-full bg-primary/10 text-primary flex items-center justify-center text-xs font-semibold hover:bg-primary/20 transition-colors"
+                      >
+                        {(comment.profiles?.display_name || "U").slice(0, 2).toUpperCase()}
+                      </Link>
+                      <div>
+                        <Link
+                          href={`/profile/${comment.user_id}`}
+                          className="text-sm font-medium text-foreground hover:text-primary transition-colors"
+                        >
+                          {comment.profiles?.display_name || "Anonymous"}
+                        </Link>
+                        <p className="text-xs text-muted-foreground">{formatDate(comment.created_at)}</p>
+                      </div>
                     </div>
-                    <div>
-                      <p className="text-sm font-medium text-foreground">
-                        {comment.profiles?.display_name || "Anonymous"}
-                      </p>
-                      <p className="text-xs text-muted-foreground">{formatDate(comment.created_at)}</p>
-                    </div>
+                    <p className="text-sm text-foreground">{comment.content}</p>
+                    {isOwnComment && (
+                      <div className="flex items-center gap-2 mt-3 pt-3 border-t border-border">
+                        <button
+                          onClick={() => setEditingComment(comment)}
+                          className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-muted rounded-md transition-colors"
+                        >
+                          <Pencil className="w-3.5 h-3.5" />
+                          Edit
+                        </button>
+                        <button
+                          onClick={() => handleDelete(comment.id, comment.user_id)}
+                          disabled={deletingId === comment.id}
+                          className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${
+                            confirmDeleteId === comment.id
+                              ? "text-white bg-red-500 hover:bg-red-600"
+                              : "text-muted-foreground hover:text-red-500 hover:bg-red-500/10"
+                          }`}
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                          {confirmDeleteId === comment.id ? "Confirm" : "Delete"}
+                        </button>
+                        {confirmDeleteId === comment.id && (
+                          <button
+                            onClick={() => setConfirmDeleteId(null)}
+                            className="px-3 py-1.5 text-xs font-medium text-muted-foreground hover:text-foreground rounded-md transition-colors"
+                          >
+                            Cancel
+                          </button>
+                        )}
+                      </div>
+                    )}
                   </div>
-                  <p className="text-sm text-foreground">{comment.content}</p>
-                </div>
-              ))
+                );
+              })
             )}
           </>
         )}
@@ -204,9 +313,13 @@ export function CommunitySection({ courtId, reviews, comments }: CommunitySectio
       {/* Modals */}
       <AuthModal isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} />
       <ReviewForm
-        isOpen={showReviewForm}
-        onClose={() => setShowReviewForm(false)}
+        isOpen={showReviewForm || !!editingReview}
+        onClose={() => {
+          setShowReviewForm(false);
+          setEditingReview(null);
+        }}
         courtId={courtId}
+        editReview={editingReview}
       />
       <ReportIssueForm
         isOpen={showReportForm}

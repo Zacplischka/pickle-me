@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { Menu, MapPin, User } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import { SearchInput } from "@/components/search/SearchInput";
@@ -15,8 +15,14 @@ import { UserMenu } from "@/components/auth/UserMenu";
 export function Navbar() {
     const [isOpen, setIsOpen] = useState(false);
     const [showAuthModal, setShowAuthModal] = useState(false);
+    const [mounted, setMounted] = useState(false);
     const courts = useCourts();
     const { user, profile, loading } = useAuth();
+
+    // Prevent hydration mismatch by only rendering auth UI after mount
+    useEffect(() => {
+        setMounted(true);
+    }, []);
 
     return (
         <nav className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -69,7 +75,7 @@ export function Navbar() {
 
                     {/* Auth UI */}
                     <div className="hidden md:block">
-                        {!loading && (
+                        {mounted && !loading ? (
                             user ? (
                                 <UserMenu user={user} displayName={profile?.display_name || undefined} />
                             ) : (
@@ -81,6 +87,8 @@ export function Navbar() {
                                     Sign In
                                 </button>
                             )
+                        ) : (
+                            <div className="w-20 h-9" />
                         )}
                     </div>
 
@@ -136,16 +144,29 @@ export function Navbar() {
                                 List a Court
                             </Link>
                             {/* Mobile Auth */}
-                            {!loading && (
+                            {mounted && !loading ? (
                                 user ? (
-                                    <div className="flex items-center gap-2 py-2">
-                                        <div className="w-8 h-8 rounded-full bg-primary/10 text-primary flex items-center justify-center text-sm font-semibold">
-                                            {(profile?.display_name || user.email?.split("@")[0] || "U").slice(0, 2).toUpperCase()}
-                                        </div>
-                                        <span className="text-sm font-medium text-foreground">
-                                            {profile?.display_name || user.email?.split("@")[0]}
-                                        </span>
-                                    </div>
+                                    <>
+                                        <Link
+                                            href="/profile"
+                                            className="flex items-center gap-2 py-2"
+                                            onClick={() => setIsOpen(false)}
+                                        >
+                                            <div className="w-8 h-8 rounded-full bg-primary/10 text-primary flex items-center justify-center text-sm font-semibold">
+                                                {(profile?.display_name || user.email?.split("@")[0] || "U").slice(0, 2).toUpperCase()}
+                                            </div>
+                                            <span className="text-sm font-medium text-foreground">
+                                                {profile?.display_name || user.email?.split("@")[0]}
+                                            </span>
+                                        </Link>
+                                        <Link
+                                            href="/settings"
+                                            className="text-sm font-medium py-2 text-foreground/80"
+                                            onClick={() => setIsOpen(false)}
+                                        >
+                                            Settings
+                                        </Link>
+                                    </>
                                 ) : (
                                     <button
                                         onClick={() => {
@@ -157,7 +178,7 @@ export function Navbar() {
                                         Sign In
                                     </button>
                                 )
-                            )}
+                            ) : null}
                         </div>
                     </motion.div>
                 )}

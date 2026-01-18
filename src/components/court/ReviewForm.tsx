@@ -1,26 +1,41 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { X, Star } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "@/lib/contexts/AuthContext";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/Button";
+import type { CourtFeedback } from "@/lib/supabase/database.types";
 
 interface ReviewFormProps {
   isOpen: boolean;
   onClose: () => void;
   courtId: string;
+  editReview?: CourtFeedback | null;
 }
 
-export function ReviewForm({ isOpen, onClose, courtId }: ReviewFormProps) {
-  const [rating, setRating] = useState(0);
+export function ReviewForm({ isOpen, onClose, courtId, editReview }: ReviewFormProps) {
+  const [rating, setRating] = useState(editReview?.rating || 0);
   const [hoveredRating, setHoveredRating] = useState(0);
-  const [content, setContent] = useState("");
+  const [content, setContent] = useState(editReview?.content || "");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const { user } = useAuth();
+
+  const isEditing = !!editReview;
+
+  // Update form when editReview changes
+  useEffect(() => {
+    if (editReview) {
+      setRating(editReview.rating || 0);
+      setContent(editReview.content || "");
+    } else {
+      setRating(0);
+      setContent("");
+    }
+  }, [editReview]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -36,18 +51,38 @@ export function ReviewForm({ isOpen, onClose, courtId }: ReviewFormProps) {
 
     const supabase = createClient();
 
-    const { error: submitError } = await supabase.from("court_feedback").insert({
-      court_id: courtId,
-      user_id: user.id,
-      type: "review",
-      rating,
-      content: content.trim() || null,
-    });
+    if (isEditing && editReview) {
+      // Update existing review
+      const { error: updateError } = await supabase
+        .from("court_feedback")
+        .update({
+          rating,
+          content: content.trim() || null,
+          updated_at: new Date().toISOString(),
+        })
+        .eq("id", editReview.id)
+        .eq("user_id", user.id); // Ensure user owns the review
 
-    if (submitError) {
-      setError(submitError.message);
-      setLoading(false);
-      return;
+      if (updateError) {
+        setError(updateError.message);
+        setLoading(false);
+        return;
+      }
+    } else {
+      // Create new review
+      const { error: submitError } = await supabase.from("court_feedback").insert({
+        court_id: courtId,
+        user_id: user.id,
+        type: "review",
+        rating,
+        content: content.trim() || null,
+      });
+
+      if (submitError) {
+        setError(submitError.message);
+        setLoading(false);
+        return;
+      }
     }
 
     // Reset form and close
@@ -56,8 +91,10 @@ export function ReviewForm({ isOpen, onClose, courtId }: ReviewFormProps) {
     setLoading(false);
     onClose();
 
-    // Refresh the page to show new review
-    window.location.reload();
+    // Refresh the page to show updated review (only for new reviews)
+    if (!isEditing) {
+      window.location.reload();
+    }
   };
 
   if (!isOpen) return null;
@@ -80,7 +117,9 @@ export function ReviewForm({ isOpen, onClose, courtId }: ReviewFormProps) {
         >
           {/* Header */}
           <div className="flex items-center justify-between p-4 border-b border-border">
-            <h2 className="text-lg font-semibold text-foreground">Write a Review</h2>
+            <h2 className="text-lg font-semibold text-foreground">
+              {isEditing ? "Edit Review" : "Write a Review"}
+            </h2>
             <button
               onClick={onClose}
               className="p-1 text-muted-foreground hover:text-foreground rounded-md hover:bg-muted transition-colors"
@@ -157,7 +196,9 @@ export function ReviewForm({ isOpen, onClose, courtId }: ReviewFormProps) {
                 Cancel
               </Button>
               <Button type="submit" className="flex-1" loading={loading}>
-                {loading ? "Submitting..." : "Submit Review"}
+                {loading
+                  ? (isEditing ? "Updating..." : "Submitting...")
+                  : (isEditing ? "Update Review" : "Submit Review")}
               </Button>
             </div>
           </form>

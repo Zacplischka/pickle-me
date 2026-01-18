@@ -9,6 +9,8 @@ import { cn, formatDistance } from "@/lib/utils";
 import { Button } from "@/components/ui/Button";
 import { OpeningHours } from "@/components/OpeningHours";
 import { ExternalLinkModal } from "@/components/ui/ExternalLinkModal";
+import { FavoriteButton } from "@/components/court/FavoriteButton";
+import { AuthModal } from "@/components/auth/AuthModal";
 
 interface CourtCardProps {
     court: Court & { distance?: number };
@@ -21,6 +23,7 @@ interface CourtCardProps {
 
 export function CourtCard({ court, variant = "default", onClick, isSelected, isLinked = false }: CourtCardProps) {
     const [isExternalModalOpen, setIsExternalModalOpen] = useState(false);
+    const [showAuthModal, setShowAuthModal] = useState(false);
     const isCompact = variant === "compact";
     const bookingUrl = court.google_website || court.website;
 
@@ -67,7 +70,12 @@ export function CourtCard({ court, variant = "default", onClick, isSelected, isL
                     sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                     className="object-cover transition-transform duration-300 group-hover:scale-105"
                 />
-                <div className="absolute top-2 right-2 flex gap-2">
+                <div className="absolute top-2 right-2 flex items-center gap-2">
+                    <FavoriteButton
+                        courtId={court.id}
+                        size="sm"
+                        onAuthRequired={() => setShowAuthModal(true)}
+                    />
                     {court.type && (
                         <span className={cn("px-2 py-1 rounded-md text-xs font-semibold shadow-sm backdrop-blur-md", typeColor)}>
                             {court.type}
@@ -242,6 +250,9 @@ export function CourtCard({ court, variant = "default", onClick, isSelected, isL
                 url={bookingUrl || ""}
                 siteName={court.name}
             />
+
+            {/* Auth Modal */}
+            <AuthModal isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} />
         </div>
     );
 }

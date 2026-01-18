@@ -9,6 +9,42 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      court_favorites: {
+        Row: {
+          id: string
+          user_id: string
+          court_id: string
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          court_id: string
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          court_id?: string
+          created_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "court_favorites_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "court_favorites_court_id_fkey"
+            columns: ["court_id"]
+            isOneToOne: false
+            referencedRelation: "courts"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
       court_feedback: {
         Row: {
           id: string
@@ -184,18 +220,33 @@ export type Database = {
           id: string
           display_name: string | null
           avatar_url: string | null
+          email_preferences: {
+            submission_reviewed: boolean
+            replies: boolean
+            weekly_digest: boolean
+          } | null
           created_at: string
         }
         Insert: {
           id: string
           display_name?: string | null
           avatar_url?: string | null
+          email_preferences?: {
+            submission_reviewed: boolean
+            replies: boolean
+            weekly_digest: boolean
+          } | null
           created_at?: string
         }
         Update: {
           id?: string
           display_name?: string | null
           avatar_url?: string | null
+          email_preferences?: {
+            submission_reviewed: boolean
+            replies: boolean
+            weekly_digest: boolean
+          } | null
           created_at?: string
         }
         Relationships: []
@@ -334,3 +385,7 @@ export type CourtFeedbackUpdate = Database["public"]["Tables"]["court_feedback"]
 export type CourtPhoto = Database["public"]["Tables"]["court_photos"]["Row"]
 export type CourtPhotoInsert = Database["public"]["Tables"]["court_photos"]["Insert"]
 export type CourtPhotoUpdate = Database["public"]["Tables"]["court_photos"]["Update"]
+
+export type CourtFavorite = Database["public"]["Tables"]["court_favorites"]["Row"]
+export type CourtFavoriteInsert = Database["public"]["Tables"]["court_favorites"]["Insert"]
+export type CourtFavoriteUpdate = Database["public"]["Tables"]["court_favorites"]["Update"]
