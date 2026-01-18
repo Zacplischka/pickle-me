@@ -131,7 +131,7 @@ export function FilterBar({ totalCourts, activeFilters }: FilterBarProps) {
           <Button
             variant={activeFilters.type ? "secondary" : "outline"}
             size="sm"
-            className="h-8 rounded-full text-xs bg-background"
+            className="h-8 rounded-full text-xs"
             onClick={() => setTypeOpen(!typeOpen)}
           >
             {activeFilters.type || "Any Type"}
@@ -143,7 +143,7 @@ export function FilterBar({ totalCourts, activeFilters }: FilterBarProps) {
               <button
                 type="button"
                 className={cn(
-                  "w-full px-3 py-2 text-left text-sm hover:bg-muted flex items-center justify-between",
+                  "w-full px-3 py-2 text-left text-sm hover:bg-muted flex items-center justify-between text-foreground",
                   !activeFilters.type && "text-primary"
                 )}
                 onClick={() => {
@@ -159,7 +159,7 @@ export function FilterBar({ totalCourts, activeFilters }: FilterBarProps) {
                   type="button"
                   key={type}
                   className={cn(
-                    "w-full px-3 py-2 text-left text-sm hover:bg-muted flex items-center justify-between",
+                    "w-full px-3 py-2 text-left text-sm hover:bg-muted flex items-center justify-between text-foreground",
                     activeFilters.type === type && "text-primary"
                   )}
                   onClick={(e) => {
@@ -182,7 +182,7 @@ export function FilterBar({ totalCourts, activeFilters }: FilterBarProps) {
           <Button
             variant={activeFilters.facilities.length > 0 ? "secondary" : "outline"}
             size="sm"
-            className="h-8 rounded-full text-xs bg-background"
+            className="h-8 rounded-full text-xs"
             onClick={() => setFacilitiesOpen(!facilitiesOpen)}
           >
             Facilities
@@ -201,7 +201,7 @@ export function FilterBar({ totalCourts, activeFilters }: FilterBarProps) {
                   type="button"
                   key={value}
                   className={cn(
-                    "w-full px-3 py-2 text-left text-sm hover:bg-muted flex items-center justify-between",
+                    "w-full px-3 py-2 text-left text-sm hover:bg-muted flex items-center justify-between text-foreground",
                     activeFilters.facilities.includes(value) && "text-primary"
                   )}
                   onClick={() => toggleFacility(value)}

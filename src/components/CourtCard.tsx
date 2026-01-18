@@ -1,19 +1,39 @@
 "use client";
 
+import { useState } from "react";
 import Image from "next/image";
-import { MapPin, Trophy, Users, Star, Phone, Globe } from "lucide-react";
+import { MapPin, Trophy, Users, Star, Phone, Globe, Navigation } from "lucide-react";
 import { Court } from "@/lib/data";
-import { cn } from "@/lib/utils";
+import { cn, formatDistance } from "@/lib/utils";
 import { Button } from "@/components/ui/Button";
 import { OpeningHours } from "@/components/OpeningHours";
+import { ExternalLinkModal } from "@/components/ui/ExternalLinkModal";
 
 interface CourtCardProps {
-    court: Court;
+    court: Court & { distance?: number };
     variant?: "default" | "compact";
+    onClick?: () => void;
+    isSelected?: boolean;
 }
 
-export function CourtCard({ court, variant = "default" }: CourtCardProps) {
+export function CourtCard({ court, variant = "default", onClick, isSelected }: CourtCardProps) {
+    const [isExternalModalOpen, setIsExternalModalOpen] = useState(false);
     const isCompact = variant === "compact";
+    const bookingUrl = court.google_website || court.website;
+
+    const handleBookNowClick = (e: React.MouseEvent) => {
+        e.stopPropagation();
+        if (bookingUrl) {
+            setIsExternalModalOpen(true);
+        }
+    };
+
+    const handleConfirmNavigation = () => {
+        if (bookingUrl) {
+            window.open(bookingUrl, "_blank", "noopener,noreferrer");
+        }
+        setIsExternalModalOpen(false);
+    };
 
     const typeColor = court.type === "Indoor"
         ? "bg-primary/90 text-primary-foreground"
@@ -22,7 +42,15 @@ export function CourtCard({ court, variant = "default" }: CourtCardProps) {
             : "bg-emerald-500/90 text-white"; // Hybrid
 
     return (
-        <div className="group relative flex flex-col rounded-xl border border-border bg-card overflow-hidden transition-all hover:shadow-lg hover:border-border/80">
+        <div
+            onClick={onClick}
+            className={cn(
+                "group relative flex flex-col rounded-xl border bg-card overflow-hidden transition-all hover:shadow-lg cursor-pointer",
+                isSelected
+                    ? "border-primary ring-2 ring-primary/20 shadow-lg"
+                    : "border-border hover:border-border/80"
+            )}
+        >
             {/* Image Section */}
             <div className={cn("aspect-[4/3] w-full overflow-hidden bg-muted relative", isCompact && "aspect-[3/2]")}>
                 <Image
@@ -53,9 +81,17 @@ export function CourtCard({ court, variant = "default" }: CourtCardProps) {
             {/* Content Section */}
             <div className={cn("flex flex-1 flex-col p-5 gap-3", isCompact && "p-3")}>
                 <div>
-                    <h3 className="font-bold text-lg leading-tight text-foreground group-hover:text-primary transition-colors">
-                        {court.name}
-                    </h3>
+                    <div className="flex items-start justify-between gap-2">
+                        <h3 className="font-bold text-lg leading-tight text-foreground group-hover:text-primary transition-colors">
+                            {court.name}
+                        </h3>
+                        {court.distance !== undefined && (
+                            <span className="flex items-center gap-1 text-xs font-semibold text-primary bg-primary/10 px-2 py-1 rounded-full whitespace-nowrap">
+                                <Navigation className="w-3 h-3" />
+                                {formatDistance(court.distance)}
+                            </span>
+                        )}
+                    </div>
                     <div className="flex items-center gap-1.5 mt-1 text-muted-foreground">
                         <MapPin className="w-3.5 h-3.5 flex-shrink-0" />
                         <span className="text-xs font-medium truncate">
@@ -148,11 +184,26 @@ export function CourtCard({ court, variant = "default" }: CourtCardProps) {
                     <Button variant="outline" size="sm" className="w-full">
                         View Details
                     </Button>
-                    <Button variant="default" size="sm" className="w-full bg-secondary hover:bg-secondary/90 text-white">
+                    <Button
+                        variant="default"
+                        size="sm"
+                        className="w-full bg-secondary hover:bg-secondary/90 text-white disabled:opacity-50 disabled:cursor-not-allowed"
+                        onClick={handleBookNowClick}
+                        disabled={!bookingUrl}
+                    >
                         Book Now
                     </Button>
                 </div>
             </div>
+
+            {/* External Link Confirmation Modal */}
+            <ExternalLinkModal
+                isOpen={isExternalModalOpen}
+                onClose={() => setIsExternalModalOpen(false)}
+                onConfirm={handleConfirmNavigation}
+                url={bookingUrl || ""}
+                siteName={court.name}
+            />
         </div>
     );
 }

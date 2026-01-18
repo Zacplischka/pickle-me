@@ -1,8 +1,7 @@
+import { Suspense } from "react";
 import { getCourts } from "@/lib/data";
-import { Button } from "@/components/ui/Button";
-import { SlidersHorizontal, ChevronDown, X, MapPin } from "lucide-react";
 import { SearchLayout } from "@/components/search/SearchLayout";
-import Link from "next/link";
+import { FilterBar } from "@/components/search/FilterBar";
 
 interface SearchPageProps {
     searchParams: Promise<{
@@ -12,6 +11,8 @@ interface SearchPageProps {
         lat?: string;
         lng?: string;
         radius?: string;
+        type?: string;
+        facility?: string | string[];
     }>;
 }
 
@@ -26,26 +27,57 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
             : null;
     const radius = params.radius ? parseInt(params.radius, 10) : null;
 
-    // Filter courts based on search params
-    let filteredCourts = allCourts;
-    let activeFilter: { type: string; value: string } | null = null;
+    // Parse filter params
+    const typeFilter = params.type || null;
+    const facilityFilters = params.facility
+        ? Array.isArray(params.facility)
+            ? params.facility
+            : [params.facility]
+        : [];
 
+    // Build active filter info for display
+    let searchFilter: { type: string; value: string } | null = null;
     if (params.suburb) {
-        filteredCourts = allCourts.filter(
+        searchFilter = { type: "Suburb", value: params.suburb };
+    } else if (params.q) {
+        searchFilter = { type: "Search", value: params.q };
+    } else if (userLocation && radius) {
+        searchFilter = { type: "Near You", value: `${radius} km` };
+    }
+
+    // Filter courts based on all params
+    let filteredCourts = allCourts;
+
+    // Text/location search filters
+    if (params.suburb) {
+        filteredCourts = filteredCourts.filter(
             (court) => court.suburb.toLowerCase() === params.suburb!.toLowerCase()
         );
-        activeFilter = { type: "Suburb", value: params.suburb };
     } else if (params.q) {
         const query = params.q.toLowerCase();
-        filteredCourts = allCourts.filter(
+        filteredCourts = filteredCourts.filter(
             (court) =>
                 court.name.toLowerCase().includes(query) ||
                 court.suburb.toLowerCase().includes(query) ||
                 (court.region && court.region.toLowerCase().includes(query))
         );
-        activeFilter = { type: "Search", value: params.q };
-    } else if (userLocation && radius) {
-        activeFilter = { type: "Near You", value: `${radius} km` };
+    }
+
+    // Type filter (Indoor/Outdoor/Hybrid)
+    if (typeFilter) {
+        filteredCourts = filteredCourts.filter(
+            (court) => court.type?.toLowerCase() === typeFilter.toLowerCase()
+        );
+    }
+
+    // Facilities filter (must have ALL selected facilities)
+    if (facilityFilters.length > 0) {
+        filteredCourts = filteredCourts.filter((court) => {
+            if (!court.features) return false;
+            return facilityFilters.every((facility) =>
+                court.features!.includes(facility)
+            );
+        });
     }
 
     // Pre-select court if specified
@@ -54,49 +86,16 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
     return (
         <div className="flex flex-col h-[calc(100vh-4rem)]">
             {/* Filters Header */}
-            <div className="sticky top-16 z-30 w-full bg-background border-b border-border/60 backdrop-blur-sm px-4 md:px-6 py-3 flex items-center justify-between gap-4">
-                <div className="flex items-center gap-2 overflow-x-auto no-scrollbar py-1">
-                    <Button variant="outline" size="sm" className="h-8 rounded-full border-dashed">
-                        <SlidersHorizontal className="mr-2 h-3 w-3" /> Filters
-                    </Button>
-
-                    {activeFilter && (
-                        <>
-                            <div className="h-6 w-px bg-border mx-1" />
-                            <Link href="/search">
-                                <Button variant="secondary" size="sm" className="h-8 rounded-full text-xs gap-1">
-                                    {activeFilter.type === "Near You" && <MapPin className="h-3 w-3" />}
-                                    {activeFilter.type}: {activeFilter.value}
-                                    <X className="h-3 w-3" />
-                                </Button>
-                            </Link>
-                        </>
-                    )}
-
-                    {!activeFilter && (
-                        <>
-                            <div className="h-6 w-px bg-border mx-1" />
-                            <Button variant="secondary" size="sm" className="h-8 rounded-full text-xs">
-                                Any Type <ChevronDown className="ml-1 h-3 w-3" />
-                            </Button>
-                            <Button variant="outline" size="sm" className="h-8 rounded-full text-xs bg-background">
-                                Price <ChevronDown className="ml-1 h-3 w-3" />
-                            </Button>
-                            <Button variant="outline" size="sm" className="h-8 rounded-full text-xs bg-background">
-                                Facilities <ChevronDown className="ml-1 h-3 w-3" />
-                            </Button>
-                        </>
-                    )}
-                </div>
-                <div className="hidden md:flex items-center gap-2">
-                    <span className="text-sm text-muted-foreground">
-                        {filteredCourts.length} court{filteredCourts.length !== 1 ? "s" : ""} found
-                    </span>
-                    <Button variant="ghost" size="sm" className="h-8">
-                        Sort by: Recommended <ChevronDown className="ml-1 h-3 w-3" />
-                    </Button>
-                </div>
-            </div>
+            <Suspense fallback={<div className="h-14 bg-background border-b border-border/60" />}>
+                <FilterBar
+                    totalCourts={filteredCourts.length}
+                    activeFilters={{
+                        type: typeFilter,
+                        facilities: facilityFilters,
+                        search: searchFilter,
+                    }}
+                />
+            </Suspense>
 
             {/* Map + Panel Layout */}
             <SearchLayout

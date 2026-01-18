@@ -206,7 +206,7 @@ export function SearchInput({
           id="search-suggestions"
           role="listbox"
           className={cn(
-            "absolute z-50 mt-2 bg-card border border-border rounded-xl shadow-xl overflow-hidden",
+            "absolute z-[100] mt-2 bg-card border border-border rounded-xl shadow-xl overflow-hidden",
             isHero ? "w-full max-w-2xl left-0" : "w-72 right-0"
           )}
         >
@@ -264,7 +264,7 @@ export function SearchInput({
         <div
           ref={dropdownRef}
           className={cn(
-            "absolute z-50 mt-2 bg-card border border-border rounded-xl shadow-xl p-4 text-center text-muted-foreground",
+            "absolute z-[100] mt-2 bg-card border border-border rounded-xl shadow-xl p-4 text-center text-muted-foreground",
             isHero ? "w-full max-w-2xl left-0" : "w-72 right-0"
           )}
         >

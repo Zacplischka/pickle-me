@@ -30,10 +30,10 @@ export function Navbar() {
                     <Link href="/search" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
                         Find Courts
                     </Link>
-                    <Link href="#" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
-                        Community
+                    <Link href="/guides" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
+                        Guides
                     </Link>
-                    <Link href="#" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
+                    <Link href="/events" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
                         Events
                     </Link>
                 </div>
@@ -48,9 +48,12 @@ export function Navbar() {
                         <ThemeToggle />
                     </div>
 
-                    <button className="hidden md:inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2">
+                    <Link
+                        href="/list-court"
+                        className="hidden md:inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2"
+                    >
                         List a Court
-                    </button>
+                    </Link>
 
                     {/* Mobile Menu Button */}
                     <button
@@ -81,14 +84,14 @@ export function Navbar() {
                                 Find Courts
                             </Link>
                             <Link
-                                href="#"
+                                href="/guides"
                                 className="text-sm font-medium py-2 text-foreground/80"
                                 onClick={() => setIsOpen(false)}
                             >
-                                Community
+                                Guides
                             </Link>
                             <Link
-                                href="#"
+                                href="/events"
                                 className="text-sm font-medium py-2 text-foreground/80"
                                 onClick={() => setIsOpen(false)}
                             >
@@ -96,9 +99,13 @@ export function Navbar() {
                             </Link>
                             <hr className="border-border/40" />
                             <ThemeToggle variant="mobile" />
-                            <button className="w-full text-center bg-primary text-primary-foreground rounded-md py-2 text-sm font-medium">
+                            <Link
+                                href="/list-court"
+                                className="w-full text-center bg-primary text-primary-foreground rounded-md py-2 text-sm font-medium block"
+                                onClick={() => setIsOpen(false)}
+                            >
                                 List a Court
-                            </button>
+                            </Link>
                         </div>
                     </motion.div>
                 )}
