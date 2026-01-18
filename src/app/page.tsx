@@ -1,5 +1,5 @@
 import { Hero } from "@/components/home/Hero";
-import { HeatMapPreview } from "@/components/home/HeatMapPreview";
+import { HeatMapPreviewWrapper } from "@/components/home/HeatMapPreviewWrapper";
 import { CourtCard } from "@/components/CourtCard";
 import { getFeaturedCourts, getCourts } from "@/lib/data";
 import { ArrowRight, Map, Users, Activity, Heart, Check } from "lucide-react";
@@ -208,7 +208,7 @@ export default async function Home() {
               </div>
             </div>
             <div className="flex-1 w-full relative aspect-video rounded-xl overflow-hidden bg-muted border border-border/60 shadow-inner">
-              <HeatMapPreview courts={allCourts} />
+              <HeatMapPreviewWrapper courts={allCourts} />
             </div>
           </div>
         </div>
