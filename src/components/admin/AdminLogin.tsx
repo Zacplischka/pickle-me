@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { Button } from "@/components/ui/Button";
-import { Lock, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 export function AdminLogin() {
@@ -36,9 +37,13 @@ export function AdminLogin() {
       <div className="w-full max-w-sm">
         <div className="bg-card rounded-xl border border-border p-8">
           <div className="flex justify-center mb-6">
-            <div className="w-12 h-12 rounded-full bg-muted flex items-center justify-center">
-              <Lock className="w-6 h-6 text-muted-foreground" />
-            </div>
+            <Image
+              src="/final.png"
+              alt="MyPickle.me Logo"
+              width={64}
+              height={64}
+              className="object-contain"
+            />
           </div>
           <h1 className="text-xl font-bold text-foreground text-center mb-2">
             Admin Access

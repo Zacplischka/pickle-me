@@ -5,7 +5,7 @@ import { AdminLogin } from "@/components/admin/AdminLogin";
 import { SubmissionsList } from "@/components/admin/SubmissionsList";
 
 export const metadata = {
-  title: "Admin | Pickle Me Vic",
+  title: "Admin | mypickle.me",
   description: "Review and manage court submissions.",
 };
 
@@ -56,21 +56,19 @@ export default async function AdminPage({
         <div className="flex gap-4 mb-6 border-b border-border">
           <a
             href="/admin"
-            className={`pb-2 px-1 text-sm font-medium border-b-2 transition-colors ${
-              !showAll
+            className={`pb-2 px-1 text-sm font-medium border-b-2 transition-colors ${!showAll
                 ? "border-primary text-primary"
                 : "border-transparent text-muted-foreground hover:text-foreground"
-            }`}
+              }`}
           >
             Pending ({submissions.filter((s) => s.status === "pending").length})
           </a>
           <a
             href="/admin?view=all"
-            className={`pb-2 px-1 text-sm font-medium border-b-2 transition-colors ${
-              showAll
+            className={`pb-2 px-1 text-sm font-medium border-b-2 transition-colors ${showAll
                 ? "border-primary text-primary"
                 : "border-transparent text-muted-foreground hover:text-foreground"
-            }`}
+              }`}
           >
             All Submissions
           </a>

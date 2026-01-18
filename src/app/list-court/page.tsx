@@ -2,7 +2,7 @@ import { CourtSubmissionForm } from "@/components/CourtSubmissionForm";
 import { MapPin } from "lucide-react";
 
 export const metadata = {
-  title: "List a Court | Pickle Me Vic",
+  title: "List a Court | mypickle.me",
   description: "Submit a pickleball court to be listed on Victoria's #1 pickleball court directory.",
 };
 

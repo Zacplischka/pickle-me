@@ -2,18 +2,32 @@ import { Hero } from "@/components/home/Hero";
 import { HeatMapPreviewWrapper } from "@/components/home/HeatMapPreviewWrapper";
 import { CourtCard } from "@/components/CourtCard";
 import { getFeaturedCourts, getCourts } from "@/lib/data";
-import { ArrowRight, Map, Users, Activity, Heart, Check } from "lucide-react";
+import { ArrowRight, Map, Users, Activity, Heart, Check, Star } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 import { Button } from "@/components/ui/Button";
 
 export default async function Home() {
   const [featuredCourts, allCourts] = await Promise.all([
-    getFeaturedCourts(3),
+    getFeaturedCourts(4), // Get 4 so we can use first for Court of the Month
     getCourts(),
   ]);
 
+  // Court of the Month is the top-rated court
+  const courtOfTheMonth = featuredCourts[0];
+
   // Take a few recently added courts (last 4 by name for now)
   const recentCourts = allCourts.slice(0, 4);
+
+  // Helper to get court image URL
+  const getCourtImageUrl = (court: typeof courtOfTheMonth) => {
+    if (!court) return "https://images.unsplash.com/photo-1626245353528-77402061e858?q=80&w=2664&auto=format&fit=crop";
+    const googlePhoto = (court.google_photos as { name?: string }[])?.[0]?.name;
+    if (googlePhoto) {
+      return `https://places.googleapis.com/v1/${googlePhoto}/media?key=${process.env.NEXT_PUBLIC_GOOGLE_PLACES_API_KEY}&maxHeightPx=800&maxWidthPx=800`;
+    }
+    return court.image_url || "https://images.unsplash.com/photo-1626245353528-77402061e858?q=80&w=2664&auto=format&fit=crop";
+  };
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -91,63 +105,93 @@ export default async function Home() {
       </section>
 
       {/* Court of the Month */}
-      <section className="py-16 md:py-24 bg-background">
-        <div className="container mx-auto px-4 md:px-6">
-          <div className="grid md:grid-cols-2 gap-12 items-center">
-            <div className="relative aspect-[4/3] md:aspect-square rounded-2xl overflow-hidden shadow-xl">
-              {/* Placeholder until we have real images */}
-              <div className="absolute inset-0 bg-gradient-to-br from-slate-200 to-slate-300" />
-              <div className="absolute inset-0 flex items-center justify-center text-slate-400">
-                <span className="sr-only">Court Image</span>
-                <Map className="w-16 h-16 opacity-20" />
-              </div>
-              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-6 text-white">
-                <div className="inline-flex items-center rounded-full bg-secondary px-3 py-1 text-xs font-semibold text-white mb-2 shadow-sm">
-                  Court of the Month
-                </div>
-                <p className="text-sm font-medium opacity-90">Royal Park Tennis Club</p>
-              </div>
-            </div>
-
-            <div className="space-y-6">
-              <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-foreground">
-                Royal Park Tennis Club
-              </h2>
-              <p className="text-lg text-muted-foreground">
-                Located in the heart of Parkville, Royal Park has embraced the pickleball revolution with 4 dedicated outdoor courts and improved lighting for evening play.
-              </p>
-
-              <div className="space-y-4">
-                <div className="flex items-start gap-3">
-                  <div className="mt-1 bg-green-100 dark:bg-green-900/30 p-1 rounded-full text-green-600 dark:text-green-400">
-                    <Check className="w-4 h-4" />
+      {courtOfTheMonth && (
+        <section className="py-16 md:py-24 bg-background">
+          <div className="container mx-auto px-4 md:px-6">
+            <div className="grid md:grid-cols-2 gap-12 items-center">
+              <div className="relative aspect-[4/3] md:aspect-square rounded-2xl overflow-hidden shadow-xl">
+                <Image
+                  src={getCourtImageUrl(courtOfTheMonth)}
+                  alt={courtOfTheMonth.name}
+                  fill
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                  className="object-cover"
+                />
+                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-6 text-white">
+                  <div className="inline-flex items-center rounded-full bg-secondary px-3 py-1 text-xs font-semibold text-white mb-2 shadow-sm">
+                    Court of the Month
                   </div>
-                  <div>
-                    <h4 className="font-semibold text-foreground">Dedicated Courts</h4>
-                    <p className="text-sm text-muted-foreground">Permanent lines and nets, no setup required.</p>
-                  </div>
-                </div>
-
-                <div className="flex items-start gap-3">
-                  <div className="mt-1 bg-green-100 dark:bg-green-900/30 p-1 rounded-full text-green-600 dark:text-green-400">
-                    <Check className="w-4 h-4" />
-                  </div>
-                  <div>
-                    <h4 className="font-semibold text-foreground">Social Sessions</h4>
-                    <p className="text-sm text-muted-foreground">Hosted social play every Tuesday and Thursday evening.</p>
-                  </div>
+                  <p className="text-sm font-medium opacity-90">{courtOfTheMonth.name}</p>
                 </div>
               </div>
 
-              <div className="pt-4">
-                <Button size="lg" variant="outline">
-                  View Venue Details
-                </Button>
+              <div className="space-y-6">
+                <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-foreground">
+                  {courtOfTheMonth.name}
+                </h2>
+
+                {/* Rating */}
+                {courtOfTheMonth.google_rating && (
+                  <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-1">
+                      <Star className="w-5 h-5 fill-amber-400 text-amber-400" />
+                      <span className="font-bold text-lg text-foreground">{courtOfTheMonth.google_rating.toFixed(1)}</span>
+                    </div>
+                    {courtOfTheMonth.google_user_ratings_total && (
+                      <span className="text-sm text-muted-foreground">
+                        ({courtOfTheMonth.google_user_ratings_total.toLocaleString()} reviews)
+                      </span>
+                    )}
+                  </div>
+                )}
+
+                <p className="text-lg text-muted-foreground">
+                  {courtOfTheMonth.google_formatted_address || `${courtOfTheMonth.suburb}${courtOfTheMonth.region ? `, ${courtOfTheMonth.region}` : ""}`}
+                </p>
+
+                <div className="space-y-4">
+                  {courtOfTheMonth.type && (
+                    <div className="flex items-start gap-3">
+                      <div className="mt-1 bg-green-100 dark:bg-green-900/30 p-1 rounded-full text-green-600 dark:text-green-400">
+                        <Check className="w-4 h-4" />
+                      </div>
+                      <div>
+                        <h4 className="font-semibold text-foreground">{courtOfTheMonth.type} Courts</h4>
+                        <p className="text-sm text-muted-foreground">
+                          {courtOfTheMonth.courts_count ? `${courtOfTheMonth.courts_count} courts available` : "Multiple courts available"}
+                          {courtOfTheMonth.surface ? ` with ${courtOfTheMonth.surface} surface` : ""}
+                        </p>
+                      </div>
+                    </div>
+                  )}
+
+                  {courtOfTheMonth.venue_type && (
+                    <div className="flex items-start gap-3">
+                      <div className="mt-1 bg-green-100 dark:bg-green-900/30 p-1 rounded-full text-green-600 dark:text-green-400">
+                        <Check className="w-4 h-4" />
+                      </div>
+                      <div>
+                        <h4 className="font-semibold text-foreground">{courtOfTheMonth.venue_type}</h4>
+                        <p className="text-sm text-muted-foreground">
+                          {courtOfTheMonth.price || "Contact for pricing"}
+                        </p>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                <div className="pt-4">
+                  <Link href={`/search?court=${courtOfTheMonth.id}`}>
+                    <Button size="lg" variant="outline">
+                      View Venue Details
+                    </Button>
+                  </Link>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* Community Spotlight */}
       <section className="py-16 bg-primary text-primary-foreground overflow-hidden relative">

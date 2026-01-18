@@ -14,7 +14,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Pickle Me Victoria | Find Pickleball Courts in VIC",
+  title: "mypickle.me | Find Pickleball Courts in VIC",
   description: "The most comprehensive directory of pickleball courts in Victoria, Australia. Find indoor and outdoor courts near you.",
 };
 

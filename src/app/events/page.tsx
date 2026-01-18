@@ -105,10 +105,10 @@ export default function EventsPage() {
                     <div className="relative z-10 space-y-6">
                         <h2 className="text-2xl md:text-3xl font-bold">Hosting an event?</h2>
                         <p className="text-primary-foreground/80 max-w-xl mx-auto">
-                            We want to help grow the sport. List your social session, tournament, or workshop on Pickle Me Victoria for free.
+                            We want to help grow the sport. List your social session, tournament, or workshop on mypickle.me for free.
                         </p>
                         <Link
-                            href="mailto:hello@picklemevic.com.au"
+                            href="mailto:hello@mypickle.me"
                             className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-secondary text-secondary-foreground hover:bg-secondary/80 h-11 rounded-md px-8 gap-2"
                         >
                             <Mail className="w-4 h-4" />

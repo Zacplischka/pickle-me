@@ -19,28 +19,42 @@ const FACILITY_OPTIONS = [
 
 interface FilterBarProps {
   totalCourts: number;
+  availableSuburbs: string[];
   activeFilters: {
     type: string | null;
+    suburb: string | null;
     facilities: string[];
     search: { type: string; value: string } | null;
   };
 }
 
-export function FilterBar({ totalCourts, activeFilters }: FilterBarProps) {
+export function FilterBar({ totalCourts, availableSuburbs, activeFilters }: FilterBarProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
 
   const [typeOpen, setTypeOpen] = useState(false);
+  const [suburbOpen, setSuburbOpen] = useState(false);
   const [facilitiesOpen, setFacilitiesOpen] = useState(false);
+  const [suburbSearch, setSuburbSearch] = useState("");
 
   const typeRef = useRef<HTMLDivElement>(null);
+  const suburbRef = useRef<HTMLDivElement>(null);
   const facilitiesRef = useRef<HTMLDivElement>(null);
+
+  // Filter suburbs based on search
+  const filteredSuburbs = availableSuburbs.filter(suburb =>
+    suburb.toLowerCase().includes(suburbSearch.toLowerCase())
+  );
 
   // Close dropdowns when clicking outside
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (typeRef.current && !typeRef.current.contains(event.target as Node)) {
         setTypeOpen(false);
+      }
+      if (suburbRef.current && !suburbRef.current.contains(event.target as Node)) {
+        setSuburbOpen(false);
+        setSuburbSearch("");
       }
       if (facilitiesRef.current && !facilitiesRef.current.contains(event.target as Node)) {
         setFacilitiesOpen(false);
@@ -82,7 +96,7 @@ export function FilterBar({ totalCourts, activeFilters }: FilterBarProps) {
     updateFilters("facility", updated);
   };
 
-  const hasAnyFilter = activeFilters.type || activeFilters.facilities.length > 0 || activeFilters.search;
+  const hasAnyFilter = activeFilters.type || activeFilters.suburb || activeFilters.facilities.length > 0 || activeFilters.search;
 
   return (
     <div className="sticky top-16 z-30 w-full bg-background border-b border-border/60 backdrop-blur-sm px-4 md:px-6 py-3 flex items-center justify-between gap-4">
@@ -173,6 +187,69 @@ export function FilterBar({ totalCourts, activeFilters }: FilterBarProps) {
                   {activeFilters.type === type && <Check className="h-3 w-3" />}
                 </button>
               ))}
+            </div>
+          )}
+        </div>
+
+        {/* Suburb filter dropdown */}
+        <div ref={suburbRef} className="relative">
+          <Button
+            variant={activeFilters.suburb ? "secondary" : "outline"}
+            size="sm"
+            className="h-8 rounded-full text-xs"
+            onClick={() => setSuburbOpen(!suburbOpen)}
+          >
+            {activeFilters.suburb || "Any Suburb"}
+            <ChevronDown className={cn("ml-1 h-3 w-3 transition-transform", suburbOpen && "rotate-180")} />
+          </Button>
+
+          {suburbOpen && (
+            <div className="absolute top-full left-0 mt-1 bg-card border border-border rounded-lg shadow-lg py-1 min-w-[200px] max-h-[300px] overflow-hidden z-50 flex flex-col">
+              <div className="px-2 py-1 border-b border-border">
+                <input
+                  type="text"
+                  placeholder="Search suburbs..."
+                  value={suburbSearch}
+                  onChange={(e) => setSuburbSearch(e.target.value)}
+                  className="w-full px-2 py-1 text-sm bg-background border border-input rounded focus:outline-none focus:ring-1 focus:ring-ring"
+                  onClick={(e) => e.stopPropagation()}
+                />
+              </div>
+              <div className="overflow-y-auto max-h-[240px]">
+                <button
+                  type="button"
+                  className={cn(
+                    "w-full px-3 py-2 text-left text-sm hover:bg-muted flex items-center justify-between text-foreground",
+                    !activeFilters.suburb && "text-primary"
+                  )}
+                  onClick={() => {
+                    updateFilters("suburb", null);
+                    setSuburbOpen(false);
+                    setSuburbSearch("");
+                  }}
+                >
+                  Any Suburb
+                  {!activeFilters.suburb && <Check className="h-3 w-3" />}
+                </button>
+                {filteredSuburbs.map(suburb => (
+                  <button
+                    type="button"
+                    key={suburb}
+                    className={cn(
+                      "w-full px-3 py-2 text-left text-sm hover:bg-muted flex items-center justify-between text-foreground",
+                      activeFilters.suburb === suburb && "text-primary"
+                    )}
+                    onClick={() => {
+                      updateFilters("suburb", suburb);
+                      setSuburbOpen(false);
+                      setSuburbSearch("");
+                    }}
+                  >
+                    {suburb}
+                    {activeFilters.suburb === suburb && <Check className="h-3 w-3" />}
+                  </button>
+                ))}
+              </div>
             </div>
           )}
         </div>

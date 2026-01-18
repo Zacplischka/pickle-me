@@ -8,8 +8,21 @@ export default function GuidesPage() {
     return (
         <div className="flex flex-col min-h-screen pb-20">
             {/* Header */}
-            <div className="bg-muted/30 border-b border-border/40 py-16 md:py-24">
-                <div className="container mx-auto px-4 md:px-6 text-center">
+            <div className="relative bg-muted/30 border-b border-border/40 py-16 md:py-24 overflow-hidden">
+                {/* Background Video */}
+                <div className="absolute inset-0 z-0">
+                    <div className="absolute inset-0 bg-gradient-to-r from-muted/80 via-muted/60 to-muted/40 z-10" />
+                    <video
+                        autoPlay
+                        loop
+                        muted
+                        playsInline
+                        className="absolute inset-0 w-full h-full object-cover opacity-60 dark:opacity-70"
+                    >
+                        <source src="/guide-hero.mp4" type="video/mp4" />
+                    </video>
+                </div>
+                <div className="container relative z-20 mx-auto px-4 md:px-6 text-center">
                     <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-foreground mb-4">
                         New to Pickleball?
                     </h1>

@@ -70,10 +70,18 @@ export function Hero() {
   return (
     <>
       <section className="relative w-full py-20 md:py-32 lg:py-40 bg-muted overflow-hidden">
-        {/* Background Pattern/Image Overlay */}
+        {/* Background Video */}
         <div className="absolute inset-0 z-0">
-          <div className="absolute inset-0 bg-gradient-to-r from-muted via-muted/95 to-muted/80 z-10" />
-          <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1629814407963-c35eb8567179?q=80&w=2670&auto=format')] bg-cover bg-center opacity-20 dark:opacity-40 mix-blend-overlay" />
+          <div className="absolute inset-0 bg-gradient-to-r from-muted/80 via-muted/60 to-muted/40 z-10" />
+          <video
+            autoPlay
+            loop
+            muted
+            playsInline
+            className="absolute inset-0 w-full h-full object-cover opacity-60 dark:opacity-70"
+          >
+            <source src="/hero2.mp4" type="video/mp4" />
+          </video>
         </div>
 
         <div className="container relative z-20 mx-auto px-4 md:px-6 flex flex-col items-center text-center gap-6">

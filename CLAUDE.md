@@ -1,91 +1,115 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+## Core Development Loop
 
-# **CRITICAL**
-1. Before implementing or writing any plans for code, ALWAYS use context7 tool to retrieve the latest library documentation!
-x
+**Every code change follows this cycle:**
 
+```
+┌─────────────┐     ┌─────────────┐     ┌─────────────┐
+│  RESEARCH   │ ──▶ │  IMPLEMENT  │ ──▶ │   VERIFY    │
+│             │     │             │     │             │
+│ • Read docs │     │ • Write code│     │ • Open in   │
+│ • Explore   │     │ • Run build │     │   browser   │
+│   codebase  │     │ • Fix errors│     │ • Test UI   │
+│ • Understand│     │             │     │ • Confirm   │
+│   context   │     │             │     │   behavior  │
+└─────────────┘     └─────────────┘     └─────────────┘
+       ▲                                       │
+       └───────────────────────────────────────┘
+                    Loop until correct
+```
+
+### 1. Research
+- Use context7 to get latest library documentation before coding
+- Read existing code to understand patterns
+- Explore the codebase structure before modifying
+
+### 2. Implement
+- Write the code changes
+- Run `npm run build` to catch type errors
+- Fix any issues before proceeding
+
+### 3. Verify with Claude in Chrome
+- Open `http://localhost:3000` in the browser
+- Use Claude in Chrome tools to interact with the UI
+- Visually confirm the implementation works as expected
+- Test user flows and edge cases
+
+**Do not consider a task complete until verified in the browser.**
+
+---
 
 ## Project Overview
 
-Pickle-me is a pickleball court finder for Victoria, Australia. It displays court locations on an interactive map with details like ratings, opening hours, and contact information.
+Pickleball court finder for Victoria, Australia. Displays courts on an interactive map with ratings, hours, and contact info.
 
 ## Commands
 
 ```bash
-npm run dev       # Start development server (http://localhost:3000)
+npm run dev       # Start dev server (http://localhost:3000)
 npm run build     # Production build
 npm run lint      # Run ESLint
-npm run seed      # Seed courts data to Supabase
-npm run enrich    # Enrich courts with Google Places data
-npm run enrich -- --limit=N   # Enrich only N courts
-npm run enrich -- --retry     # Retry failed enrichments
-npm run enrich -- --all       # Re-enrich all courts
+npm run seed      # Seed courts to Supabase
+npm run enrich    # Enrich with Google Places data
 ```
 
-## Architecture
+## Stack
 
-**Stack:** Next.js 16 (App Router), React 19, TypeScript, Tailwind CSS, Supabase, Leaflet
+Next.js 16 (App Router), React 19, TypeScript, Tailwind CSS, Supabase, Leaflet
 
-### Code Structure
+## Structure
 
 ```
 src/
-├── app/                    # Next.js App Router pages
+├── app/                    # Pages
 ├── components/
 │   ├── layout/            # Navbar, Footer
-│   ├── map/               # Map, MapWrapper (client-side Leaflet)
+│   ├── map/               # Map, MapWrapper (client-side)
 │   ├── home/              # Hero section
-│   └── ui/                # Button and other primitives
+│   └── ui/                # Primitives
 └── lib/
-    ├── supabase/
-    │   ├── client.ts      # Browser Supabase client
-    │   ├── server.ts      # Server Supabase client (uses cookies)
-    │   ├── queries.ts     # Data fetching functions
-    │   └── database.types.ts  # TypeScript types for DB schema
-    └── utils.ts           # Utility functions (cn for classnames)
+    ├── supabase/          # DB clients and queries
+    └── utils.ts           # Utilities
 
-scripts/
-├── seed-courts.ts         # Seeds court data to Supabase
-├── enrich-courts.ts       # Enriches courts with Google Places API
-└── lib/google-places.ts   # Google Places API client
-```
-
-### Data Flow
-
-1. Court data is seeded via `npm run seed`
-2. Courts are enriched with Google Places data (ratings, photos, hours) via `npm run enrich`
-3. Server components fetch data using `src/lib/supabase/queries.ts`
-4. Map component renders courts using Leaflet (client-side only via MapWrapper)
-
-### Supabase Integration
-
-- **Server components**: Use `createClient()` from `lib/supabase/server.ts`
-- **Client components**: Use `createClient()` from `lib/supabase/client.ts`
-- **Database types**: Defined in `database.types.ts`, exports `Court`, `CourtInsert`, `CourtUpdate`
-
-### Environment Variables
-
-Required in `.env.local`:
-```
-NEXT_PUBLIC_SUPABASE_URL=
-NEXT_PUBLIC_SUPABASE_ANON_KEY=
-SUPABASE_SERVICE_ROLE_KEY=     # For scripts and admin functions
-GOOGLE_PLACES_API_KEY=          # For enrichment script
-ADMIN_PASSWORD=                 # Password for /admin access
+scripts/                   # Seed and enrichment scripts
 ```
 
 ## Key Patterns
 
-- Map components use dynamic imports with `ssr: false` due to Leaflet's browser dependency
-- Server-side data fetching in page components, passed as props to client components
-- Court enrichment tracks status (`pending`, `success`, `not_found`, `error`) for idempotent reruns
+- Map uses dynamic imports with `ssr: false` (Leaflet requires browser)
+- Server components fetch data, pass to client components as props
+- Court enrichment is idempotent via status tracking
 
-### Court Submission Flow
+## Data Layer
 
-1. Users submit courts via `/list-court` form
-2. Submissions are stored in `court_submissions` table with `pending` status
-3. Admin reviews at `/admin` (password protected via `ADMIN_PASSWORD`)
-4. On approval, court is created in `courts` table with `enrichment_status: pending`
-5. Run `npm run enrich` to enrich new courts with Google Places data
+### Supabase
+
+All data is hosted in Supabase (PostgreSQL). Two main tables:
+
+- **`courts`** - Verified court locations with enriched data
+- **`court_submissions`** - User-submitted courts pending admin review
+
+**Clients:**
+- Server components: `lib/supabase/server.ts` (uses cookies)
+- Client components: `lib/supabase/client.ts` (browser client)
+- Scripts: Use `SUPABASE_SERVICE_ROLE_KEY` for admin access
+
+### Google Places API
+
+Used to enrich court data with real-world info:
+- Ratings and review counts
+- Opening hours
+- Photos
+- Contact details
+
+Run `npm run enrich` to fetch Google Places data for courts with `enrichment_status: pending`.
+
+### Environment Variables
+
+```
+NEXT_PUBLIC_SUPABASE_URL=
+NEXT_PUBLIC_SUPABASE_ANON_KEY=
+SUPABASE_SERVICE_ROLE_KEY=     # Admin access for scripts
+GOOGLE_PLACES_API_KEY=          # Places API enrichment
+ADMIN_PASSWORD=                 # /admin page access
+```

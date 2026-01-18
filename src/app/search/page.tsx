@@ -29,17 +29,19 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
 
     // Parse filter params
     const typeFilter = params.type || null;
+    const suburbFilter = params.suburb || null;
     const facilityFilters = params.facility
         ? Array.isArray(params.facility)
             ? params.facility
             : [params.facility]
         : [];
 
-    // Build active filter info for display
+    // Get unique suburbs from all courts for the filter dropdown
+    const availableSuburbs = [...new Set(allCourts.map(court => court.suburb))].sort();
+
+    // Build active filter info for display (suburb is now handled by dropdown, not search chip)
     let searchFilter: { type: string; value: string } | null = null;
-    if (params.suburb) {
-        searchFilter = { type: "Suburb", value: params.suburb };
-    } else if (params.q) {
+    if (params.q) {
         searchFilter = { type: "Search", value: params.q };
     } else if (userLocation && radius) {
         searchFilter = { type: "Near You", value: `${radius} km` };
@@ -89,8 +91,10 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
             <Suspense fallback={<div className="h-14 bg-background border-b border-border/60" />}>
                 <FilterBar
                     totalCourts={filteredCourts.length}
+                    availableSuburbs={availableSuburbs}
                     activeFilters={{
                         type: typeFilter,
+                        suburb: suburbFilter,
                         facilities: facilityFilters,
                         search: searchFilter,
                     }}

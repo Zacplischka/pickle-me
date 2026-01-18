@@ -59,7 +59,7 @@ export function ExternalLinkModal({ isOpen, onClose, onConfirm, url, siteName }:
                 <div className="flex items-center justify-between p-4 border-b border-border">
                     <div className="flex items-center gap-2">
                         <ExternalLink className="w-5 h-5 text-primary" />
-                        <h2 className="font-semibold text-lg text-foreground">Leaving Pickle Me</h2>
+                        <h2 className="font-semibold text-lg text-foreground">Leaving mypickle.me</h2>
                     </div>
                     <button
                         onClick={onClose}
@@ -80,7 +80,7 @@ export function ExternalLinkModal({ isOpen, onClose, onConfirm, url, siteName }:
                         <p className="text-sm font-medium text-foreground break-all">{domain}</p>
                     </div>
                     <p className="text-xs text-muted-foreground">
-                        This site is not affiliated with Pickle Me. Please review their terms and policies.
+                        This site is not affiliated with mypickle.me. Please review their terms and policies.
                     </p>
                 </div>
 

@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { Menu, MapPin } from "lucide-react";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -17,11 +18,17 @@ export function Navbar() {
             <div className="container mx-auto px-4 md:px-6 h-16 flex items-center justify-between">
                 {/* Logo */}
                 <Link href="/" className="flex items-center gap-2 group">
-                    <div className="relative w-8 h-8 flex items-center justify-center bg-secondary rounded-lg text-secondary-foreground font-bold shadow-sm group-hover:bg-secondary/90 transition-colors">
-                        P
+                    <div className="relative w-12 h-12 flex items-center justify-center">
+                        <Image
+                            src="/final.png"
+                            alt="MyPickle.me Logo"
+                            width={48}
+                            height={48}
+                            className="object-contain"
+                        />
                     </div>
                     <span className="font-bold text-xl tracking-tight text-foreground">
-                        Pickle Me <span className="text-secondary">Vic</span>
+                        MyPickle<span className="text-secondary">.me</span>
                     </span>
                 </Link>
 
