@@ -2,6 +2,11 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+# **CRITICAL**
+1. Before implementing or writing any plans for code, ALWAYS use context7 tool to retrieve the latest library documentation!
+x
+
+
 ## Project Overview
 
 Pickle-me is a pickleball court finder for Victoria, Australia. It displays court locations on an interactive map with details like ratings, opening hours, and contact information.
@@ -66,8 +71,9 @@ Required in `.env.local`:
 ```
 NEXT_PUBLIC_SUPABASE_URL=
 NEXT_PUBLIC_SUPABASE_ANON_KEY=
-SUPABASE_SERVICE_ROLE_KEY=     # For scripts only
+SUPABASE_SERVICE_ROLE_KEY=     # For scripts and admin functions
 GOOGLE_PLACES_API_KEY=          # For enrichment script
+ADMIN_PASSWORD=                 # Password for /admin access
 ```
 
 ## Key Patterns
@@ -75,3 +81,11 @@ GOOGLE_PLACES_API_KEY=          # For enrichment script
 - Map components use dynamic imports with `ssr: false` due to Leaflet's browser dependency
 - Server-side data fetching in page components, passed as props to client components
 - Court enrichment tracks status (`pending`, `success`, `not_found`, `error`) for idempotent reruns
+
+### Court Submission Flow
+
+1. Users submit courts via `/list-court` form
+2. Submissions are stored in `court_submissions` table with `pending` status
+3. Admin reviews at `/admin` (password protected via `ADMIN_PASSWORD`)
+4. On approval, court is created in `courts` table with `enrichment_status: pending`
+5. Run `npm run enrich` to enrich new courts with Google Places data
