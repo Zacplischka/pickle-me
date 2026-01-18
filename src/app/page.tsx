@@ -48,7 +48,9 @@ export default async function Home() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
             {featuredCourts.map((court) => (
-              <CourtCard key={court.id} court={court} />
+              <Link key={court.id} href={`/search?court=${court.id}`} className="block">
+                <CourtCard court={court} isLinked />
+              </Link>
             ))}
           </div>
 
@@ -264,7 +266,9 @@ export default async function Home() {
           <h2 className="text-2xl md:text-3xl font-bold tracking-tight text-foreground mb-8">Recently Added</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {recentCourts.map((court) => (
-              <CourtCard key={court.id} court={court} />
+              <Link key={court.id} href={`/search?court=${court.id}`} className="block">
+                <CourtCard court={court} isLinked />
+              </Link>
             ))}
             {/* Add your court card */}
             <Link href="/list-court" className="flex flex-col items-center justify-center rounded-xl border-2 border-dashed border-border p-6 text-center hover:border-secondary hover:bg-secondary/5 transition-colors cursor-pointer group">

@@ -8,7 +8,7 @@ import "leaflet.markercluster";
 import L from "leaflet";
 import { Court } from "@/lib/data";
 import { Button } from "../ui/Button";
-import { Navigation, Loader2 } from "lucide-react";
+import { Navigation, Loader2, Trophy, Users } from "lucide-react";
 import { LatLng } from "@/lib/utils";
 
 // Fix for default marker icons in Next.js
@@ -162,6 +162,13 @@ function CourtMarker({ court, isSelected, onSelect }: CourtMarkerProps) {
         }
     }, [isSelected, court.lat, court.lng, map]);
 
+    // Type badge color matching CourtCard
+    const typeColor = court.type === "Indoor"
+        ? "bg-orange-500 text-white"
+        : court.type === "Outdoor"
+            ? "bg-sky-500 text-white"
+            : "bg-emerald-500 text-white"; // Hybrid
+
     return (
         <Marker
             ref={markerRef}
@@ -172,26 +179,52 @@ function CourtMarker({ court, isSelected, onSelect }: CourtMarkerProps) {
             }}
         >
             <Popup className="font-sans">
-                <div className="p-1 min-w-[200px]">
+                <div className="p-1 min-w-[220px]">
                     <h3 className="font-bold text-sm mb-1">{court.name}</h3>
-                    <p className="text-xs text-muted-foreground mb-2">{court.suburb}</p>
+                    <p className="text-xs text-gray-500 mb-2">{court.suburb}</p>
+
+                    {/* Type badge and rating row */}
                     <div className="flex items-center gap-2 mb-2">
                         {court.type && (
-                            <span className="text-xs bg-secondary/10 text-secondary px-2 py-1 rounded-full font-medium">
+                            <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${typeColor}`}>
                                 {court.type}
                             </span>
                         )}
                         {court.google_rating && (
                             <span className="text-xs flex items-center gap-1">
                                 <span className="text-amber-500">★</span>
-                                {court.google_rating.toFixed(1)}
+                                <span className="font-medium">{court.google_rating.toFixed(1)}</span>
+                                {court.google_user_ratings_total && (
+                                    <span className="text-gray-400">
+                                        ({court.google_user_ratings_total.toLocaleString()})
+                                    </span>
+                                )}
                             </span>
                         )}
                     </div>
+
+                    {/* Surface and courts count */}
+                    {(court.surface || court.courts_count) && (
+                        <div className="flex items-center gap-3 mb-2 text-xs text-gray-600">
+                            {court.surface && (
+                                <span className="flex items-center gap-1">
+                                    <Trophy className="w-3 h-3 text-orange-400" />
+                                    {court.surface}
+                                </span>
+                            )}
+                            {court.courts_count && (
+                                <span className="flex items-center gap-1">
+                                    <Users className="w-3 h-3 text-blue-400" />
+                                    {court.courts_count} Courts
+                                </span>
+                            )}
+                        </div>
+                    )}
+
                     {court.google_phone && (
                         <a
                             href={`tel:${court.google_phone}`}
-                            className="text-xs text-primary hover:underline block"
+                            className="text-xs text-blue-600 hover:underline block"
                         >
                             {court.google_phone}
                         </a>

@@ -98,8 +98,8 @@ export function searchSuggestions(
   return suggestions
     .sort((a, b) => {
       if (a.matchScore !== b.matchScore) return a.matchScore - b.matchScore;
-      const aName = a.type === "court" ? a.court.name : a.suburb;
-      const bName = b.type === "court" ? b.court.name : b.suburb;
+      const aName = a.type === "court" ? a.court.name : a.type === "suburb" ? a.suburb : "";
+      const bName = b.type === "court" ? b.court.name : b.type === "suburb" ? b.suburb : "";
       return aName.localeCompare(bName);
     })
     .slice(0, limit);

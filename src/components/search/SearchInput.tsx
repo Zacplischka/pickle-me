@@ -2,9 +2,9 @@
 
 import { useState, useMemo, useRef, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { Search, MapPin, X } from "lucide-react";
+import { Search, MapPin, X, Loader2 } from "lucide-react";
 import { Court } from "@/lib/supabase/database.types";
-import { Suggestion } from "@/lib/types/search";
+import { Suggestion, PlaceSuggestion } from "@/lib/types/search";
 import { extractSuburbs, searchSuggestions } from "@/lib/search";
 import { cn } from "@/lib/utils";
 
@@ -13,6 +13,14 @@ interface SearchInputProps {
   variant: "hero" | "navbar";
   placeholder?: string;
   onClose?: () => void;
+}
+
+interface AutocompletePrediction {
+  placeId: string;
+  text: string;
+  mainText: string;
+  secondaryText: string;
+  types: string[];
 }
 
 export function SearchInput({
@@ -28,13 +36,82 @@ export function SearchInput({
   const [query, setQuery] = useState("");
   const [isOpen, setIsOpen] = useState(false);
   const [activeIndex, setActiveIndex] = useState(-1);
+  const [placeSuggestions, setPlaceSuggestions] = useState<PlaceSuggestion[]>([]);
+  const [isLoadingPlaces, setIsLoadingPlaces] = useState(false);
+  const [isNavigating, setIsNavigating] = useState(false);
 
   const suburbs = useMemo(() => extractSuburbs(courts), [courts]);
 
-  const suggestions = useMemo(
-    () => searchSuggestions(courts, suburbs, query),
+  // Local court/suburb suggestions
+  const localSuggestions = useMemo(
+    () => searchSuggestions(courts, suburbs, query, 4),
     [courts, suburbs, query]
   );
+
+  // Fetch place suggestions from Google Places API
+  useEffect(() => {
+    const trimmedQuery = query.trim();
+
+    if (trimmedQuery.length < 2) {
+      setPlaceSuggestions([]);
+      return;
+    }
+
+    const controller = new AbortController();
+    const timeoutId = setTimeout(async () => {
+      setIsLoadingPlaces(true);
+      try {
+        const response = await fetch(
+          `/api/places/autocomplete?input=${encodeURIComponent(trimmedQuery)}`,
+          { signal: controller.signal }
+        );
+        const data = await response.json();
+
+        const places: PlaceSuggestion[] = (data.predictions || [])
+          .slice(0, 4)
+          .map((p: AutocompletePrediction) => ({
+            type: "place" as const,
+            placeId: p.placeId,
+            mainText: p.mainText,
+            secondaryText: p.secondaryText,
+            matchScore: 2, // Lower priority than local matches
+          }));
+
+        setPlaceSuggestions(places);
+      } catch (error) {
+        if ((error as Error).name !== "AbortError") {
+          console.error("Failed to fetch place suggestions:", error);
+        }
+      } finally {
+        setIsLoadingPlaces(false);
+      }
+    }, 300); // Debounce
+
+    return () => {
+      clearTimeout(timeoutId);
+      controller.abort();
+    };
+  }, [query]);
+
+  // Combine local and place suggestions
+  const suggestions: Suggestion[] = useMemo(() => {
+    if (!query.trim()) {
+      return localSuggestions;
+    }
+
+    // Filter out place suggestions that match existing suburb names (avoid duplicates)
+    const existingSuburbs = new Set(
+      localSuggestions
+        .filter((s): s is Suggestion & { type: "suburb" } => s.type === "suburb")
+        .map((s) => s.suburb.toLowerCase())
+    );
+
+    const filteredPlaces = placeSuggestions.filter(
+      (p) => !existingSuburbs.has(p.mainText.toLowerCase())
+    );
+
+    return [...localSuggestions, ...filteredPlaces].slice(0, 8);
+  }, [localSuggestions, placeSuggestions, query]);
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -61,15 +138,44 @@ export function SearchInput({
   }, [activeIndex]);
 
   const handleSelect = useCallback(
-    (suggestion: Suggestion) => {
+    async (suggestion: Suggestion) => {
       if (suggestion.type === "court") {
         router.push(`/search?court=${suggestion.court.id}`);
-      } else {
+        setIsOpen(false);
+        setQuery("");
+        onClose?.();
+      } else if (suggestion.type === "suburb") {
         router.push(`/search?suburb=${encodeURIComponent(suggestion.suburb)}`);
+        setIsOpen(false);
+        setQuery("");
+        onClose?.();
+      } else if (suggestion.type === "place") {
+        // Fetch coordinates for the place and navigate with lat/lng
+        setIsNavigating(true);
+        try {
+          const response = await fetch(
+            `/api/places/details?placeId=${suggestion.placeId}`
+          );
+          const data = await response.json();
+
+          if (data.place) {
+            router.push(
+              `/search?lat=${data.place.lat}&lng=${data.place.lng}&location=${encodeURIComponent(suggestion.mainText)}`
+            );
+          } else {
+            // Fallback to text search
+            router.push(`/search?q=${encodeURIComponent(suggestion.mainText)}`);
+          }
+        } catch (error) {
+          console.error("Failed to fetch place details:", error);
+          router.push(`/search?q=${encodeURIComponent(suggestion.mainText)}`);
+        } finally {
+          setIsNavigating(false);
+          setIsOpen(false);
+          setQuery("");
+          onClose?.();
+        }
       }
-      setIsOpen(false);
-      setQuery("");
-      onClose?.();
     },
     [router, onClose]
   );
@@ -127,7 +233,7 @@ export function SearchInput({
         className={cn(
           "flex items-center",
           isHero
-            ? "w-full max-w-2xl p-2 bg-card/80 backdrop-blur-md border border-border rounded-2xl shadow-2xl flex-col md:flex-row gap-2"
+            ? "w-full flex-col md:flex-row gap-2"
             : "px-3 py-1.5 bg-muted/50 hover:bg-muted rounded-full transition-colors"
         )}
       >
@@ -215,7 +321,9 @@ export function SearchInput({
               key={
                 suggestion.type === "court"
                   ? `court-${suggestion.court.id}`
-                  : `suburb-${suggestion.suburb}`
+                  : suggestion.type === "suburb"
+                    ? `suburb-${suggestion.suburb}`
+                    : `place-${suggestion.placeId}`
               }
               id={`suggestion-${index}`}
               role="option"
@@ -226,8 +334,10 @@ export function SearchInput({
                 "w-full px-4 py-3 flex items-center gap-3 text-left transition-colors",
                 index === activeIndex
                   ? "bg-muted"
-                  : "hover:bg-muted/50"
+                  : "hover:bg-muted/50",
+                isNavigating && "opacity-50 pointer-events-none"
               )}
+              disabled={isNavigating}
             >
               {suggestion.type === "court" ? (
                 <>
@@ -241,7 +351,7 @@ export function SearchInput({
                     </div>
                   </div>
                 </>
-              ) : (
+              ) : suggestion.type === "suburb" ? (
                 <>
                   <MapPin className="w-5 h-5 text-muted-foreground flex-shrink-0" />
                   <div className="flex-1 min-w-0">
@@ -253,9 +363,27 @@ export function SearchInput({
                     </div>
                   </div>
                 </>
+              ) : (
+                <>
+                  <MapPin className="w-5 h-5 text-secondary flex-shrink-0" />
+                  <div className="flex-1 min-w-0">
+                    <div className="font-medium text-foreground">
+                      {suggestion.mainText}
+                    </div>
+                    <div className="text-sm text-muted-foreground truncate">
+                      {suggestion.secondaryText}
+                    </div>
+                  </div>
+                </>
               )}
             </button>
           ))}
+          {isLoadingPlaces && query.trim().length >= 2 && (
+            <div className="px-4 py-3 flex items-center gap-3 text-muted-foreground">
+              <Loader2 className="w-5 h-5 animate-spin" />
+              <span className="text-sm">Searching locations...</span>
+            </div>
+          )}
         </div>
       )}
 

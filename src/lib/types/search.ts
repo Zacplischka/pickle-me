@@ -13,7 +13,15 @@ export type SuburbSuggestion = {
   matchScore: number;
 };
 
-export type Suggestion = CourtSuggestion | SuburbSuggestion;
+export type PlaceSuggestion = {
+  type: "place";
+  placeId: string;
+  mainText: string;
+  secondaryText: string;
+  matchScore: number;
+};
+
+export type Suggestion = CourtSuggestion | SuburbSuggestion | PlaceSuggestion;
 
 export interface SuburbData {
   suburb: string;

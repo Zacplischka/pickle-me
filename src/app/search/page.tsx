@@ -11,6 +11,7 @@ interface SearchPageProps {
         lat?: string;
         lng?: string;
         radius?: string;
+        location?: string;
         type?: string;
         facility?: string | string[];
     }>;
@@ -26,6 +27,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
             ? { lat: parseFloat(params.lat), lng: parseFloat(params.lng) }
             : null;
     const radius = params.radius ? parseInt(params.radius, 10) : null;
+    const locationName = params.location || null;
 
     // Parse filter params
     const typeFilter = params.type || null;
@@ -45,6 +47,8 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
         searchFilter = { type: "Search", value: params.q };
     } else if (userLocation && radius) {
         searchFilter = { type: "Near You", value: `${radius} km` };
+    } else if (userLocation && locationName) {
+        searchFilter = { type: "Near", value: locationName };
     }
 
     // Filter courts based on all params

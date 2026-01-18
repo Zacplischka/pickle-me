@@ -14,9 +14,11 @@ interface CourtCardProps {
     variant?: "default" | "compact";
     onClick?: () => void;
     isSelected?: boolean;
+    /** When true, contact links are rendered as text (use when card is wrapped in a Link) */
+    isLinked?: boolean;
 }
 
-export function CourtCard({ court, variant = "default", onClick, isSelected }: CourtCardProps) {
+export function CourtCard({ court, variant = "default", onClick, isSelected, isLinked = false }: CourtCardProps) {
     const [isExternalModalOpen, setIsExternalModalOpen] = useState(false);
     const isCompact = variant === "compact";
     const bookingUrl = court.google_website || court.website;
@@ -146,7 +148,7 @@ export function CourtCard({ court, variant = "default", onClick, isSelected }: C
                 )}
 
                 {/* Contact Links */}
-                {(court.google_phone || court.google_website || court.website) && (
+                {(court.google_phone || court.google_website || court.website) && !isLinked && (
                     <div className="flex items-center gap-3 text-xs">
                         {court.google_phone && (
                             <a
@@ -169,6 +171,23 @@ export function CourtCard({ court, variant = "default", onClick, isSelected }: C
                                 <Globe className="w-3.5 h-3.5" />
                                 <span>Website</span>
                             </a>
+                        )}
+                    </div>
+                )}
+                {/* Contact info (non-interactive when card is linked) */}
+                {(court.google_phone || court.google_website || court.website) && isLinked && (
+                    <div className="flex items-center gap-3 text-xs">
+                        {court.google_phone && (
+                            <span className="flex items-center gap-1 text-muted-foreground">
+                                <Phone className="w-3.5 h-3.5" />
+                                <span>Call</span>
+                            </span>
+                        )}
+                        {(court.google_website || court.website) && (
+                            <span className="flex items-center gap-1 text-muted-foreground">
+                                <Globe className="w-3.5 h-3.5" />
+                                <span>Website</span>
+                            </span>
                         )}
                     </div>
                 )}
