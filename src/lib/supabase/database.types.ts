@@ -9,6 +9,74 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      court_submissions: {
+        Row: {
+          address: string | null
+          approved_court_id: string | null
+          courts_count: string | null
+          created_at: string | null
+          id: string
+          name: string
+          notes: string | null
+          price: string | null
+          region: string | null
+          rejection_reason: string | null
+          reviewed_at: string | null
+          status: string
+          suburb: string
+          surface: string | null
+          type: string | null
+          venue_type: string | null
+          website: string | null
+        }
+        Insert: {
+          address?: string | null
+          approved_court_id?: string | null
+          courts_count?: string | null
+          created_at?: string | null
+          id?: string
+          name: string
+          notes?: string | null
+          price?: string | null
+          region?: string | null
+          rejection_reason?: string | null
+          reviewed_at?: string | null
+          status?: string
+          suburb: string
+          surface?: string | null
+          type?: string | null
+          venue_type?: string | null
+          website?: string | null
+        }
+        Update: {
+          address?: string | null
+          approved_court_id?: string | null
+          courts_count?: string | null
+          created_at?: string | null
+          id?: string
+          name?: string
+          notes?: string | null
+          price?: string | null
+          region?: string | null
+          rejection_reason?: string | null
+          reviewed_at?: string | null
+          status?: string
+          suburb?: string
+          surface?: string | null
+          type?: string | null
+          venue_type?: string | null
+          website?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "court_submissions_approved_court_id_fkey"
+            columns: ["approved_court_id"]
+            isOneToOne: false
+            referencedRelation: "courts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       courts: {
         Row: {
           address: string | null
@@ -22,6 +90,7 @@ export type Database = {
           google_phone: string | null
           google_photos: Json | null
           google_place_id: string | null
+          google_price_level: string | null
           google_rating: number | null
           google_user_ratings_total: number | null
           google_website: string | null
@@ -53,6 +122,7 @@ export type Database = {
           google_phone?: string | null
           google_photos?: Json | null
           google_place_id?: string | null
+          google_price_level?: string | null
           google_rating?: number | null
           google_user_ratings_total?: number | null
           google_website?: string | null
@@ -84,6 +154,7 @@ export type Database = {
           google_phone?: string | null
           google_photos?: Json | null
           google_place_id?: string | null
+          google_price_level?: string | null
           google_rating?: number | null
           google_user_ratings_total?: number | null
           google_website?: string | null
@@ -124,3 +195,7 @@ export type Database = {
 export type Court = Database["public"]["Tables"]["courts"]["Row"]
 export type CourtInsert = Database["public"]["Tables"]["courts"]["Insert"]
 export type CourtUpdate = Database["public"]["Tables"]["courts"]["Update"]
+
+export type CourtSubmission = Database["public"]["Tables"]["court_submissions"]["Row"]
+export type CourtSubmissionInsert = Database["public"]["Tables"]["court_submissions"]["Insert"]
+export type CourtSubmissionUpdate = Database["public"]["Tables"]["court_submissions"]["Update"]
