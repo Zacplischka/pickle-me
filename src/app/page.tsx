@@ -1,4 +1,5 @@
 import { Hero } from "@/components/home/Hero";
+import { HeatMapPreview } from "@/components/home/HeatMapPreview";
 import { CourtCard } from "@/components/CourtCard";
 import { getFeaturedCourts, getCourts } from "@/lib/data";
 import { ArrowRight, Map, Users, Activity, Heart, Check } from "lucide-react";
@@ -206,19 +207,8 @@ export default async function Home() {
                 </Button>
               </div>
             </div>
-            <div className="flex-1 w-full relative aspect-video rounded-xl overflow-hidden bg-muted border border-border/60 shadow-inner group cursor-pointer">
-              {/* Placeholder Map Image */}
-              <div className="absolute inset-0 bg-[url('https://api.mapbox.com/styles/v1/mapbox/streets-v11/static/144.9631, -37.8136,10,0/800x600?access_token=PLACEHOLDER')] bg-cover bg-center opacity-80 transition-opacity group-hover:opacity-100" />
-              <div className="absolute inset-0 flex items-center justify-center bg-black/5 group-hover:bg-transparent transition-colors">
-                <span className="sr-only">Map Preview</span>
-              </div>
-              {/* Safe fallback if mapbox url fails (it needs token, so likely broken image or blank) - Using a generic map pattern/color */}
-              <div className="absolute inset-0 bg-slate-200 -z-10" />
-              <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                <div className="bg-background/80 backdrop-blur-sm p-4 rounded-full shadow-lg">
-                  <Map className="w-8 h-8 text-primary" />
-                </div>
-              </div>
+            <div className="flex-1 w-full relative aspect-video rounded-xl overflow-hidden bg-muted border border-border/60 shadow-inner">
+              <HeatMapPreview courts={allCourts} />
             </div>
           </div>
         </div>
