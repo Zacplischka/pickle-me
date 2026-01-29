@@ -15,11 +15,17 @@ Built by the community for the community, the platform connects Victorian pickle
 ## Features
 
 - Interactive map with court locations and clustering
-- Search courts by suburb or postcode
-- Court details: ratings, reviews, opening hours, photos
+- Heat map preview showing court density
+- Search courts by suburb or postcode with Google Places autocomplete
+- Court detail pages with ratings, reviews, opening hours, photos
 - Filter by indoor/outdoor, surface type, accessibility
-- Mobile-friendly responsive design
+- User authentication (Google, email/password via Supabase Auth)
+- User profiles with activity history
+- Favorite courts and quick access
+- Photo uploads for courts
 - Community court submissions
+- Admin dashboard for managing submissions and content
+- Mobile-friendly responsive design with loading states
 
 ## Tech Stack
 
@@ -84,15 +90,28 @@ npm run enrich    # Enrich courts with Google Places data
 
 ```
 src/
-├── app/                    # Next.js pages and routes
+├── app/                    # Next.js pages and API routes
+│   ├── admin/             # Admin dashboard
+│   ├── api/               # API routes (admin, places)
+│   ├── court/[id]/        # Court detail page
+│   ├── profile/           # User profile pages
+│   ├── search/            # Court search with map
+│   └── settings/          # User settings
 ├── components/
+│   ├── admin/             # Admin components
+│   ├── auth/              # Authentication (modal, menu)
+│   ├── court/             # Court detail components
+│   ├── home/              # Hero, heat map preview
 │   ├── layout/            # Navbar, Footer
 │   ├── map/               # Map components (client-side)
-│   ├── home/              # Hero section
+│   ├── profile/           # Profile components
+│   ├── search/            # Search and filter components
+│   ├── settings/          # Settings forms
 │   └── ui/                # UI primitives
 └── lib/
+    ├── contexts/          # React contexts (auth, courts)
     ├── supabase/          # Database clients and queries
-    └── utils.ts           # Utility functions
+    └── types/             # TypeScript types
 
 scripts/                   # Seed and enrichment scripts
 ```

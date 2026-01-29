@@ -1,40 +1,5 @@
-
-import { Button } from "@/components/ui/Button";
-import { Calendar, MapPin, Clock, Mail } from "lucide-react";
+import { Calendar, Mail } from "lucide-react";
 import Link from "next/link";
-
-const EVENTS = [
-    {
-        id: 1,
-        title: "Social Saturday at Royal Park",
-        date: "Every Saturday",
-        time: "10:00 AM - 1:00 PM",
-        location: "Royal Park Tennis Club, Parkville",
-        description: "Looking for a game? Come down for our weekly social session. All skill levels welcome, paddles provided if needed.",
-        category: "Social Play",
-        price: "$15 non-members",
-    },
-    {
-        id: 2,
-        title: "Victorian Open Championships",
-        date: "March 15-16, 2026",
-        time: "8:00 AM - 6:00 PM",
-        location: "Melbourne Sports & Aquatic Centre",
-        description: "The biggest event on the calendar! Singles, Doubles, and Mixed categories. Registration opens Feb 1st.",
-        category: "Tournament",
-        price: "Registration fees apply",
-    },
-    {
-        id: 3,
-        title: "Beginner Clinic: Learning the Basics",
-        date: "Sunday, Feb 8th",
-        time: "9:00 AM - 11:00 AM",
-        location: "Albert Park",
-        description: "New to Pickleball? Join our certified instructors for a comprehensive introduction to rules, scoring, and basic shots.",
-        category: "Workshop",
-        price: "$25",
-    },
-];
 
 export default function EventsPage() {
     return (
@@ -43,7 +8,7 @@ export default function EventsPage() {
             <div className="bg-muted/30 border-b border-border/40 py-16 md:py-24">
                 <div className="container mx-auto px-4 md:px-6 text-center">
                     <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-foreground mb-4">
-                        Upcoming Events in Victoria
+                        Events
                     </h1>
                     <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
                         From social sessions to competitive tournaments. Find your next game and connect with the community.
@@ -51,51 +16,16 @@ export default function EventsPage() {
                 </div>
             </div>
 
-            {/* Events Grid */}
-            <div className="container mx-auto px-4 md:px-6 py-12">
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 max-w-5xl mx-auto">
-                    {EVENTS.map((event) => (
-                        <div
-                            key={event.id}
-                            className="group bg-card border border-border/60 hover:border-border rounded-xl p-6 shadow-sm hover:shadow-md transition-all flex flex-col"
-                        >
-                            <div className="flex items-start justify-between mb-4">
-                                <div className="inline-flex items-center rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-medium text-primary">
-                                    {event.category}
-                                </div>
-                                <div className="text-sm font-medium text-primary">
-                                    {event.price}
-                                </div>
-                            </div>
-
-                            <h3 className="text-xl font-semibold mb-2 group-hover:text-primary transition-colors">
-                                {event.title}
-                            </h3>
-
-                            <div className="space-y-2 mb-6 text-sm text-muted-foreground">
-                                <div className="flex items-center gap-2">
-                                    <Calendar className="w-4 h-4" />
-                                    <span>{event.date}</span>
-                                </div>
-                                <div className="flex items-center gap-2">
-                                    <Clock className="w-4 h-4" />
-                                    <span>{event.time}</span>
-                                </div>
-                                <div className="flex items-center gap-2">
-                                    <MapPin className="w-4 h-4" />
-                                    <span>{event.location}</span>
-                                </div>
-                            </div>
-
-                            <p className="text-muted-foreground mb-6 flex-grow">
-                                {event.description}
-                            </p>
-
-                            <Button className="w-full sm:w-auto" variant="outline">
-                                Event Details
-                            </Button>
-                        </div>
-                    ))}
+            {/* Coming Soon */}
+            <div className="container mx-auto px-4 md:px-6 py-12 flex-grow flex items-center justify-center">
+                <div className="text-center max-w-md">
+                    <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <Calendar className="w-8 h-8 text-primary" />
+                    </div>
+                    <h2 className="text-2xl font-semibold mb-3">Coming Soon</h2>
+                    <p className="text-muted-foreground mb-6">
+                        We&apos;re working on bringing you the best pickleball events across Victoria. Check back soon for tournaments, social sessions, and workshops.
+                    </p>
                 </div>
             </div>
 

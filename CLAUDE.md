@@ -61,14 +61,32 @@ Next.js 16 (App Router), React 19, TypeScript, Tailwind CSS, Supabase, Leaflet
 
 ```
 src/
-├── app/                    # Pages
+├── app/
+│   ├── admin/             # Admin dashboard
+│   ├── api/               # API routes (admin, places)
+│   ├── auth/              # Auth callback
+│   ├── court/[id]/        # Court detail page
+│   ├── events/            # Events page
+│   ├── guides/            # Guides page
+│   ├── list-court/        # Court submission form
+│   ├── profile/           # User profile pages
+│   ├── search/            # Court search with map
+│   └── settings/          # User settings
 ├── components/
+│   ├── admin/             # Admin components (login, lists)
+│   ├── auth/              # AuthModal, UserMenu
+│   ├── court/             # Court detail components
+│   ├── home/              # Hero, HeatMapPreview, NearbyDrawer
 │   ├── layout/            # Navbar, Footer
 │   ├── map/               # Map, MapWrapper (client-side)
-│   ├── home/              # Hero section
-│   └── ui/                # Primitives
+│   ├── profile/           # Profile tabs, favorites, reviews
+│   ├── search/            # Search input, filters, court list
+│   ├── settings/          # Settings forms
+│   └── ui/                # Button, Spinner, ThemeToggle
 └── lib/
-    ├── supabase/          # DB clients and queries
+    ├── contexts/          # AuthContext, CourtsContext
+    ├── supabase/          # DB clients, queries, auth, favorites
+    ├── types/             # TypeScript types
     └── utils.ts           # Utilities
 
 scripts/                   # Seed and enrichment scripts
