@@ -26,7 +26,7 @@ export async function generateMetadata({ params }: CourtPageProps): Promise<Meta
   let imageUrl = "https://images.unsplash.com/photo-1626245353528-77402061e858?q=80&w=2664&auto=format&fit=crop";
   const googlePhoto = (court.google_photos as { name?: string }[])?.[0]?.name;
   if (googlePhoto) {
-    imageUrl = `https://places.googleapis.com/v1/${googlePhoto}/media?key=${process.env.NEXT_PUBLIC_GOOGLE_PLACES_API_KEY}&maxHeightPx=630&maxWidthPx=1200`;
+    imageUrl = `https://places.googleapis.com/v1/${googlePhoto}/media?key=${process.env.NEXT_PUBLIC_GOOGLE_PLACES_API_KEY?.trim()}&maxHeightPx=630&maxWidthPx=1200`;
   } else if (court.image_url) {
     imageUrl = court.image_url;
   }
@@ -135,7 +135,7 @@ export default async function CourtPage({ params }: CourtPageProps) {
               <div className="bg-card rounded-xl border border-border overflow-hidden">
                 <div className="aspect-video bg-muted flex items-center justify-center">
                   <iframe
-                    src={`https://www.google.com/maps/embed/v1/place?key=${process.env.NEXT_PUBLIC_GOOGLE_PLACES_API_KEY}&q=${court.lat},${court.lng}&zoom=15`}
+                    src={`https://www.google.com/maps/embed/v1/place?key=${process.env.NEXT_PUBLIC_GOOGLE_PLACES_API_KEY?.trim()}&q=${court.lat},${court.lng}&zoom=15`}
                     className="w-full h-full"
                     style={{ border: 0 }}
                     allowFullScreen

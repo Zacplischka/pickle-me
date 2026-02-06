@@ -24,7 +24,7 @@ export default async function Home() {
     if (!court) return "https://images.unsplash.com/photo-1626245353528-77402061e858?q=80&w=2664&auto=format&fit=crop";
     const googlePhoto = (court.google_photos as { name?: string }[])?.[0]?.name;
     if (googlePhoto) {
-      return `https://places.googleapis.com/v1/${googlePhoto}/media?key=${process.env.NEXT_PUBLIC_GOOGLE_PLACES_API_KEY}&maxHeightPx=800&maxWidthPx=800`;
+      return `https://places.googleapis.com/v1/${googlePhoto}/media?key=${process.env.NEXT_PUBLIC_GOOGLE_PLACES_API_KEY?.trim()}&maxHeightPx=800&maxWidthPx=800`;
     }
     return court.image_url || "https://images.unsplash.com/photo-1626245353528-77402061e858?q=80&w=2664&auto=format&fit=crop";
   };
