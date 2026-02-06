@@ -98,6 +98,22 @@ scripts/                   # Seed and enrichment scripts
 - Server components fetch data, pass to client components as props
 - Court enrichment is idempotent via status tracking
 
+## SEO
+
+- **Metadata**: Open Graph and Twitter meta tags configured in `layout.tsx` (global) and `court/[id]/page.tsx` (per-court)
+- **Structured Data**: JSON-LD on homepage (`WebSite` with `SearchAction`) and court pages (`SportsActivityLocation`)
+- **Sitemap**: Dynamic sitemap at `/sitemap.xml` generated from all courts (`app/sitemap.ts`)
+- **Robots**: `app/robots.ts` allows all crawlers, blocks `/admin/`, `/api/`, `/profile/`
+- **Google Search Console**: Verification file at `public/google83dba7a6afd5c66c.html`
+
+## Deployment
+
+- **Hosting**: Vercel (project `prj_J6G0YUKIgSIJkLdO5NJDjxS3mlAh`)
+- **CI/CD**: GitHub repo (`Zacplischka/pickle-me`) connected via `vercel git connect`
+  - Push/merge to `main` → automatic **production** deploy
+  - Pull requests → automatic **preview** deploy
+- **Environment variables**: Configured in Vercel dashboard
+
 ## Data Layer
 
 ### Supabase
@@ -129,5 +145,7 @@ NEXT_PUBLIC_SUPABASE_URL=
 NEXT_PUBLIC_SUPABASE_ANON_KEY=
 SUPABASE_SERVICE_ROLE_KEY=     # Admin access for scripts
 GOOGLE_PLACES_API_KEY=          # Places API enrichment
+NEXT_PUBLIC_GOOGLE_PLACES_API_KEY=  # Client-side Places (OG images)
+NEXT_PUBLIC_SITE_URL=           # Base URL for SEO (default: https://mypickle.me)
 ADMIN_PASSWORD=                 # /admin page access
 ```
