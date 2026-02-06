@@ -107,6 +107,55 @@ export async function searchCourts(query: string): Promise<Court[]> {
   return data || [];
 }
 
+export async function getSimilarCourts(
+  court: { id: string; suburb: string; region: string | null },
+  limit = 3
+): Promise<Court[]> {
+  const supabase = await createClient();
+
+  // Try same suburb first
+  const { data: suburbCourts, error: suburbError } = await supabase
+    .from("courts")
+    .select("*")
+    .eq("suburb", court.suburb)
+    .neq("id", court.id)
+    .order("google_rating", { ascending: false, nullsFirst: false })
+    .limit(limit);
+
+  if (suburbError) {
+    console.error("Error fetching similar courts:", suburbError);
+    return [];
+  }
+
+  // If enough results from suburb, return them
+  if (suburbCourts && suburbCourts.length >= limit) {
+    return suburbCourts;
+  }
+
+  // Fall back to same region to fill remaining slots
+  if (!court.region) return suburbCourts || [];
+
+  const existingIds = new Set((suburbCourts || []).map((c) => c.id));
+  existingIds.add(court.id);
+  const remaining = limit - (suburbCourts?.length || 0);
+
+  const { data: regionCourts, error: regionError } = await supabase
+    .from("courts")
+    .select("*")
+    .eq("region", court.region)
+    .neq("id", court.id)
+    .order("google_rating", { ascending: false, nullsFirst: false })
+    .limit(remaining + existingIds.size);
+
+  if (regionError) {
+    console.error("Error fetching region courts:", regionError);
+    return suburbCourts || [];
+  }
+
+  const filtered = (regionCourts || []).filter((c) => !existingIds.has(c.id)).slice(0, remaining);
+  return [...(suburbCourts || []), ...filtered];
+}
+
 // ============ Court Submissions ============
 
 export async function createCourtSubmission(
