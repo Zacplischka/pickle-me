@@ -31,6 +31,21 @@ export default async function Home() {
 
   return (
     <div className="flex flex-col min-h-screen">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "WebSite",
+          "name": "mypickle.me",
+          "url": "https://mypickle.me",
+          "description": "The most comprehensive directory of pickleball courts in Victoria, Australia.",
+          "potentialAction": {
+            "@type": "SearchAction",
+            "target": "https://mypickle.me/search?query={search_term_string}",
+            "query-input": "required name=search_term_string"
+          }
+        })}}
+      />
       <Hero />
 
       {/* Featured Section */}

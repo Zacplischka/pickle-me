@@ -21,9 +21,23 @@ export async function generateMetadata({ params }: CourtPageProps): Promise<Meta
     };
   }
 
+  // Get first image for OG
+  let imageUrl = "https://images.unsplash.com/photo-1626245353528-77402061e858?q=80&w=2664&auto=format&fit=crop";
+  const googlePhoto = (court.google_photos as { name?: string }[])?.[0]?.name;
+  if (googlePhoto) {
+    imageUrl = `https://places.googleapis.com/v1/${googlePhoto}/media?key=${process.env.NEXT_PUBLIC_GOOGLE_PLACES_API_KEY}&maxHeightPx=630&maxWidthPx=1200`;
+  } else if (court.image_url) {
+    imageUrl = court.image_url;
+  }
+
   return {
     title: `${court.name} | mypickle.me`,
-    description: `Find pickleball at ${court.name} in ${court.suburb}. ${court.type || ""} courts with ${court.surface || "various"} surface.`,
+    description: `Find pickleball at ${court.name} in ${court.suburb}. ${court.type || ""} courts with ${court.surface || "various"} surface. View photos, ratings, and opening hours.`,
+    openGraph: {
+      title: `${court.name} | Pickleball Courts in ${court.suburb}`,
+      description: `Play pickleball at ${court.name}. View court details, photos, and community reviews.`,
+      images: [imageUrl],
+    },
   };
 }
 
@@ -51,8 +65,42 @@ export default async function CourtPage({ params }: CourtPageProps) {
     ? reviewsWithRating.reduce((sum, r) => sum + (r.rating || 0), 0) / reviewsWithRating.length
     : null;
 
+  // JSON-LD Structured Data
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "SportsActivityLocation",
+    "name": court.name,
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": court.address,
+      "addressLocality": court.suburb,
+      "addressRegion": court.region || "VIC",
+      "addressCountry": "AU"
+    },
+    "geo": {
+      "@type": "GeoCoordinates",
+      "latitude": court.lat,
+      "longitude": court.lng
+    },
+    "image": [
+      court.image_url || "https://images.unsplash.com/photo-1626245353528-77402061e858?q=80&w=2664&auto=format&fit=crop"
+    ],
+    "description": `Pickleball courts at ${court.name}. ${court.courts_count || 'Multiple'} ${court.type || ''} courts available.`,
+    "url": `https://mypickle.me/court/${court.id}`,
+    "telephone": court.google_phone,
+    "aggregateRating": (court.google_rating || communityRating) ? {
+      "@type": "AggregateRating",
+      "ratingValue": court.google_rating || communityRating,
+      "reviewCount": (court.google_user_ratings_total || 0) + reviews.length
+    } : undefined
+  };
+
   return (
     <div className="min-h-screen bg-background">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       {/* Photo Carousel */}
       <CourtPhotoCarousel court={court} userPhotos={photos} />
 
