@@ -1,11 +1,12 @@
 import { notFound } from "next/navigation";
 import { Metadata } from "next";
 import { getCourtById } from "@/lib/supabase/queries";
-import { getCourtFeedback, getCourtPhotos } from "@/lib/supabase/queries";
+import { getCourtFeedback, getCourtPhotos, getSimilarCourts } from "@/lib/supabase/queries";
 import { CourtDetailHeader } from "@/components/court/CourtDetailHeader";
 import { CourtPhotoCarousel } from "@/components/court/CourtPhotoCarousel";
 import { CourtInfo } from "@/components/court/CourtInfo";
 import { CommunitySection } from "@/components/court/CommunitySection";
+import { SimilarCourts } from "@/components/court/SimilarCourts";
 
 interface CourtPageProps {
   params: Promise<{ id: string }>;
@@ -49,9 +50,10 @@ export default async function CourtPage({ params }: CourtPageProps) {
     notFound();
   }
 
-  const [feedback, photos] = await Promise.all([
+  const [feedback, photos, similarCourts] = await Promise.all([
     getCourtFeedback(id),
     getCourtPhotos(id),
+    getSimilarCourts({ id, suburb: court.suburb, region: court.region }),
   ]);
 
   // Separate reviews from other feedback types
@@ -122,6 +124,8 @@ export default async function CourtPage({ params }: CourtPageProps) {
               comments={comments}
               corrections={corrections}
             />
+
+            <SimilarCourts courts={similarCourts} />
           </div>
 
           {/* Sidebar */}
