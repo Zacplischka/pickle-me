@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Heart } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+
 import { useAuth } from "@/lib/contexts/AuthContext";
 import { toggleFavorite, checkIsFavorited } from "@/lib/supabase/favorites";
 import { cn } from "@/lib/utils";
@@ -90,14 +90,7 @@ export function FavoriteButton({
       )}
       aria-label={isFavorited ? "Remove from favorites" : "Add to favorites"}
     >
-      <AnimatePresence mode="wait">
-        <motion.div
-          key={isFavorited ? "filled" : "outline"}
-          initial={isAnimating ? { scale: 0.5 } : false}
-          animate={{ scale: 1 }}
-          exit={{ scale: 0.5 }}
-          transition={{ duration: 0.15 }}
-        >
+      <div className={cn("transition-transform duration-150", isAnimating && "scale-125")}>
           <Heart
             className={cn(
               iconSizes[size],
@@ -107,8 +100,7 @@ export function FavoriteButton({
                 : "text-muted-foreground hover:text-red-500"
             )}
           />
-        </motion.div>
-      </AnimatePresence>
+      </div>
     </button>
   );
 }

@@ -4,7 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { User, LogOut, Settings, ChevronDown } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+
 import { signOut } from "@/lib/supabase/auth";
 import type { AuthUser } from "@/lib/supabase/auth";
 
@@ -58,13 +58,9 @@ export function UserMenu({ user, displayName, avatarUrl }: UserMenuProps) {
         <ChevronDown className={`w-4 h-4 text-muted-foreground transition-transform ${isOpen ? "rotate-180" : ""}`} />
       </button>
 
-      <AnimatePresence>
-        {isOpen && (
-          <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            className="absolute right-0 top-full mt-2 w-56 bg-card border border-border rounded-lg shadow-lg overflow-hidden z-50"
+      {isOpen && (
+          <div
+            className="absolute right-0 top-full mt-2 w-56 bg-card border border-border rounded-lg shadow-lg overflow-hidden z-50 animate-in fade-in slide-in-from-top-2 duration-150"
           >
             {/* User Info */}
             <div className="p-3 border-b border-border">
@@ -102,9 +98,8 @@ export function UserMenu({ user, displayName, avatarUrl }: UserMenuProps) {
                 Sign Out
               </button>
             </div>
-          </motion.div>
+          </div>
         )}
-      </AnimatePresence>
     </div>
   );
 }

@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { MapPin, Trophy, Users, Star, Phone, Globe, Navigation } from "lucide-react";
@@ -8,9 +7,8 @@ import { Court } from "@/lib/data";
 import { cn, formatDistance } from "@/lib/utils";
 import { Button } from "@/components/ui/Button";
 import { OpeningHours } from "@/components/OpeningHours";
-import { ExternalLinkModal } from "@/components/ui/ExternalLinkModal";
 import { FavoriteButton } from "@/components/court/FavoriteButton";
-import { AuthModal } from "@/components/auth/AuthModal";
+import { useModals } from "@/lib/contexts/ModalContext";
 
 interface CourtCardProps {
     court: Court & { distance?: number };
@@ -22,23 +20,15 @@ interface CourtCardProps {
 }
 
 export function CourtCard({ court, variant = "default", onClick, isSelected, isLinked = false }: CourtCardProps) {
-    const [isExternalModalOpen, setIsExternalModalOpen] = useState(false);
-    const [showAuthModal, setShowAuthModal] = useState(false);
+    const { openAuthModal, openExternalLink } = useModals();
     const isCompact = variant === "compact";
     const bookingUrl = court.google_website || court.website;
 
     const handleBookNowClick = (e: React.MouseEvent) => {
         e.stopPropagation();
         if (bookingUrl) {
-            setIsExternalModalOpen(true);
+            openExternalLink(bookingUrl, court.name);
         }
-    };
-
-    const handleConfirmNavigation = () => {
-        if (bookingUrl) {
-            window.open(bookingUrl, "_blank", "noopener,noreferrer");
-        }
-        setIsExternalModalOpen(false);
     };
 
     const typeColor = court.type === "Indoor"
@@ -74,7 +64,7 @@ export function CourtCard({ court, variant = "default", onClick, isSelected, isL
                     <FavoriteButton
                         courtId={court.id}
                         size="sm"
-                        onAuthRequired={() => setShowAuthModal(true)}
+                        onAuthRequired={() => openAuthModal()}
                     />
                     {court.type && (
                         <span className={cn("px-2 py-1 rounded-md text-xs font-semibold shadow-sm backdrop-blur-md", typeColor)}>
@@ -242,17 +232,6 @@ export function CourtCard({ court, variant = "default", onClick, isSelected, isL
                 </div>
             </div>
 
-            {/* External Link Confirmation Modal */}
-            <ExternalLinkModal
-                isOpen={isExternalModalOpen}
-                onClose={() => setIsExternalModalOpen(false)}
-                onConfirm={handleConfirmNavigation}
-                url={bookingUrl || ""}
-                siteName={court.name}
-            />
-
-            {/* Auth Modal */}
-            <AuthModal isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} />
         </div>
     );
 }

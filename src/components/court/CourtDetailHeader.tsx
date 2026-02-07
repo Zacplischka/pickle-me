@@ -1,11 +1,10 @@
 "use client";
 
-import { useState } from "react";
 import { MapPin, Star, Trophy, Users, Clock, DollarSign } from "lucide-react";
 import type { Court } from "@/lib/supabase/database.types";
 import { cn } from "@/lib/utils";
 import { FavoriteButton } from "./FavoriteButton";
-import { AuthModal } from "@/components/auth/AuthModal";
+import { useModals } from "@/lib/contexts/ModalContext";
 
 interface CourtDetailHeaderProps {
   court: Court;
@@ -14,7 +13,7 @@ interface CourtDetailHeaderProps {
 }
 
 export function CourtDetailHeader({ court, communityRating, reviewCount }: CourtDetailHeaderProps) {
-  const [showAuthModal, setShowAuthModal] = useState(false);
+  const { openAuthModal } = useModals();
 
   const typeColor = court.type === "Indoor"
     ? "bg-primary/90 text-primary-foreground"
@@ -31,7 +30,7 @@ export function CourtDetailHeader({ court, communityRating, reviewCount }: Court
           <FavoriteButton
             courtId={court.id}
             size="lg"
-            onAuthRequired={() => setShowAuthModal(true)}
+            onAuthRequired={() => openAuthModal()}
           />
         </div>
         <div className="flex items-center gap-1.5 mt-2 text-muted-foreground">
@@ -133,8 +132,6 @@ export function CourtDetailHeader({ court, communityRating, reviewCount }: Court
         )}
       </div>
 
-      {/* Auth Modal */}
-      <AuthModal isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} />
     </div>
   );
 }

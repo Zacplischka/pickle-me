@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { X, Key, Loader2 } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+
 import { updatePassword } from "@/lib/supabase/auth";
 import { Button } from "@/components/ui/Button";
 
@@ -71,20 +71,13 @@ export function ChangePassword({ isOAuthUser }: ChangePasswordProps) {
         Change Password
       </button>
 
-      <AnimatePresence>
-        {isOpen && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
+      {isOpen && (
+          <div
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in duration-150"
             onClick={() => setIsOpen(false)}
           >
-            <motion.div
-              initial={{ scale: 0.95, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.95, opacity: 0 }}
-              className="w-full max-w-md bg-card rounded-xl shadow-xl border border-border overflow-hidden"
+            <div
+              className="w-full max-w-md bg-card rounded-xl shadow-xl border border-border overflow-hidden animate-in zoom-in-95 fade-in duration-150"
               onClick={(e) => e.stopPropagation()}
             >
               {/* Header */}
@@ -164,10 +157,9 @@ export function ChangePassword({ isOAuthUser }: ChangePasswordProps) {
                   </Button>
                 </div>
               </form>
-            </motion.div>
-          </motion.div>
+            </div>
+          </div>
         )}
-      </AnimatePresence>
     </div>
   );
 }

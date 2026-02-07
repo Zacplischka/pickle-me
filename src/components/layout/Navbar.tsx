@@ -4,20 +4,20 @@ import Link from "next/link";
 import Image from "next/image";
 import { Menu, MapPin, User } from "lucide-react";
 import { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import { SearchInput } from "@/components/search/SearchInput";
 import { useCourts } from "@/lib/contexts/CourtsContext";
 import { useAuth } from "@/lib/contexts/AuthContext";
-import { AuthModal } from "@/components/auth/AuthModal";
 import { UserMenu } from "@/components/auth/UserMenu";
+import { useModals } from "@/lib/contexts/ModalContext";
 
 export function Navbar() {
     const [isOpen, setIsOpen] = useState(false);
-    const [showAuthModal, setShowAuthModal] = useState(false);
     const [mounted, setMounted] = useState(false);
     const courts = useCourts();
     const { user, profile, loading } = useAuth();
+    const { openAuthModal } = useModals();
 
     // Prevent hydration mismatch by only rendering auth UI after mount
     useEffect(() => {
@@ -80,7 +80,7 @@ export function Navbar() {
                                 <UserMenu user={user} displayName={profile?.display_name || undefined} avatarUrl={profile?.avatar_url} />
                             ) : (
                                 <button
-                                    onClick={() => setShowAuthModal(true)}
+                                    onClick={() => openAuthModal()}
                                     className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-foreground/80 hover:text-foreground transition-colors"
                                 >
                                     <User className="w-4 h-4" />
@@ -103,13 +103,9 @@ export function Navbar() {
             </div>
 
             {/* Mobile Menu */}
-            <AnimatePresence>
-                {isOpen && (
-                    <motion.div
-                        initial={{ opacity: 0, height: 0 }}
-                        animate={{ opacity: 1, height: "auto" }}
-                        exit={{ opacity: 0, height: 0 }}
-                        className="md:hidden border-t border-border/40 bg-background"
+            {isOpen && (
+                    <div
+                        className="md:hidden border-t border-border/40 bg-background animate-in fade-in slide-in-from-top-2 duration-200"
                     >
                         <div className="container mx-auto px-4 py-4 flex flex-col gap-4">
                             <Link
@@ -175,7 +171,7 @@ export function Navbar() {
                                     <button
                                         onClick={() => {
                                             setIsOpen(false);
-                                            setShowAuthModal(true);
+                                            openAuthModal();
                                         }}
                                         className="w-full text-center border border-border text-foreground rounded-md py-2 text-sm font-medium"
                                     >
@@ -184,15 +180,9 @@ export function Navbar() {
                                 )
                             ) : null}
                         </div>
-                    </motion.div>
+                    </div>
                 )}
-            </AnimatePresence>
 
-            {/* Auth Modal */}
-            <AuthModal
-                isOpen={showAuthModal}
-                onClose={() => setShowAuthModal(false)}
-            />
         </nav>
     );
 }

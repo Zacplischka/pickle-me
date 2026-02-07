@@ -3,7 +3,7 @@
 import { useTheme } from "next-themes";
 import { Sun, Moon, Monitor, Check } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+
 import { cn } from "@/lib/utils";
 
 interface ThemeToggleProps {
@@ -76,25 +76,16 @@ export function ThemeToggle({ variant = "default" }: ThemeToggleProps) {
                         <currentThemeConfig.icon className="w-4 h-4" />
                         Theme: {currentThemeConfig.label}
                     </span>
-                    <motion.span
-                        animate={{ rotate: isOpen ? 180 : 0 }}
-                        transition={{ duration: 0.2 }}
-                        className="text-muted-foreground"
-                    >
+                    <span className={cn("text-muted-foreground transition-transform duration-200", isOpen && "rotate-180")}>
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                         </svg>
-                    </motion.span>
+                    </span>
                 </button>
 
-                <AnimatePresence>
-                    {isOpen && (
-                        <motion.div
-                            initial={{ opacity: 0, y: -8 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: -8 }}
-                            transition={{ duration: 0.15 }}
-                            className="mt-1 py-1 bg-card border border-border rounded-md shadow-lg"
+                {isOpen && (
+                        <div
+                            className="mt-1 py-1 bg-card border border-border rounded-md shadow-lg animate-in fade-in zoom-in-95 duration-150"
                             role="menu"
                         >
                             {themes.map(({ value, label, icon: Icon }) => (
@@ -119,9 +110,8 @@ export function ThemeToggle({ variant = "default" }: ThemeToggleProps) {
                                     {theme === value && <Check className="w-4 h-4 text-secondary" />}
                                 </button>
                             ))}
-                        </motion.div>
+                        </div>
                     )}
-                </AnimatePresence>
             </div>
         );
     }
@@ -137,14 +127,9 @@ export function ThemeToggle({ variant = "default" }: ThemeToggleProps) {
                 <CurrentIcon className="w-4 h-4" />
             </button>
 
-            <AnimatePresence>
-                {isOpen && (
-                    <motion.div
-                        initial={{ opacity: 0, y: -8, scale: 0.95 }}
-                        animate={{ opacity: 1, y: 0, scale: 1 }}
-                        exit={{ opacity: 0, y: -8, scale: 0.95 }}
-                        transition={{ duration: 0.15 }}
-                        className="absolute right-0 mt-2 py-1 w-36 bg-card border border-border rounded-lg shadow-lg z-50"
+            {isOpen && (
+                    <div
+                        className="absolute right-0 mt-2 py-1 w-36 bg-card border border-border rounded-lg shadow-lg z-50 animate-in fade-in zoom-in-95 duration-150"
                         role="menu"
                     >
                         {themes.map(({ value, label, icon: Icon }) => (
@@ -169,9 +154,8 @@ export function ThemeToggle({ variant = "default" }: ThemeToggleProps) {
                                 {theme === value && <Check className="w-4 h-4 text-secondary" />}
                             </button>
                         ))}
-                    </motion.div>
+                    </div>
                 )}
-            </AnimatePresence>
         </div>
     );
 }

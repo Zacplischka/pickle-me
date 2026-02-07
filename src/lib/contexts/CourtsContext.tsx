@@ -21,8 +21,5 @@ export function CourtsProvider({ children, courts }: CourtsProviderProps) {
 
 export function useCourts(): Court[] {
   const context = useContext(CourtsContext);
-  if (context === undefined) {
-    throw new Error("useCourts must be used within a CourtsProvider");
-  }
-  return context;
+  return context ?? [];
 }
