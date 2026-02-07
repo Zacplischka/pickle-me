@@ -1,7 +1,13 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useCallback } from "react";
 
-export function useFocusTrap(isActive: boolean) {
+interface FocusTrapOptions {
+  onEscape?: () => void;
+}
+
+export function useFocusTrap(isActive: boolean, options?: FocusTrapOptions) {
   const containerRef = useRef<HTMLDivElement>(null);
+  const onEscapeRef = useRef(options?.onEscape);
+  onEscapeRef.current = options?.onEscape;
 
   useEffect(() => {
     if (!isActive || !containerRef.current) return;
@@ -11,8 +17,10 @@ export function useFocusTrap(isActive: boolean) {
       'a[href], button:not([disabled]), textarea, input, select, [tabindex]:not([tabindex="-1"])';
 
     function handleKeyDown(e: KeyboardEvent) {
+      if (!container.contains(document.activeElement) && e.key !== "Escape") return;
+
       if (e.key === "Escape") {
-        container.dispatchEvent(new CustomEvent("escape"));
+        onEscapeRef.current?.();
         return;
       }
 

@@ -1,5 +1,7 @@
 "use client";
 
+import { useEffect } from "react";
+
 export default function Error({
   error,
   reset,
@@ -7,6 +9,10 @@ export default function Error({
   error: Error & { digest?: string };
   reset: () => void;
 }) {
+  useEffect(() => {
+    console.error("Unhandled error:", error);
+  }, [error]);
+
   return (
     <div className="min-h-[60vh] flex items-center justify-center p-4">
       <div className="text-center max-w-md">

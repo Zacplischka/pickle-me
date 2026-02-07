@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useCallback } from "react";
+import { useEffect } from "react";
 import { ExternalLink, X } from "lucide-react";
 import { Button } from "./Button";
 import { useFocusTrap } from "@/lib/hooks/useFocusTrap";
@@ -14,16 +14,7 @@ interface ExternalLinkModalProps {
 }
 
 export function ExternalLinkModal({ isOpen, onClose, onConfirm, url, siteName }: ExternalLinkModalProps) {
-    const trapRef = useFocusTrap(isOpen);
-
-    const handleEscape = useCallback(() => onClose(), [onClose]);
-
-    useEffect(() => {
-        const container = trapRef.current;
-        if (!container) return;
-        container.addEventListener("escape", handleEscape);
-        return () => container.removeEventListener("escape", handleEscape);
-    }, [isOpen, handleEscape, trapRef]);
+    const trapRef = useFocusTrap(isOpen, { onEscape: onClose });
 
     useEffect(() => {
         if (isOpen) {

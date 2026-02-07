@@ -39,7 +39,7 @@ export function PublicProfileContent({ profile, reviews, photos, userId }: Publi
           {activeTab === "reviews" && (
             <ReviewsList
               reviews={reviews}
-              isOwnProfile={false}
+              isOwnProfile={isOwnProfile}
             />
           )}
 

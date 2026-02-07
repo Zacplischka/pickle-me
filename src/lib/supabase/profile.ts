@@ -1,4 +1,5 @@
 import { createClient } from "./client";
+import { fetchProfileWithStats, fetchUserReviews, fetchUserPhotos } from "./profile-queries";
 import type { Profile, ProfileUpdate, CourtFeedback, CourtPhoto, Court } from "./database.types";
 
 export type ProfileWithStats = Profile & {
@@ -33,45 +34,7 @@ export async function getProfile(userId: string): Promise<Profile | null> {
 }
 
 export async function getProfileWithStats(userId: string): Promise<ProfileWithStats | null> {
-  const supabase = createClient();
-
-  // Get profile
-  const { data: profile, error: profileError } = await supabase
-    .from("profiles")
-    .select("*")
-    .eq("id", userId)
-    .single();
-
-  if (profileError || !profile) {
-    console.error("Error fetching profile:", profileError);
-    return null;
-  }
-
-  // Get counts in parallel
-  const [reviewResult, photoResult, favoriteResult] = await Promise.all([
-    supabase
-      .from("court_feedback")
-      .select("id", { count: "exact", head: true })
-      .eq("user_id", userId)
-      .eq("type", "review")
-      .eq("status", "active"),
-    supabase
-      .from("court_photos")
-      .select("id", { count: "exact", head: true })
-      .eq("user_id", userId)
-      .eq("status", "active"),
-    supabase
-      .from("court_favorites")
-      .select("id", { count: "exact", head: true })
-      .eq("user_id", userId),
-  ]);
-
-  return {
-    ...profile,
-    reviewCount: reviewResult.count || 0,
-    photoCount: photoResult.count || 0,
-    favoriteCount: favoriteResult.count || 0,
-  };
+  return fetchProfileWithStats(createClient(), userId);
 }
 
 export async function updateProfile(
@@ -94,46 +57,11 @@ export async function updateProfile(
 }
 
 export async function getUserReviews(userId: string): Promise<UserReview[]> {
-  const supabase = createClient();
-
-  const { data, error } = await supabase
-    .from("court_feedback")
-    .select(`
-      *,
-      courts (id, name, suburb)
-    `)
-    .eq("user_id", userId)
-    .eq("type", "review")
-    .eq("status", "active")
-    .order("created_at", { ascending: false });
-
-  if (error) {
-    console.error("Error fetching user reviews:", error);
-    return [];
-  }
-
-  return (data || []) as UserReview[];
+  return fetchUserReviews(createClient(), userId);
 }
 
 export async function getUserPhotos(userId: string): Promise<UserPhoto[]> {
-  const supabase = createClient();
-
-  const { data, error } = await supabase
-    .from("court_photos")
-    .select(`
-      *,
-      courts (id, name, suburb)
-    `)
-    .eq("user_id", userId)
-    .eq("status", "active")
-    .order("created_at", { ascending: false });
-
-  if (error) {
-    console.error("Error fetching user photos:", error);
-    return [];
-  }
-
-  return (data || []) as UserPhoto[];
+  return fetchUserPhotos(createClient(), userId);
 }
 
 export async function getUserComments(userId: string): Promise<UserReview[]> {

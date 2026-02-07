@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState } from "react";
 import { createPortal } from "react-dom";
 import { X, Mail, Loader2 } from "lucide-react";
 
@@ -23,16 +23,7 @@ export function AuthModal({ isOpen, onClose, defaultMode = "signin" }: AuthModal
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-  const trapRef = useFocusTrap(isOpen);
-
-  const handleEscape = useCallback(() => onClose(), [onClose]);
-
-  useEffect(() => {
-    const container = trapRef.current;
-    if (!container) return;
-    container.addEventListener("escape", handleEscape);
-    return () => container.removeEventListener("escape", handleEscape);
-  }, [isOpen, handleEscape, trapRef]);
+  const trapRef = useFocusTrap(isOpen, { onEscape: onClose });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

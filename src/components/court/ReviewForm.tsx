@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { X, Star } from "lucide-react";
 
@@ -26,16 +26,7 @@ export function ReviewForm({ isOpen, onClose, courtId, editReview }: ReviewFormP
 
   const router = useRouter();
   const { user } = useAuth();
-  const trapRef = useFocusTrap(isOpen);
-
-  const handleEscape = useCallback(() => onClose(), [onClose]);
-
-  useEffect(() => {
-    const container = trapRef.current;
-    if (!container) return;
-    container.addEventListener("escape", handleEscape);
-    return () => container.removeEventListener("escape", handleEscape);
-  }, [isOpen, handleEscape, trapRef]);
+  const trapRef = useFocusTrap(isOpen, { onEscape: onClose });
 
   const isEditing = !!editReview;
 

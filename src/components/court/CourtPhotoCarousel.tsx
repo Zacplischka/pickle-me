@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useCallback } from "react";
 import Image from "next/image";
 import { ChevronLeft, ChevronRight, Camera, X } from "lucide-react";
 
@@ -16,16 +16,8 @@ interface CourtPhotoCarouselProps {
 export function CourtPhotoCarousel({ court, userPhotos }: CourtPhotoCarouselProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [lightboxOpen, setLightboxOpen] = useState(false);
-  const lightboxTrapRef = useFocusTrap(lightboxOpen);
-
   const closeLightbox = useCallback(() => setLightboxOpen(false), []);
-
-  useEffect(() => {
-    const container = lightboxTrapRef.current;
-    if (!container) return;
-    container.addEventListener("escape", closeLightbox);
-    return () => container.removeEventListener("escape", closeLightbox);
-  }, [lightboxOpen, closeLightbox, lightboxTrapRef]);
+  const lightboxTrapRef = useFocusTrap(lightboxOpen, { onEscape: closeLightbox });
 
   // Build photo array - Google photos first, then user photos
   const googlePhotos = (court.google_photos as { name?: string }[] | null) || [];
