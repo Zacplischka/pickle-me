@@ -137,6 +137,7 @@ export default async function CourtPage({ params }: CourtPageProps) {
               <div className="bg-card rounded-xl border border-border overflow-hidden">
                 <div className="aspect-video bg-muted flex items-center justify-center">
                   <iframe
+                    title={`Map showing location of ${court.name}`}
                     src={`https://www.google.com/maps/embed/v1/place?key=${process.env.NEXT_PUBLIC_GOOGLE_PLACES_API_KEY?.trim()}&q=${court.lat},${court.lng}&zoom=15`}
                     className="w-full h-full"
                     style={{ border: 0 }}

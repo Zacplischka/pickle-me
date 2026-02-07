@@ -1,9 +1,19 @@
 import { Suspense } from "react";
+import { Metadata } from "next";
 import { getCourtSummaries } from "@/lib/data";
 import { SearchLayout } from "@/components/search/SearchLayout";
 import { FilterBar } from "@/components/search/FilterBar";
 
 export const revalidate = 300;
+
+export const metadata: Metadata = {
+  title: "Find Pickleball Courts",
+  description: "Search and explore pickleball courts across Victoria, Australia. Filter by location, court type, and facilities. View on an interactive map.",
+  openGraph: {
+    title: "Find Pickleball Courts Near You | mypickle.me",
+    description: "Search indoor, outdoor, and hybrid pickleball courts across Melbourne and regional Victoria.",
+  },
+};
 
 interface SearchPageProps {
     searchParams: Promise<{
@@ -93,6 +103,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
 
     return (
         <div className="flex flex-col h-[calc(100vh-4rem)]">
+            <h1 className="sr-only">Search Pickleball Courts</h1>
             {/* Filters Header */}
             <Suspense fallback={<div className="h-14 bg-background border-b border-border/60" />}>
                 <FilterBar
@@ -108,6 +119,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
             </Suspense>
 
             {/* Map + Panel Layout */}
+            <h2 className="sr-only">Court search results</h2>
             <SearchLayout
                 courts={filteredCourts}
                 initialSelectedCourtId={selectedCourtId}

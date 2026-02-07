@@ -1,6 +1,16 @@
 import Link from "next/link";
 import Image from "next/image";
+import { Metadata } from "next";
 import { BookOpen, ShoppingBag, AlertTriangle, CheckCircle2, Ruler } from "lucide-react";
+
+export const metadata: Metadata = {
+  title: "Beginner's Guide to Pickleball",
+  description: "Everything you need to know to start playing pickleball. Learn the rules, essential gear, and court dimensions.",
+  openGraph: {
+    title: "Beginner's Guide to Pickleball | mypickle.me",
+    description: "From basic rules to choosing your first paddle — your complete guide to getting started with pickleball in Victoria.",
+  },
+};
 
 export default function GuidesPage() {
     return (
@@ -15,6 +25,7 @@ export default function GuidesPage() {
                         loop
                         muted
                         playsInline
+                        preload="metadata"
                         className="absolute inset-0 w-full h-full object-cover opacity-60 dark:opacity-70"
                     >
                         <source src="/guide-hero.mp4" type="video/mp4" />

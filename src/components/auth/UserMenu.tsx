@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { User, LogOut, Settings, ChevronDown } from "lucide-react";
+import Image from "next/image";
 
 import { signOut } from "@/lib/supabase/auth";
 import type { AuthUser } from "@/lib/supabase/auth";
@@ -47,7 +48,7 @@ export function UserMenu({ user, displayName, avatarUrl }: UserMenuProps) {
       >
         <div className="w-8 h-8 rounded-full bg-primary/10 text-primary flex items-center justify-center text-sm font-semibold overflow-hidden">
           {avatarUrl ? (
-            <img src={avatarUrl} alt={name} className="w-full h-full object-cover" />
+            <Image src={avatarUrl} alt={name} width={32} height={32} className="w-full h-full object-cover" />
           ) : (
             initials
           )}

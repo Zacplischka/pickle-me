@@ -1,5 +1,15 @@
 import { Calendar, Mail } from "lucide-react";
 import Link from "next/link";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Pickleball Events in Victoria",
+  description: "Find pickleball tournaments, social sessions, and workshops across Victoria, Australia. Submit your own event for free.",
+  openGraph: {
+    title: "Pickleball Events in Victoria | mypickle.me",
+    description: "Discover upcoming pickleball events, tournaments, and social sessions near you.",
+  },
+};
 
 export default function EventsPage() {
     return (
@@ -42,7 +52,7 @@ export default function EventsPage() {
                             className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-secondary text-secondary-foreground hover:bg-secondary/80 h-11 rounded-md px-8 gap-2"
                         >
                             <Mail className="w-4 h-4" />
-                            Submit and Event
+                            Submit an Event
                         </Link>
                     </div>
 

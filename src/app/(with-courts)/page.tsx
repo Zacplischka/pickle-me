@@ -175,7 +175,7 @@ export default async function Home() {
                         <Check className="w-4 h-4" />
                       </div>
                       <div>
-                        <h4 className="font-semibold text-foreground">{courtOfTheMonth.type} Courts</h4>
+                        <h3 className="font-semibold text-foreground">{courtOfTheMonth.type} Courts</h3>
                         <p className="text-sm text-muted-foreground">
                           {courtOfTheMonth.courts_count ? `${courtOfTheMonth.courts_count} courts available` : "Multiple courts available"}
                           {courtOfTheMonth.surface ? ` with ${courtOfTheMonth.surface} surface` : ""}
@@ -190,7 +190,7 @@ export default async function Home() {
                         <Check className="w-4 h-4" />
                       </div>
                       <div>
-                        <h4 className="font-semibold text-foreground">{courtOfTheMonth.venue_type}</h4>
+                        <h3 className="font-semibold text-foreground">{courtOfTheMonth.venue_type}</h3>
                         <p className="text-sm text-muted-foreground">
                           {courtOfTheMonth.price || "Contact for pricing"}
                         </p>
