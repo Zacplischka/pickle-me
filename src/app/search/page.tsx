@@ -1,7 +1,9 @@
 import { Suspense } from "react";
-import { getCourts } from "@/lib/data";
+import { getCourtSummaries } from "@/lib/data";
 import { SearchLayout } from "@/components/search/SearchLayout";
 import { FilterBar } from "@/components/search/FilterBar";
+
+export const revalidate = 300;
 
 interface SearchPageProps {
     searchParams: Promise<{
@@ -19,7 +21,7 @@ interface SearchPageProps {
 
 export default async function SearchPage({ searchParams }: SearchPageProps) {
     const params = await searchParams;
-    const allCourts = await getCourts();
+    const allCourts = await getCourtSummaries();
 
     // Parse location params
     const userLocation =

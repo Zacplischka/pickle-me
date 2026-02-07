@@ -1,16 +1,18 @@
 import { Hero } from "@/components/home/Hero";
 import { HeatMapPreviewWrapper } from "@/components/home/HeatMapPreviewWrapper";
 import { CourtCard } from "@/components/CourtCard";
-import { getFeaturedCourts, getCourts } from "@/lib/data";
+import { getFeaturedCourts, getCourtSummaries } from "@/lib/data";
 import { ArrowRight, Map, Users, Activity, Heart, Check, Star } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@/components/ui/Button";
 
+export const revalidate = 300;
+
 export default async function Home() {
   const [featuredCourts, allCourts] = await Promise.all([
     getFeaturedCourts(4), // Get 4 so we can use first for Court of the Month
-    getCourts(),
+    getCourtSummaries(),
   ]);
 
   // Court of the Month is the top-rated court
