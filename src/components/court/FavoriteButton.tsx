@@ -1,10 +1,11 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Heart } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "@/lib/contexts/AuthContext";
-import { toggleFavorite, checkIsFavorited } from "@/lib/supabase/favorites";
+import { useFavorites } from "@/lib/contexts/FavoritesContext";
+import { toggleFavorite } from "@/lib/supabase/favorites";
 import { cn } from "@/lib/utils";
 
 interface FavoriteButtonProps {
@@ -20,10 +21,10 @@ export function FavoriteButton({
   className,
   onAuthRequired,
 }: FavoriteButtonProps) {
-  const [isFavorited, setIsFavorited] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [isAnimating, setIsAnimating] = useState(false);
   const { user } = useAuth();
+  const { favoriteCourtIds, toggleLocal } = useFavorites();
+  const isFavorited = favoriteCourtIds.has(courtId);
 
   const sizeClasses = {
     sm: "w-8 h-8",
@@ -37,43 +38,20 @@ export function FavoriteButton({
     lg: "w-6 h-6",
   };
 
-  useEffect(() => {
-    async function checkFavorite() {
-      if (user) {
-        const favorited = await checkIsFavorited(user.id, courtId);
-        setIsFavorited(favorited);
-      }
-    }
-    checkFavorite();
-  }, [user, courtId]);
-
   const handleToggle = async (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-
     if (!user) {
       onAuthRequired?.();
       return;
     }
-
     setIsLoading(true);
-    setIsAnimating(true);
-
-    // Optimistic update
-    const previousState = isFavorited;
-    setIsFavorited(!isFavorited);
-
+    toggleLocal(courtId); // Optimistic update via context
     const result = await toggleFavorite(user.id, courtId);
-
     if (result.error) {
-      // Revert on error
-      setIsFavorited(previousState);
-    } else {
-      setIsFavorited(result.isFavorited);
+      toggleLocal(courtId); // Revert on error
     }
-
     setIsLoading(false);
-    setTimeout(() => setIsAnimating(false), 300);
   };
 
   return (
@@ -93,7 +71,7 @@ export function FavoriteButton({
       <AnimatePresence mode="wait">
         <motion.div
           key={isFavorited ? "filled" : "outline"}
-          initial={isAnimating ? { scale: 0.5 } : false}
+          initial={{ scale: 0.5 }}
           animate={{ scale: 1 }}
           exit={{ scale: 0.5 }}
           transition={{ duration: 0.15 }}

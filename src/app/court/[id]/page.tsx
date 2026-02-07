@@ -8,6 +8,8 @@ import { CourtInfo } from "@/components/court/CourtInfo";
 import { CommunitySection } from "@/components/court/CommunitySection";
 import { SimilarCourts } from "@/components/court/SimilarCourts";
 
+export const revalidate = 600;
+
 interface CourtPageProps {
   params: Promise<{ id: string }>;
 }

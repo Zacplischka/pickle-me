@@ -15,6 +15,8 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+const supabase = createClient();
+
 interface AuthProviderProps {
   children: ReactNode;
 }
@@ -25,8 +27,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
 
-  const supabase = createClient();
-
   const fetchProfile = useCallback(async (userId: string) => {
     const { data } = await supabase
       .from("profiles")
@@ -34,7 +34,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       .eq("id", userId)
       .single();
     setProfile(data);
-  }, [supabase]);
+  }, []);
 
   const refreshProfile = useCallback(async () => {
     if (user) {
@@ -74,7 +74,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     return () => {
       subscription.unsubscribe();
     };
-  }, [supabase, fetchProfile]);
+  }, [fetchProfile]);
 
   return (
     <AuthContext.Provider value={{ user, session, profile, loading, refreshProfile }}>

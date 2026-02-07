@@ -80,7 +80,7 @@ export async function getUserFavorites(userId: string): Promise<FavoriteWithCour
     .from("court_favorites")
     .select(`
       *,
-      courts (*)
+      courts (id, name, suburb, image_url, google_rating, type)
     `)
     .eq("user_id", userId)
     .order("created_at", { ascending: false });

@@ -7,7 +7,10 @@ import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { CourtsProvider } from "@/lib/contexts/CourtsContext";
 import { AuthProvider } from "@/lib/contexts/AuthContext";
-import { getCourts } from "@/lib/data";
+import { FavoritesProvider } from "@/lib/contexts/FavoritesContext";
+import { getCourtSummaries } from "@/lib/data";
+
+export const revalidate = 300;
 
 const inter = Inter({
   variable: "--font-inter",
@@ -42,7 +45,7 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const courts = await getCourts();
+  const courts = await getCourtSummaries();
 
   return (
     <html lang="en" suppressHydrationWarning>
@@ -59,13 +62,15 @@ export default async function RootLayout({
           disableTransitionOnChange
         >
           <AuthProvider>
-            <CourtsProvider courts={courts}>
-              <Navbar />
-              <main className="flex-1">
-                {children}
-              </main>
-              <Footer />
-            </CourtsProvider>
+            <FavoritesProvider>
+              <CourtsProvider courts={courts}>
+                <Navbar />
+                <main className="flex-1">
+                  {children}
+                </main>
+                <Footer />
+              </CourtsProvider>
+            </FavoritesProvider>
           </AuthProvider>
         </ThemeProvider>
       </body>
