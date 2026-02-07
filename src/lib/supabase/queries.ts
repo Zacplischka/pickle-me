@@ -17,7 +17,7 @@ const COURT_SUMMARY_COLUMNS = `
   id, name, suburb, region, address, lat, lng, type, surface,
   courts_count, venue_type, price, features, image_url,
   google_rating, google_user_ratings_total, google_formatted_address,
-  google_phone, google_website, website
+  google_phone, google_website, website, google_photos
 ` as const;
 
 // Extended types with profile info
