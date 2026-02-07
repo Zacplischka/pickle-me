@@ -37,7 +37,8 @@ export function UserMenu({ user, displayName, avatarUrl }: UserMenuProps) {
   const handleSignOut = async () => {
     await signOut();
     setIsOpen(false);
-    window.location.reload();
+    router.refresh();
+    router.push("/");
   };
 
   return (

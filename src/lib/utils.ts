@@ -50,3 +50,21 @@ export function sanitizePostgrestValue(input: string): string {
   // Remove characters that are PostgREST operators/delimiters
   return input.replace(/[,.()*\\]/g, "");
 }
+
+export function formatDate(
+  dateString: string,
+  options?: { includeTime?: boolean }
+): string {
+  const date = new Date(dateString);
+  const base: Intl.DateTimeFormatOptions = {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+    timeZone: "UTC",
+  };
+  if (options?.includeTime) {
+    base.hour = "2-digit";
+    base.minute = "2-digit";
+  }
+  return date.toLocaleDateString("en-AU", base);
+}

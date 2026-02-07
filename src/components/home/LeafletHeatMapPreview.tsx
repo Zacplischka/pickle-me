@@ -128,7 +128,7 @@ export function LeafletHeatMapPreview({
       <MapContainer
         center={[-37.8136, 144.9631]}
         zoom={10}
-        scrollWheelZoom={true}
+        scrollWheelZoom={false}
         zoomControl={false}
         attributionControl={false}
         style={{ height: "100%", width: "100%", borderRadius: "inherit" }}

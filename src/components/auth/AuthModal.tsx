@@ -6,6 +6,7 @@ import { X, Mail, Loader2 } from "lucide-react";
 
 import { signInWithEmail, signUpWithEmail, signInWithProvider, resetPassword } from "@/lib/supabase/auth";
 import { Button } from "@/components/ui/Button";
+import { useFocusTrap } from "@/lib/hooks/useFocusTrap";
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -22,6 +23,7 @@ export function AuthModal({ isOpen, onClose, defaultMode = "signin" }: AuthModal
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const trapRef = useFocusTrap(isOpen, { onEscape: onClose });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -93,6 +95,10 @@ export function AuthModal({ isOpen, onClose, defaultMode = "signin" }: AuthModal
 
   const modalContent = (
     <div
+        ref={trapRef}
+        role="dialog"
+        aria-modal="true"
+        aria-label={mode === "signin" ? "Sign In" : mode === "signup" ? "Create Account" : "Reset Password"}
         className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in duration-150"
         onClick={onClose}
       >
