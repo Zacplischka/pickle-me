@@ -6,16 +6,16 @@ import "leaflet/dist/leaflet.css";
 import Link from "next/link";
 import type { Court } from "@/lib/supabase/database.types";
 
-// Fix default marker icon in Next.js/webpack
-import icon from "leaflet/dist/images/marker-icon.png";
-import iconShadow from "leaflet/dist/images/marker-shadow.png";
-
+// Fix default marker icon — Turbopack doesn't support importing PNGs from node_modules
+// the same way Webpack does, so use CDN URLs instead
 L.Marker.prototype.options.icon = L.icon({
-  iconUrl: icon.src,
-  shadowUrl: iconShadow.src,
+  iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
+  iconRetinaUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png",
+  shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
   iconSize: [25, 41],
   iconAnchor: [12, 41],
   popupAnchor: [1, -34],
+  shadowSize: [41, 41],
 });
 
 interface SuburbMapProps {
