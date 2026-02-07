@@ -41,3 +41,12 @@ export function formatDistance(km: number): string {
   }
   return `${km.toFixed(1)}km`;
 }
+
+/**
+ * Escape special PostgREST filter characters so user input
+ * can be safely used inside .or() / .filter() strings.
+ */
+export function sanitizePostgrestValue(input: string): string {
+  // Remove characters that are PostgREST operators/delimiters
+  return input.replace(/[,.()*\\]/g, "");
+}

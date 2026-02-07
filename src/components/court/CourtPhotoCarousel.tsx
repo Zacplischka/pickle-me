@@ -21,7 +21,7 @@ export function CourtPhotoCarousel({ court, userPhotos }: CourtPhotoCarouselProp
   const allPhotos: { url: string; caption?: string; source: "google" | "user" }[] = [
     ...googlePhotos.map((p) => ({
       url: p.name
-        ? `https://places.googleapis.com/v1/${p.name}/media?key=${process.env.NEXT_PUBLIC_GOOGLE_PLACES_API_KEY}&maxHeightPx=1200&maxWidthPx=1600`
+        ? `https://places.googleapis.com/v1/${p.name}/media?key=${process.env.NEXT_PUBLIC_GOOGLE_PLACES_API_KEY?.trim()}&maxHeightPx=1200&maxWidthPx=1600`
         : "",
       caption: "Google Photos",
       source: "google" as const,
@@ -36,7 +36,7 @@ export function CourtPhotoCarousel({ court, userPhotos }: CourtPhotoCarouselProp
   // Fallback if no photos
   if (allPhotos.length === 0) {
     allPhotos.push({
-      url: court.image_url || "https://images.unsplash.com/photo-1626245353528-77402061e858?q=80&w=2664&auto=format&fit=crop",
+      url: court.image_url || "/court-placeholder.jpg",
       caption: court.name,
       source: "google",
     });

@@ -52,8 +52,8 @@ export function FavoritesList({ favorites, onUnfavorite }: FavoritesListProps) {
                 <Image
                   src={
                     (court.google_photos as { name?: string }[])?.[0]?.name
-                      ? `https://places.googleapis.com/v1/${(court.google_photos as { name?: string }[])[0].name}/media?key=${process.env.NEXT_PUBLIC_GOOGLE_PLACES_API_KEY}&maxHeightPx=800&maxWidthPx=800`
-                      : court.image_url || "https://images.unsplash.com/photo-1626245353528-77402061e858?q=80&w=2664&auto=format&fit=crop"
+                      ? `https://places.googleapis.com/v1/${(court.google_photos as { name?: string }[])[0].name}/media?key=${process.env.NEXT_PUBLIC_GOOGLE_PLACES_API_KEY?.trim()}&maxHeightPx=800&maxWidthPx=800`
+                      : court.image_url || "/court-placeholder.jpg"
                   }
                   alt={court.name}
                   fill

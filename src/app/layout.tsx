@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { AuthProvider } from "@/lib/contexts/AuthContext";
+import { FavoritesProvider } from "@/lib/contexts/FavoritesContext";
 import { ModalProvider } from "@/lib/contexts/ModalContext";
 import { GlobalModals } from "@/components/GlobalModals";
 
@@ -57,14 +58,16 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <AuthProvider>
-            <ModalProvider>
-              <Navbar />
-              <main className="flex-1">
-                {children}
-              </main>
-              <Footer />
-              <GlobalModals />
-            </ModalProvider>
+            <FavoritesProvider>
+              <ModalProvider>
+                <Navbar />
+                <main className="flex-1">
+                  {children}
+                </main>
+                <Footer />
+                <GlobalModals />
+              </ModalProvider>
+            </FavoritesProvider>
           </AuthProvider>
         </ThemeProvider>
       </body>

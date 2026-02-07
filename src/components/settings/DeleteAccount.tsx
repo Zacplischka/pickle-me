@@ -3,10 +3,7 @@
 import { useState } from "react";
 import { X, AlertTriangle, Loader2 } from "lucide-react";
 
-import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/contexts/AuthContext";
-import { updateProfile } from "@/lib/supabase/profile";
-import { signOut } from "@/lib/supabase/auth";
 import { Button } from "@/components/ui/Button";
 
 export function DeleteAccount() {
@@ -15,7 +12,6 @@ export function DeleteAccount() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const router = useRouter();
   const { user } = useAuth();
 
   const handleDelete = async (e: React.FormEvent) => {
@@ -31,29 +27,24 @@ export function DeleteAccount() {
     setLoading(true);
     setError(null);
 
-    // Soft delete: anonymize the profile
-    const result = await updateProfile(user.id, {
-      display_name: "Deleted User",
-      avatar_url: null,
-      email_preferences: null,
-    });
+    const res = await fetch("/api/account/delete", { method: "POST" });
+    const data = await res.json();
 
-    if (result.error) {
-      setError(result.error);
+    if (!res.ok) {
+      setError(data.error || "Failed to delete account");
       setLoading(false);
       return;
     }
 
-    // Sign out and redirect
-    await signOut();
-    router.push("/");
+    // Redirect to home (user is now signed out server-side)
+    window.location.href = "/";
   };
 
   return (
     <div className="bg-card border border-red-500/30 rounded-xl p-6">
       <h2 className="text-lg font-semibold text-foreground mb-2">Danger Zone</h2>
       <p className="text-sm text-muted-foreground mb-4">
-        Once you delete your account, your profile will be anonymized. Your reviews and photos will remain but will show as "Deleted User".
+        Once you delete your account, your profile will be anonymized. Your reviews and photos will remain but will show as &quot;Deleted User&quot;.
       </p>
 
       <button
@@ -91,7 +82,7 @@ export function DeleteAccount() {
                   <div className="text-sm">
                     <p className="font-medium text-red-500">This action cannot be undone</p>
                     <p className="text-muted-foreground mt-1">
-                      Your profile will be anonymized. All your reviews and photos will remain visible but will show as "Deleted User".
+                      Your profile will be anonymized. All your reviews and photos will remain visible but will show as &quot;Deleted User&quot;.
                     </p>
                   </div>
                 </div>

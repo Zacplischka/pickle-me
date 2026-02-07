@@ -1,10 +1,11 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Heart } from "lucide-react";
 
 import { useAuth } from "@/lib/contexts/AuthContext";
-import { toggleFavorite, checkIsFavorited } from "@/lib/supabase/favorites";
+import { useFavorites } from "@/lib/contexts/FavoritesContext";
+import { toggleFavorite } from "@/lib/supabase/favorites";
 import { cn } from "@/lib/utils";
 
 interface FavoriteButtonProps {
@@ -20,10 +21,10 @@ export function FavoriteButton({
   className,
   onAuthRequired,
 }: FavoriteButtonProps) {
-  const [isFavorited, setIsFavorited] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [isAnimating, setIsAnimating] = useState(false);
   const { user } = useAuth();
+  const { favoriteCourtIds, toggleLocal } = useFavorites();
+  const isFavorited = favoriteCourtIds.has(courtId);
 
   const sizeClasses = {
     sm: "w-8 h-8",
@@ -37,43 +38,20 @@ export function FavoriteButton({
     lg: "w-6 h-6",
   };
 
-  useEffect(() => {
-    async function checkFavorite() {
-      if (user) {
-        const favorited = await checkIsFavorited(user.id, courtId);
-        setIsFavorited(favorited);
-      }
-    }
-    checkFavorite();
-  }, [user, courtId]);
-
   const handleToggle = async (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-
     if (!user) {
       onAuthRequired?.();
       return;
     }
-
     setIsLoading(true);
-    setIsAnimating(true);
-
-    // Optimistic update
-    const previousState = isFavorited;
-    setIsFavorited(!isFavorited);
-
+    toggleLocal(courtId); // Optimistic update via context
     const result = await toggleFavorite(user.id, courtId);
-
     if (result.error) {
-      // Revert on error
-      setIsFavorited(previousState);
-    } else {
-      setIsFavorited(result.isFavorited);
+      toggleLocal(courtId); // Revert on error
     }
-
     setIsLoading(false);
-    setTimeout(() => setIsAnimating(false), 300);
   };
 
   return (
@@ -90,17 +68,15 @@ export function FavoriteButton({
       )}
       aria-label={isFavorited ? "Remove from favorites" : "Add to favorites"}
     >
-      <div className={cn("transition-transform duration-150", isAnimating && "scale-125")}>
-          <Heart
-            className={cn(
-              iconSizes[size],
-              "transition-colors",
-              isFavorited
-                ? "fill-red-500 text-red-500"
-                : "text-muted-foreground hover:text-red-500"
-            )}
-          />
-      </div>
+      <Heart
+        className={cn(
+          iconSizes[size],
+          "transition-colors",
+          isFavorited
+            ? "fill-red-500 text-red-500"
+            : "text-muted-foreground hover:text-red-500"
+        )}
+      />
     </button>
   );
 }

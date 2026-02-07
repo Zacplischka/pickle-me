@@ -1,4 +1,4 @@
-import { cookies } from "next/headers";
+import { isAuthenticated } from "@/lib/admin-auth";
 import { getPendingSubmissions, getAllSubmissions, getAllFeedback, getAllPhotos } from "@/lib/supabase/queries";
 import { AdminLogin } from "@/components/admin/AdminLogin";
 import { SubmissionsList } from "@/components/admin/SubmissionsList";
@@ -9,12 +9,6 @@ export const metadata = {
   title: "Admin | mypickle.me",
   description: "Review and manage court submissions.",
 };
-
-async function isAuthenticated() {
-  const cookieStore = await cookies();
-  const adminToken = cookieStore.get("admin_token");
-  return adminToken?.value === process.env.ADMIN_PASSWORD;
-}
 
 export default async function AdminPage({
   searchParams,

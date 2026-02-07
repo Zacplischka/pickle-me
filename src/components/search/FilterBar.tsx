@@ -65,9 +65,7 @@ export function FilterBar({ totalCourts, availableSuburbs, activeFilters }: Filt
   }, []);
 
   const updateFilters = (key: string, value: string | string[] | null) => {
-    console.log("updateFilters called:", { key, value });
     const params = new URLSearchParams(searchParams.toString());
-    console.log("Current searchParams:", searchParams.toString());
 
     if (value === null || (Array.isArray(value) && value.length === 0)) {
       params.delete(key);
@@ -79,9 +77,7 @@ export function FilterBar({ totalCourts, availableSuburbs, activeFilters }: Filt
     }
 
     const newUrl = `/search?${params.toString()}`;
-    console.log("Pushing to:", newUrl);
     router.push(newUrl);
-    console.log("router.push called");
   };
 
   const clearAllFilters = () => {
@@ -178,7 +174,6 @@ export function FilterBar({ totalCourts, availableSuburbs, activeFilters }: Filt
                   )}
                   onClick={(e) => {
                     e.stopPropagation();
-                    console.log("Button clicked:", type);
                     updateFilters("type", type);
                     setTypeOpen(false);
                   }}

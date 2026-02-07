@@ -1,16 +1,18 @@
 import { Hero } from "@/components/home/Hero";
 import { HeatMapPreviewWrapper } from "@/components/home/HeatMapPreviewWrapper";
 import { CourtCard } from "@/components/CourtCard";
-import { getFeaturedCourts, getCourts } from "@/lib/data";
+import { getFeaturedCourts, getCourtSummaries } from "@/lib/data";
 import { ArrowRight, Map, Users, Activity, Heart, Check, Star } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@/components/ui/Button";
 
+export const revalidate = 300;
+
 export default async function Home() {
   const [featuredCourts, allCourts] = await Promise.all([
     getFeaturedCourts(4), // Get 4 so we can use first for Court of the Month
-    getCourts(),
+    getCourtSummaries(),
   ]);
 
   // Court of the Month is the top-rated court
@@ -21,12 +23,12 @@ export default async function Home() {
 
   // Helper to get court image URL
   const getCourtImageUrl = (court: typeof courtOfTheMonth) => {
-    if (!court) return "https://images.unsplash.com/photo-1626245353528-77402061e858?q=80&w=2664&auto=format&fit=crop";
+    if (!court) return "/court-placeholder.jpg";
     const googlePhoto = (court.google_photos as { name?: string }[])?.[0]?.name;
     if (googlePhoto) {
-      return `https://places.googleapis.com/v1/${googlePhoto}/media?key=${process.env.NEXT_PUBLIC_GOOGLE_PLACES_API_KEY}&maxHeightPx=800&maxWidthPx=800`;
+      return `https://places.googleapis.com/v1/${googlePhoto}/media?key=${process.env.NEXT_PUBLIC_GOOGLE_PLACES_API_KEY?.trim()}&maxHeightPx=800&maxWidthPx=800`;
     }
-    return court.image_url || "https://images.unsplash.com/photo-1626245353528-77402061e858?q=80&w=2664&auto=format&fit=crop";
+    return court.image_url || "/court-placeholder.jpg";
   };
 
   return (

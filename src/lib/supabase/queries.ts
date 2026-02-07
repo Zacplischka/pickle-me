@@ -1,4 +1,6 @@
+import { cache } from "react";
 import { createClient, createAdminClient } from "./server";
+import { sanitizePostgrestValue } from "@/lib/utils";
 import type {
   Court,
   CourtSubmission,
@@ -11,6 +13,13 @@ import type {
   Profile
 } from "./database.types";
 
+const COURT_SUMMARY_COLUMNS = `
+  id, name, suburb, region, address, lat, lng, type, surface,
+  courts_count, venue_type, price, features, image_url,
+  google_rating, google_user_ratings_total, google_formatted_address,
+  google_phone, google_website, website
+` as const;
+
 // Extended types with profile info
 export type CourtFeedbackWithProfile = CourtFeedback & {
   profiles: Pick<Profile, "display_name" | "avatar_url"> | null;
@@ -20,7 +29,7 @@ export type CourtPhotoWithProfile = CourtPhoto & {
   profiles: Pick<Profile, "display_name" | "avatar_url"> | null;
 };
 
-export async function getCourts(): Promise<Court[]> {
+export const getCourts = cache(async function getCourts(): Promise<Court[]> {
   const supabase = await createClient();
 
   const { data, error } = await supabase
@@ -34,9 +43,22 @@ export async function getCourts(): Promise<Court[]> {
   }
 
   return data || [];
-}
+});
 
-export async function getFeaturedCourts(limit = 3): Promise<Court[]> {
+export const getCourtSummaries = cache(async function getCourtSummaries(): Promise<Court[]> {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("courts")
+    .select(COURT_SUMMARY_COLUMNS)
+    .order("name");
+  if (error) {
+    console.error("Error fetching court summaries:", error);
+    return [];
+  }
+  return (data || []) as Court[];
+});
+
+export const getFeaturedCourts = cache(async function getFeaturedCourts(limit = 3): Promise<Court[]> {
   const supabase = await createClient();
 
   const { data, error } = await supabase
@@ -54,9 +76,9 @@ export async function getFeaturedCourts(limit = 3): Promise<Court[]> {
   }
 
   return data || [];
-}
+});
 
-export async function getCourtById(id: string): Promise<Court | null> {
+export const getCourtById = cache(async function getCourtById(id: string): Promise<Court | null> {
   const supabase = await createClient();
 
   const { data, error } = await supabase
@@ -71,7 +93,7 @@ export async function getCourtById(id: string): Promise<Court | null> {
   }
 
   return data;
-}
+});
 
 export async function getCourtsByRegion(region: string): Promise<Court[]> {
   const supabase = await createClient();
@@ -92,11 +114,14 @@ export async function getCourtsByRegion(region: string): Promise<Court[]> {
 
 export async function searchCourts(query: string): Promise<Court[]> {
   const supabase = await createClient();
+  const sanitized = sanitizePostgrestValue(query);
+
+  if (!sanitized.trim()) return [];
 
   const { data, error } = await supabase
     .from("courts")
     .select("*")
-    .or(`name.ilike.%${query}%,suburb.ilike.%${query}%,region.ilike.%${query}%`)
+    .or(`name.ilike.%${sanitized}%,suburb.ilike.%${sanitized}%,region.ilike.%${sanitized}%`)
     .order("name");
 
   if (error) {
@@ -105,6 +130,55 @@ export async function searchCourts(query: string): Promise<Court[]> {
   }
 
   return data || [];
+}
+
+export async function getSimilarCourts(
+  court: { id: string; suburb: string; region: string | null },
+  limit = 3
+): Promise<Court[]> {
+  const supabase = await createClient();
+
+  // Try same suburb first
+  const { data: suburbCourts, error: suburbError } = await supabase
+    .from("courts")
+    .select("*")
+    .eq("suburb", court.suburb)
+    .neq("id", court.id)
+    .order("google_rating", { ascending: false, nullsFirst: false })
+    .limit(limit);
+
+  if (suburbError) {
+    console.error("Error fetching similar courts:", suburbError);
+    return [];
+  }
+
+  // If enough results from suburb, return them
+  if (suburbCourts && suburbCourts.length >= limit) {
+    return suburbCourts;
+  }
+
+  // Fall back to same region to fill remaining slots
+  if (!court.region) return suburbCourts || [];
+
+  const existingIds = new Set((suburbCourts || []).map((c) => c.id));
+  existingIds.add(court.id);
+  const remaining = limit - (suburbCourts?.length || 0);
+
+  const { data: regionCourts, error: regionError } = await supabase
+    .from("courts")
+    .select("*")
+    .eq("region", court.region)
+    .neq("id", court.id)
+    .order("google_rating", { ascending: false, nullsFirst: false })
+    .limit(remaining + existingIds.size);
+
+  if (regionError) {
+    console.error("Error fetching region courts:", regionError);
+    return suburbCourts || [];
+  }
+
+  const filtered = (regionCourts || []).filter((c) => !existingIds.has(c.id)).slice(0, remaining);
+  return [...(suburbCourts || []), ...filtered];
 }
 
 // ============ Court Submissions ============
