@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { Send, Loader2, X } from "lucide-react";
 import { useAuth } from "@/lib/contexts/AuthContext";
 import { createClient } from "@/lib/supabase/client";
@@ -18,6 +19,7 @@ export function CommentForm({ courtId, onAuthRequired, editComment, onCancelEdit
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const router = useRouter();
   const { user } = useAuth();
 
   const isEditing = !!editComment;
@@ -71,7 +73,7 @@ export function CommentForm({ courtId, onAuthRequired, editComment, onCancelEdit
       onCancelEdit?.();
 
       // Refresh the page to show updated comment
-      window.location.reload();
+      router.refresh();
     } else {
       // Create new comment
       const { error: submitError } = await supabase.from("court_feedback").insert({
@@ -92,7 +94,7 @@ export function CommentForm({ courtId, onAuthRequired, editComment, onCancelEdit
       setLoading(false);
 
       // Refresh the page to show new comment
-      window.location.reload();
+      router.refresh();
     }
   };
 

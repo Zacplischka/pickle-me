@@ -21,14 +21,11 @@ export function Footer() {
                     </p>
                 </div>
                 <div className="flex gap-4 items-center">
-                    <Link href="#" className="text-sm text-muted-foreground hover:text-foreground">
-                        About
+                    <Link href="/search" className="text-sm text-muted-foreground hover:text-foreground">
+                        Find Courts
                     </Link>
-                    <Link href="#" className="text-sm text-muted-foreground hover:text-foreground">
-                        Terms
-                    </Link>
-                    <Link href="#" className="text-sm text-muted-foreground hover:text-foreground">
-                        Privacy
+                    <Link href="/list-court" className="text-sm text-muted-foreground hover:text-foreground">
+                        Submit Court
                     </Link>
                 </div>
             </div>

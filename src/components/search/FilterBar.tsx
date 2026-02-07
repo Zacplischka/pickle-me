@@ -1,10 +1,12 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/Button";
 import { SlidersHorizontal, ChevronDown, X, MapPin, Check } from "lucide-react";
 import { cn } from "@/lib/utils";
+
+type DropdownKeyHandler = (e: React.KeyboardEvent) => void;
 
 const COURT_TYPES = ["Indoor", "Outdoor", "Hybrid"] as const;
 
@@ -63,6 +65,36 @@ export function FilterBar({ totalCourts, availableSuburbs, activeFilters }: Filt
     document.addEventListener("click", handleClickOutside);
     return () => document.removeEventListener("click", handleClickOutside);
   }, []);
+
+  // Keyboard handler for dropdown triggers
+  const handleTriggerKeyDown = useCallback(
+    (openSetter: (v: boolean) => void, isOpen: boolean): DropdownKeyHandler =>
+      (e) => {
+        if (e.key === "Escape" && isOpen) {
+          e.preventDefault();
+          openSetter(false);
+        } else if (e.key === "ArrowDown" && !isOpen) {
+          e.preventDefault();
+          openSetter(true);
+        }
+      },
+    []
+  );
+
+  // Keyboard handler for dropdown options
+  const handleOptionKeyDown = useCallback(
+    (onSelect: () => void, closeSetter: (v: boolean) => void): DropdownKeyHandler =>
+      (e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          onSelect();
+        } else if (e.key === "Escape") {
+          e.preventDefault();
+          closeSetter(false);
+        }
+      },
+    []
+  );
 
   const updateFilters = (key: string, value: string | string[] | null) => {
     const params = new URLSearchParams(searchParams.toString());
@@ -143,15 +175,22 @@ export function FilterBar({ totalCourts, availableSuburbs, activeFilters }: Filt
             size="sm"
             className="h-8 rounded-full text-xs"
             onClick={() => setTypeOpen(!typeOpen)}
+            onKeyDown={handleTriggerKeyDown(setTypeOpen, typeOpen)}
+            aria-expanded={typeOpen}
+            aria-haspopup="listbox"
+            aria-label="Filter by court type"
           >
             {activeFilters.type || "Any Type"}
             <ChevronDown className={cn("ml-1 h-3 w-3 transition-transform", typeOpen && "rotate-180")} />
           </Button>
 
           {typeOpen && (
-            <div className="absolute top-full left-0 mt-1 bg-card border border-border rounded-lg shadow-lg py-1 min-w-[140px] z-50">
+            <div role="listbox" aria-label="Court type options" className="absolute top-full left-0 mt-1 bg-card border border-border rounded-lg shadow-lg py-1 min-w-[140px] z-50">
               <button
                 type="button"
+                role="option"
+                aria-selected={!activeFilters.type}
+                tabIndex={0}
                 className={cn(
                   "w-full px-3 py-2 text-left text-sm hover:bg-muted flex items-center justify-between text-foreground",
                   !activeFilters.type && "text-primary"
@@ -160,6 +199,10 @@ export function FilterBar({ totalCourts, availableSuburbs, activeFilters }: Filt
                   updateFilters("type", null);
                   setTypeOpen(false);
                 }}
+                onKeyDown={handleOptionKeyDown(() => {
+                  updateFilters("type", null);
+                  setTypeOpen(false);
+                }, setTypeOpen)}
               >
                 Any Type
                 {!activeFilters.type && <Check className="h-3 w-3" />}
@@ -167,6 +210,9 @@ export function FilterBar({ totalCourts, availableSuburbs, activeFilters }: Filt
               {COURT_TYPES.map(type => (
                 <button
                   type="button"
+                  role="option"
+                  aria-selected={activeFilters.type === type}
+                  tabIndex={0}
                   key={type}
                   className={cn(
                     "w-full px-3 py-2 text-left text-sm hover:bg-muted flex items-center justify-between text-foreground",
@@ -177,6 +223,10 @@ export function FilterBar({ totalCourts, availableSuburbs, activeFilters }: Filt
                     updateFilters("type", type);
                     setTypeOpen(false);
                   }}
+                  onKeyDown={handleOptionKeyDown(() => {
+                    updateFilters("type", type);
+                    setTypeOpen(false);
+                  }, setTypeOpen)}
                 >
                   {type}
                   {activeFilters.type === type && <Check className="h-3 w-3" />}
@@ -193,6 +243,10 @@ export function FilterBar({ totalCourts, availableSuburbs, activeFilters }: Filt
             size="sm"
             className="h-8 rounded-full text-xs"
             onClick={() => setSuburbOpen(!suburbOpen)}
+            onKeyDown={handleTriggerKeyDown(setSuburbOpen, suburbOpen)}
+            aria-expanded={suburbOpen}
+            aria-haspopup="listbox"
+            aria-label="Filter by suburb"
           >
             {activeFilters.suburb || "Any Suburb"}
             <ChevronDown className={cn("ml-1 h-3 w-3 transition-transform", suburbOpen && "rotate-180")} />
@@ -208,11 +262,22 @@ export function FilterBar({ totalCourts, availableSuburbs, activeFilters }: Filt
                   onChange={(e) => setSuburbSearch(e.target.value)}
                   className="w-full px-2 py-1 text-sm bg-background border border-input rounded focus:outline-none focus:ring-1 focus:ring-ring"
                   onClick={(e) => e.stopPropagation()}
+                  onKeyDown={(e) => {
+                    if (e.key === "Escape") {
+                      e.preventDefault();
+                      setSuburbOpen(false);
+                      setSuburbSearch("");
+                    }
+                  }}
+                  aria-label="Search suburbs"
                 />
               </div>
-              <div className="overflow-y-auto max-h-[240px]">
+              <div role="listbox" aria-label="Suburb options" className="overflow-y-auto max-h-[240px]">
                 <button
                   type="button"
+                  role="option"
+                  aria-selected={!activeFilters.suburb}
+                  tabIndex={0}
                   className={cn(
                     "w-full px-3 py-2 text-left text-sm hover:bg-muted flex items-center justify-between text-foreground",
                     !activeFilters.suburb && "text-primary"
@@ -222,6 +287,11 @@ export function FilterBar({ totalCourts, availableSuburbs, activeFilters }: Filt
                     setSuburbOpen(false);
                     setSuburbSearch("");
                   }}
+                  onKeyDown={handleOptionKeyDown(() => {
+                    updateFilters("suburb", null);
+                    setSuburbOpen(false);
+                    setSuburbSearch("");
+                  }, setSuburbOpen)}
                 >
                   Any Suburb
                   {!activeFilters.suburb && <Check className="h-3 w-3" />}
@@ -229,6 +299,9 @@ export function FilterBar({ totalCourts, availableSuburbs, activeFilters }: Filt
                 {filteredSuburbs.map(suburb => (
                   <button
                     type="button"
+                    role="option"
+                    aria-selected={activeFilters.suburb === suburb}
+                    tabIndex={0}
                     key={suburb}
                     className={cn(
                       "w-full px-3 py-2 text-left text-sm hover:bg-muted flex items-center justify-between text-foreground",
@@ -239,6 +312,11 @@ export function FilterBar({ totalCourts, availableSuburbs, activeFilters }: Filt
                       setSuburbOpen(false);
                       setSuburbSearch("");
                     }}
+                    onKeyDown={handleOptionKeyDown(() => {
+                      updateFilters("suburb", suburb);
+                      setSuburbOpen(false);
+                      setSuburbSearch("");
+                    }, setSuburbOpen)}
                   >
                     {suburb}
                     {activeFilters.suburb === suburb && <Check className="h-3 w-3" />}
@@ -256,6 +334,10 @@ export function FilterBar({ totalCourts, availableSuburbs, activeFilters }: Filt
             size="sm"
             className="h-8 rounded-full text-xs"
             onClick={() => setFacilitiesOpen(!facilitiesOpen)}
+            onKeyDown={handleTriggerKeyDown(setFacilitiesOpen, facilitiesOpen)}
+            aria-expanded={facilitiesOpen}
+            aria-haspopup="listbox"
+            aria-label="Filter by facilities"
           >
             Facilities
             {activeFilters.facilities.length > 0 && (
@@ -267,16 +349,20 @@ export function FilterBar({ totalCourts, availableSuburbs, activeFilters }: Filt
           </Button>
 
           {facilitiesOpen && (
-            <div className="absolute top-full left-0 mt-1 bg-card border border-border rounded-lg shadow-lg py-1 min-w-[200px] z-50">
+            <div role="listbox" aria-label="Facility options" className="absolute top-full left-0 mt-1 bg-card border border-border rounded-lg shadow-lg py-1 min-w-[200px] z-50">
               {FACILITY_OPTIONS.map(({ value, label }) => (
                 <button
                   type="button"
+                  role="option"
+                  aria-selected={activeFilters.facilities.includes(value)}
+                  tabIndex={0}
                   key={value}
                   className={cn(
                     "w-full px-3 py-2 text-left text-sm hover:bg-muted flex items-center justify-between text-foreground",
                     activeFilters.facilities.includes(value) && "text-primary"
                   )}
                   onClick={() => toggleFacility(value)}
+                  onKeyDown={handleOptionKeyDown(() => toggleFacility(value), setFacilitiesOpen)}
                 >
                   {label}
                   {activeFilters.facilities.includes(value) && <Check className="h-3 w-3" />}

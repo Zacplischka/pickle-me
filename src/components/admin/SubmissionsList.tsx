@@ -5,17 +5,7 @@ import type { CourtSubmission } from "@/lib/supabase/database.types";
 import { Button } from "@/components/ui/Button";
 import { Check, X, MapPin, Clock, ExternalLink } from "lucide-react";
 import { useRouter } from "next/navigation";
-
-// Format date consistently to avoid hydration mismatches
-function formatDate(dateString: string): string {
-  const date = new Date(dateString);
-  return date.toLocaleDateString("en-AU", {
-    day: "2-digit",
-    month: "2-digit",
-    year: "numeric",
-    timeZone: "UTC",
-  });
-}
+import { formatDate } from "@/lib/utils";
 
 interface SubmissionsListProps {
   submissions: CourtSubmission[];

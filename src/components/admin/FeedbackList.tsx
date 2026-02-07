@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Star, MessageCircle, AlertTriangle, Eye, EyeOff, CheckCircle, Trash2, Loader2 } from "lucide-react";
 import type { CourtFeedbackWithProfile } from "@/lib/supabase/queries";
+import { formatDate } from "@/lib/utils";
 
 interface FeedbackListProps {
   feedback: CourtFeedbackWithProfile[];
@@ -64,16 +65,6 @@ export function FeedbackList({ feedback }: FeedbackListProps) {
     }
   };
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString("en-AU", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-  };
-
   if (items.length === 0) {
     return (
       <div className="text-center py-12 text-muted-foreground">
@@ -116,7 +107,7 @@ export function FeedbackList({ feedback }: FeedbackListProps) {
               <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
                 <span>{item.profiles?.display_name || "Anonymous"}</span>
                 <span>•</span>
-                <span>{formatDate(item.created_at)}</span>
+                <span>{formatDate(item.created_at, { includeTime: true })}</span>
               </div>
 
               {/* Content */}

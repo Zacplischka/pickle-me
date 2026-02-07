@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef } from "react";
+import { useRouter } from "next/navigation";
 import { X, Upload, Image as ImageIcon } from "lucide-react";
 import Image from "next/image";
 
@@ -23,6 +24,7 @@ export function PhotoUpload({ isOpen, onClose, courtId }: PhotoUploadProps) {
   const [success, setSuccess] = useState(false);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const router = useRouter();
   const { user } = useAuth();
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -149,7 +151,7 @@ export function PhotoUpload({ isOpen, onClose, courtId }: PhotoUploadProps) {
               <p className="text-sm text-muted-foreground mb-4">
                 Your photo has been added to this court&apos;s gallery.
               </p>
-              <Button onClick={() => window.location.reload()}>Done</Button>
+              <Button onClick={() => router.refresh()}>Done</Button>
             </div>
           ) : (
             <form onSubmit={handleSubmit} className="p-6 space-y-6">

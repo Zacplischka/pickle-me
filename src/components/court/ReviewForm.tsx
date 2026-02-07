@@ -1,11 +1,13 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
+import { useRouter } from "next/navigation";
 import { X, Star } from "lucide-react";
 
 import { useAuth } from "@/lib/contexts/AuthContext";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/Button";
+import { useFocusTrap } from "@/lib/hooks/useFocusTrap";
 import type { CourtFeedback } from "@/lib/supabase/database.types";
 
 interface ReviewFormProps {
@@ -22,7 +24,18 @@ export function ReviewForm({ isOpen, onClose, courtId, editReview }: ReviewFormP
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const router = useRouter();
   const { user } = useAuth();
+  const trapRef = useFocusTrap(isOpen);
+
+  const handleEscape = useCallback(() => onClose(), [onClose]);
+
+  useEffect(() => {
+    const container = trapRef.current;
+    if (!container) return;
+    container.addEventListener("escape", handleEscape);
+    return () => container.removeEventListener("escape", handleEscape);
+  }, [isOpen, handleEscape, trapRef]);
 
   const isEditing = !!editReview;
 
@@ -91,16 +104,18 @@ export function ReviewForm({ isOpen, onClose, courtId, editReview }: ReviewFormP
     setLoading(false);
     onClose();
 
-    // Refresh the page to show updated review (only for new reviews)
-    if (!isEditing) {
-      window.location.reload();
-    }
+    // Refresh the page to show updated data
+    router.refresh();
   };
 
   if (!isOpen) return null;
 
   return (
     <div
+        ref={trapRef}
+        role="dialog"
+        aria-modal="true"
+        aria-label={isEditing ? "Edit Review" : "Write a Review"}
         className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in duration-150"
         onClick={onClose}
       >

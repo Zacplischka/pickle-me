@@ -1,9 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Image from "next/image";
 import { ChevronLeft, ChevronRight, Camera, X } from "lucide-react";
 
+import { useFocusTrap } from "@/lib/hooks/useFocusTrap";
 import type { Court } from "@/lib/supabase/database.types";
 import type { CourtPhotoWithProfile } from "@/lib/supabase/queries";
 
@@ -15,6 +16,16 @@ interface CourtPhotoCarouselProps {
 export function CourtPhotoCarousel({ court, userPhotos }: CourtPhotoCarouselProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [lightboxOpen, setLightboxOpen] = useState(false);
+  const lightboxTrapRef = useFocusTrap(lightboxOpen);
+
+  const closeLightbox = useCallback(() => setLightboxOpen(false), []);
+
+  useEffect(() => {
+    const container = lightboxTrapRef.current;
+    if (!container) return;
+    container.addEventListener("escape", closeLightbox);
+    return () => container.removeEventListener("escape", closeLightbox);
+  }, [lightboxOpen, closeLightbox, lightboxTrapRef]);
 
   // Build photo array - Google photos first, then user photos
   const googlePhotos = (court.google_photos as { name?: string }[] | null) || [];
@@ -125,6 +136,10 @@ export function CourtPhotoCarousel({ court, userPhotos }: CourtPhotoCarouselProp
       {/* Lightbox */}
       {lightboxOpen && (
           <div
+            ref={lightboxTrapRef}
+            role="dialog"
+            aria-modal="true"
+            aria-label="Photo lightbox"
             className="fixed inset-0 z-50 bg-black/95 flex items-center justify-center animate-in fade-in duration-150"
             onClick={() => setLightboxOpen(false)}
           >

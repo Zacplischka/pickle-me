@@ -6,6 +6,7 @@ import { Star, MapPin, Pencil, Trash2, Plus } from "lucide-react";
 import type { UserReview } from "@/lib/supabase/profile";
 import { deleteUserFeedback } from "@/lib/supabase/profile";
 import { Button } from "@/components/ui/Button";
+import { formatDate } from "@/lib/utils";
 
 interface ReviewsListProps {
   reviews: UserReview[];
@@ -17,14 +18,6 @@ interface ReviewsListProps {
 export function ReviewsList({ reviews, isOwnProfile, onEdit, onDelete }: ReviewsListProps) {
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [confirmDelete, setConfirmDelete] = useState<string | null>(null);
-
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString("en-AU", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-    });
-  };
 
   const handleDelete = async (reviewId: string) => {
     if (confirmDelete !== reviewId) {

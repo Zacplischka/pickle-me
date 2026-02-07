@@ -1,13 +1,14 @@
 import { createServerClient } from "@supabase/ssr";
 import { createClient as createSupabaseClient } from "@supabase/supabase-js";
 import { cookies } from "next/headers";
+import { env } from "@/lib/env";
 
 export async function createClient() {
   const cookieStore = await cookies();
 
   return createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    env.SUPABASE_URL,
+    env.SUPABASE_ANON_KEY,
     {
       cookies: {
         getAll() {
@@ -31,8 +32,11 @@ export async function createClient() {
 
 // Admin client with service role key - use for admin operations only
 export function createAdminClient() {
+  if (!env.SUPABASE_SERVICE_ROLE_KEY) {
+    throw new Error("Missing required environment variable: SUPABASE_SERVICE_ROLE_KEY");
+  }
   return createSupabaseClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!
+    env.SUPABASE_URL,
+    env.SUPABASE_SERVICE_ROLE_KEY
   );
 }

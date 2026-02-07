@@ -2,9 +2,11 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Star, MessageCircle, AlertTriangle, Camera, Plus, Pencil, Trash2 } from "lucide-react";
 import { useAuth } from "@/lib/contexts/AuthContext";
 import { useModals } from "@/lib/contexts/ModalContext";
+import { formatDate } from "@/lib/utils";
 import { ReviewForm } from "./ReviewForm";
 import { CommentForm } from "./CommentForm";
 import { ReportIssueForm } from "./ReportIssueForm";
@@ -31,6 +33,7 @@ export function CommunitySection({ courtId, reviews, comments }: CommunitySectio
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
 
+  const router = useRouter();
   const { user } = useAuth();
   const { openAuthModal } = useModals();
 
@@ -45,7 +48,7 @@ export function CommunitySection({ courtId, reviews, comments }: CommunitySectio
 
     if (result.success) {
       // Refresh the page to show updated content
-      window.location.reload();
+      router.refresh();
     }
 
     setDeletingId(null);
@@ -65,14 +68,6 @@ export function CommunitySection({ courtId, reviews, comments }: CommunitySectio
     { id: "comments", label: "Comments", count: comments.length, icon: <MessageCircle className="w-4 h-4" /> },
     { id: "photos", label: "Photos", count: 0, icon: <Camera className="w-4 h-4" /> },
   ];
-
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString("en-AU", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-    });
-  };
 
   return (
     <div className="space-y-6">

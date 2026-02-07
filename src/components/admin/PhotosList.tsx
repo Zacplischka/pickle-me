@@ -4,6 +4,7 @@ import { useState } from "react";
 import Image from "next/image";
 import { Eye, EyeOff, Trash2, Loader2 } from "lucide-react";
 import type { CourtPhotoWithProfile } from "@/lib/supabase/queries";
+import { formatDate } from "@/lib/utils";
 
 interface PhotosListProps {
   photos: CourtPhotoWithProfile[];
@@ -37,14 +38,6 @@ export function PhotosList({ photos }: PhotosListProps) {
     }
 
     setLoadingId(null);
-  };
-
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString("en-AU", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-    });
   };
 
   if (items.length === 0) {

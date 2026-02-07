@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useCallback } from "react";
 import { ExternalLink, X } from "lucide-react";
 import { Button } from "./Button";
+import { useFocusTrap } from "@/lib/hooks/useFocusTrap";
 
 interface ExternalLinkModalProps {
     isOpen: boolean;
@@ -13,23 +14,25 @@ interface ExternalLinkModalProps {
 }
 
 export function ExternalLinkModal({ isOpen, onClose, onConfirm, url, siteName }: ExternalLinkModalProps) {
-    const modalRef = useRef<HTMLDivElement>(null);
+    const trapRef = useFocusTrap(isOpen);
+
+    const handleEscape = useCallback(() => onClose(), [onClose]);
 
     useEffect(() => {
-        const handleEscape = (e: KeyboardEvent) => {
-            if (e.key === "Escape") onClose();
-        };
+        const container = trapRef.current;
+        if (!container) return;
+        container.addEventListener("escape", handleEscape);
+        return () => container.removeEventListener("escape", handleEscape);
+    }, [isOpen, handleEscape, trapRef]);
 
+    useEffect(() => {
         if (isOpen) {
-            document.addEventListener("keydown", handleEscape);
             document.body.style.overflow = "hidden";
         }
-
         return () => {
-            document.removeEventListener("keydown", handleEscape);
             document.body.style.overflow = "unset";
         };
-    }, [isOpen, onClose]);
+    }, [isOpen]);
 
     const handleBackdropClick = (e: React.MouseEvent) => {
         if (e.target === e.currentTarget) onClose();
@@ -48,11 +51,14 @@ export function ExternalLinkModal({ isOpen, onClose, onConfirm, url, siteName }:
 
     return (
         <div
+            ref={trapRef}
+            role="dialog"
+            aria-modal="true"
+            aria-label="Leaving mypickle.me"
             className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm animate-in fade-in duration-200"
             onClick={handleBackdropClick}
         >
             <div
-                ref={modalRef}
                 className="relative w-full max-w-md mx-4 bg-card rounded-xl shadow-xl border border-border animate-in zoom-in-95 duration-200"
             >
                 {/* Header */}
