@@ -23,7 +23,7 @@ export async function generateMetadata({ params }: CourtPageProps): Promise<Meta
   }
 
   // Get first image for OG
-  let imageUrl = "https://images.unsplash.com/photo-1626245353528-77402061e858?q=80&w=2664&auto=format&fit=crop";
+  let imageUrl = "/court-placeholder.jpg";
   const googlePhoto = (court.google_photos as { name?: string }[])?.[0]?.name;
   if (googlePhoto) {
     imageUrl = `https://places.googleapis.com/v1/${googlePhoto}/media?key=${process.env.NEXT_PUBLIC_GOOGLE_PLACES_API_KEY?.trim()}&maxHeightPx=630&maxWidthPx=1200`;
@@ -85,7 +85,7 @@ export default async function CourtPage({ params }: CourtPageProps) {
       "longitude": court.lng
     },
     "image": [
-      court.image_url || "https://images.unsplash.com/photo-1626245353528-77402061e858?q=80&w=2664&auto=format&fit=crop"
+      court.image_url || "/court-placeholder.jpg"
     ],
     "description": `Pickleball courts at ${court.name}. ${court.courts_count || 'Multiple'} ${court.type || ''} courts available.`,
     "url": `https://mypickle.me/court/${court.id}`,

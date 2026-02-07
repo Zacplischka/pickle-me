@@ -36,7 +36,7 @@ export function CourtPhotoCarousel({ court, userPhotos }: CourtPhotoCarouselProp
   // Fallback if no photos
   if (allPhotos.length === 0) {
     allPhotos.push({
-      url: court.image_url || "https://images.unsplash.com/photo-1626245353528-77402061e858?q=80&w=2664&auto=format&fit=crop",
+      url: court.image_url || "/court-placeholder.jpg",
       caption: court.name,
       source: "google",
     });
