@@ -82,6 +82,8 @@ export function NearbyDrawer({
 
       {/* Drawer */}
       <div
+        role="dialog"
+        aria-label="Nearby pickleball courts"
         className={cn(
           "fixed top-0 right-0 h-full w-full max-w-md bg-background border-l border-border shadow-2xl z-50 transition-transform duration-300 ease-out",
           isOpen ? "translate-x-0" : "translate-x-full"

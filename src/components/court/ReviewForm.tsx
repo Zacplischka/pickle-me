@@ -137,6 +137,7 @@ export function ReviewForm({ isOpen, onClose, courtId, editReview }: ReviewFormP
                     onMouseEnter={() => setHoveredRating(value)}
                     onMouseLeave={() => setHoveredRating(0)}
                     className="p-1 transition-transform hover:scale-110"
+                    aria-label={`Rate ${value} out of 5 stars`}
                   >
                     <Star
                       className={`w-8 h-8 transition-colors ${

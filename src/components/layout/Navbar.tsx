@@ -96,6 +96,8 @@ export function Navbar() {
                     <button
                         className="md:hidden p-2 text-foreground/80 hover:text-foreground"
                         onClick={() => setIsOpen(!isOpen)}
+                        aria-label={isOpen ? "Close navigation menu" : "Open navigation menu"}
+                        aria-expanded={isOpen}
                     >
                         <Menu className="w-6 h-6" />
                     </button>
@@ -150,7 +152,7 @@ export function Navbar() {
                                         >
                                             <div className="w-8 h-8 rounded-full bg-primary/10 text-primary flex items-center justify-center text-sm font-semibold overflow-hidden">
                                                 {profile?.avatar_url ? (
-                                                    <img src={profile.avatar_url} alt="Avatar" className="w-full h-full object-cover" />
+                                                    <Image src={profile.avatar_url} alt="Avatar" width={32} height={32} className="w-full h-full object-cover" />
                                                 ) : (
                                                     (profile?.display_name || user.email?.split("@")[0] || "U").slice(0, 2).toUpperCase()
                                                 )}

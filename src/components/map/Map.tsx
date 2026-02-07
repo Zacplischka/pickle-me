@@ -248,7 +248,7 @@ export default function Map({ courts, onLocationFound, selectedCourtId, onCourtS
     );
 
     return (
-        <div className="w-full h-full relative">
+        <div className="w-full h-full relative" aria-label="Interactive map showing pickleball court locations in Victoria" role="application">
             <MapContainer
                 center={center}
                 zoom={11}

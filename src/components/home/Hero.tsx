@@ -78,6 +78,7 @@ export function Hero() {
             loop
             muted
             playsInline
+            preload="metadata"
             className="absolute inset-0 w-full h-full object-cover opacity-60 dark:opacity-70"
           >
             <source src="/hero2.mp4" type="video/mp4" />
@@ -87,7 +88,7 @@ export function Hero() {
         <div className="container relative z-20 mx-auto px-4 md:px-6 flex flex-col items-center text-center gap-6">
           <div className="inline-flex items-center rounded-full border border-foreground/20 bg-foreground/10 px-3 py-1 text-sm text-foreground backdrop-blur-sm">
             <span className="flex h-2 w-2 rounded-full bg-secondary mr-2 animate-pulse"></span>
-            Directory Live for 2025
+            Directory Live for 2026
           </div>
 
           <h1 className="text-4xl md:text-5xl lg:text-7xl font-extrabold tracking-tight text-foreground max-w-4xl">
