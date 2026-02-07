@@ -3,7 +3,7 @@ import { Metadata } from "next";
 import Link from "next/link";
 import { MapPin, Star, Activity, ChevronRight, Home, Building2, TreePine } from "lucide-react";
 import { toSlug, fromSlug, calculateDistance } from "@/lib/utils";
-import { getCourtsBySuburb, getDistinctSuburbs } from "@/lib/data";
+import { getCourtsBySuburb, getDistinctSuburbs, getCourtSummaries } from "@/lib/data";
 import type { Court } from "@/lib/supabase/database.types";
 import { CourtCard } from "@/components/CourtCard";
 import { SuburbMapWrapper } from "@/components/suburb/SuburbMapWrapper";
@@ -114,9 +114,6 @@ export default async function SuburbPage({ params }: SuburbPageProps) {
   const center = getAvgLatLng(courts);
 
   // Build a map of suburb → courts for nearby suburb distance calculation
-  // We reuse the same data from getDistinctSuburbs + individual suburb courts
-  // For efficiency, approximate by getting all court summaries
-  const { getCourtSummaries } = await import("@/lib/data");
   const allCourts = await getCourtSummaries();
   const courtsBySuburb = new Map<string, Court[]>();
   for (const court of allCourts) {
@@ -134,6 +131,8 @@ export default async function SuburbPage({ params }: SuburbPageProps) {
   if (stats.indoor > 0) typeParts.push(`${stats.indoor} indoor`);
   if (stats.outdoor > 0) typeParts.push(`${stats.outdoor} outdoor`);
   if (stats.hybrid > 0) typeParts.push(`${stats.hybrid} hybrid`);
+
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://mypickle.me";
 
   // JSON-LD: ItemList of SportsActivityLocation
   const itemListJsonLd = {
@@ -163,7 +162,7 @@ export default async function SuburbPage({ params }: SuburbPageProps) {
               },
             }
           : {}),
-        url: `https://mypickle.me/court/${court.id}`,
+        url: `${baseUrl}/court/${court.id}`,
         ...(court.google_rating
           ? {
               aggregateRating: {
@@ -186,13 +185,13 @@ export default async function SuburbPage({ params }: SuburbPageProps) {
         "@type": "ListItem",
         position: 1,
         name: "Home",
-        item: "https://mypickle.me",
+        item: baseUrl,
       },
       {
         "@type": "ListItem",
         position: 2,
         name: "Courts",
-        item: "https://mypickle.me/search",
+        item: `${baseUrl}/search`,
       },
       {
         "@type": "ListItem",
