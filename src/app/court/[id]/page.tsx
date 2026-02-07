@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import { Metadata } from "next";
+import Link from "next/link";
 import { getCourtById } from "@/lib/supabase/queries";
 import { getCourtFeedback, getCourtPhotos, getSimilarCourts } from "@/lib/supabase/queries";
 import { CourtDetailHeader } from "@/components/court/CourtDetailHeader";
@@ -7,6 +8,8 @@ import { CourtPhotoCarousel } from "@/components/court/CourtPhotoCarousel";
 import { CourtInfo } from "@/components/court/CourtInfo";
 import { CommunitySection } from "@/components/court/CommunitySection";
 import { SimilarCourts } from "@/components/court/SimilarCourts";
+import { toSlug } from "@/lib/utils";
+import { ChevronRight, Home } from "lucide-react";
 
 export const revalidate = 600;
 
@@ -109,6 +112,24 @@ export default async function CourtPage({ params }: CourtPageProps) {
       <CourtPhotoCarousel court={court} userPhotos={photos} />
 
       <div className="container mx-auto px-4 md:px-6 py-8">
+        <nav aria-label="Breadcrumb" className="mb-6">
+          <ol className="flex items-center gap-1.5 text-sm text-muted-foreground">
+            <li>
+              <Link href="/" className="hover:text-foreground transition-colors flex items-center gap-1">
+                <Home className="w-3.5 h-3.5" />
+                <span>Home</span>
+              </Link>
+            </li>
+            <li><ChevronRight className="w-3.5 h-3.5" /></li>
+            <li>
+              <Link href={`/courts/${toSlug(court.suburb)}`} className="hover:text-foreground transition-colors">
+                Courts in {court.suburb}
+              </Link>
+            </li>
+            <li><ChevronRight className="w-3.5 h-3.5" /></li>
+            <li className="text-foreground font-medium truncate max-w-[200px]">{court.name}</li>
+          </ol>
+        </nav>
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Main Content */}
           <div className="lg:col-span-2 space-y-8">

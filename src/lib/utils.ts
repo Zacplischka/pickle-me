@@ -51,6 +51,16 @@ export function sanitizePostgrestValue(input: string): string {
   return input.replace(/[,.()*\\]/g, "");
 }
 
+/** Convert a suburb/region name to a URL slug */
+export function toSlug(name: string): string {
+  return name.toLowerCase().trim().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+}
+
+/** Find the original name from a slug given a list of known names */
+export function fromSlug(slug: string, knownNames: string[]): string | undefined {
+  return knownNames.find(name => toSlug(name) === slug);
+}
+
 export function formatDate(
   dateString: string,
   options?: { includeTime?: boolean }

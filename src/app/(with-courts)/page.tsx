@@ -1,8 +1,9 @@
 import { Hero } from "@/components/home/Hero";
 import { HeatMapPreviewWrapper } from "@/components/home/HeatMapPreviewWrapper";
 import { CourtCard } from "@/components/CourtCard";
-import { getFeaturedCourts, getCourtSummaries } from "@/lib/data";
-import { ArrowRight, Map, Users, Activity, Heart, Check, Star } from "lucide-react";
+import { getFeaturedCourts, getCourtSummaries, getDistinctSuburbs } from "@/lib/data";
+import { toSlug } from "@/lib/utils";
+import { ArrowRight, Map, MapPin, Users, Activity, Heart, Check, Star } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@/components/ui/Button";
@@ -10,9 +11,10 @@ import { Button } from "@/components/ui/Button";
 export const revalidate = 300;
 
 export default async function Home() {
-  const [featuredCourts, allCourts] = await Promise.all([
+  const [featuredCourts, allCourts, suburbs] = await Promise.all([
     getFeaturedCourts(4), // Get 4 so we can use first for Court of the Month
     getCourtSummaries(),
+    getDistinctSuburbs(),
   ]);
 
   // Court of the Month is the top-rated court
@@ -273,6 +275,35 @@ export default async function Home() {
             <div className="flex-1 w-full relative aspect-video rounded-xl overflow-hidden bg-muted border border-border/60 shadow-inner">
               <HeatMapPreviewWrapper courts={allCourts} />
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Browse by Suburb */}
+      <section className="py-16 bg-background">
+        <div className="container mx-auto px-4 md:px-6">
+          <div className="flex items-center justify-between mb-8">
+            <div>
+              <h2 className="text-2xl md:text-3xl font-bold tracking-tight text-foreground">Browse by Suburb</h2>
+              <p className="text-muted-foreground mt-1">Find courts in your local area.</p>
+            </div>
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            {suburbs.slice(0, 12).map(({ suburb, count }) => (
+              <Link
+                key={suburb}
+                href={`/courts/${toSlug(suburb)}`}
+                className="flex items-center gap-3 p-4 rounded-xl border border-border bg-card hover:border-primary/50 hover:shadow-sm transition-all group"
+              >
+                <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary group-hover:bg-primary/20 transition-colors">
+                  <MapPin className="w-5 h-5" />
+                </div>
+                <div>
+                  <div className="font-semibold text-foreground group-hover:text-primary transition-colors">{suburb}</div>
+                  <div className="text-xs text-muted-foreground">{count} court{count !== 1 ? 's' : ''}</div>
+                </div>
+              </Link>
+            ))}
           </div>
         </div>
       </section>
