@@ -1,4 +1,5 @@
 import { createClient, createAdminClient } from "./server";
+import { sanitizePostgrestValue } from "@/lib/utils";
 import type {
   Court,
   CourtSubmission,
@@ -92,11 +93,14 @@ export async function getCourtsByRegion(region: string): Promise<Court[]> {
 
 export async function searchCourts(query: string): Promise<Court[]> {
   const supabase = await createClient();
+  const sanitized = sanitizePostgrestValue(query);
+
+  if (!sanitized.trim()) return [];
 
   const { data, error } = await supabase
     .from("courts")
     .select("*")
-    .or(`name.ilike.%${query}%,suburb.ilike.%${query}%,region.ilike.%${query}%`)
+    .or(`name.ilike.%${sanitized}%,suburb.ilike.%${sanitized}%,region.ilike.%${sanitized}%`)
     .order("name");
 
   if (error) {

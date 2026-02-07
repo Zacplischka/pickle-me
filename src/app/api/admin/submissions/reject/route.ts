@@ -1,12 +1,6 @@
-import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
+import { isAuthenticated } from "@/lib/admin-auth";
 import { rejectSubmission } from "@/lib/supabase/queries";
-
-async function isAuthenticated() {
-  const cookieStore = await cookies();
-  const adminToken = cookieStore.get("admin_token");
-  return adminToken?.value === process.env.ADMIN_PASSWORD;
-}
 
 export async function POST(request: Request) {
   if (!(await isAuthenticated())) {
