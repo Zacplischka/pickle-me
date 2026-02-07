@@ -181,6 +181,35 @@ export async function getSimilarCourts(
   return [...(suburbCourts || []), ...filtered];
 }
 
+// ============ Suburb Queries ============
+
+/** Get all courts in a suburb */
+export const getCourtsBySuburb = cache(async function getCourtsBySuburb(suburb: string): Promise<Court[]> {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("courts")
+    .select(COURT_SUMMARY_COLUMNS)
+    .eq("suburb", suburb)
+    .order("google_rating", { ascending: false, nullsFirst: false });
+  if (error) {
+    console.error("Error fetching courts by suburb:", error);
+    return [];
+  }
+  return (data || []) as Court[];
+});
+
+/** Get all unique suburbs with court counts */
+export const getDistinctSuburbs = cache(async function getDistinctSuburbs(): Promise<{ suburb: string; count: number }[]> {
+  const courts = await getCourtSummaries();
+  const map = new Map<string, number>();
+  for (const court of courts) {
+    map.set(court.suburb, (map.get(court.suburb) || 0) + 1);
+  }
+  return Array.from(map.entries())
+    .map(([suburb, count]) => ({ suburb, count }))
+    .sort((a, b) => b.count - a.count);
+});
+
 // ============ Court Submissions ============
 
 export async function createCourtSubmission(
