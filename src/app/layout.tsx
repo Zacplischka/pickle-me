@@ -5,12 +5,10 @@ import "./globals.css";
 import { cn } from "@/lib/utils";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
-import { CourtsProvider } from "@/lib/contexts/CourtsContext";
 import { AuthProvider } from "@/lib/contexts/AuthContext";
 import { FavoritesProvider } from "@/lib/contexts/FavoritesContext";
-import { getCourtSummaries } from "@/lib/data";
-
-export const revalidate = 300;
+import { ModalProvider } from "@/lib/contexts/ModalContext";
+import { GlobalModals } from "@/components/GlobalModals";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -40,13 +38,11 @@ export const metadata: Metadata = {
   },
 };
 
-export default async function RootLayout({
+export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const courts = await getCourtSummaries();
-
   return (
     <html lang="en" suppressHydrationWarning>
       <body
@@ -63,13 +59,14 @@ export default async function RootLayout({
         >
           <AuthProvider>
             <FavoritesProvider>
-              <CourtsProvider courts={courts}>
+              <ModalProvider>
                 <Navbar />
                 <main className="flex-1">
                   {children}
                 </main>
                 <Footer />
-              </CourtsProvider>
+                <GlobalModals />
+              </ModalProvider>
             </FavoritesProvider>
           </AuthProvider>
         </ThemeProvider>

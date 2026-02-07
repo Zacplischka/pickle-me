@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { createPortal } from "react-dom";
 import { X, Mail, Loader2 } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+
 import { signInWithEmail, signUpWithEmail, signInWithProvider, resetPassword } from "@/lib/supabase/auth";
 import { Button } from "@/components/ui/Button";
 
@@ -92,19 +92,12 @@ export function AuthModal({ isOpen, onClose, defaultMode = "signin" }: AuthModal
   if (typeof document === "undefined") return null;
 
   const modalContent = (
-    <AnimatePresence>
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
+    <div
+        className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in duration-150"
         onClick={onClose}
       >
-        <motion.div
-          initial={{ scale: 0.95, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          exit={{ scale: 0.95, opacity: 0 }}
-          className="w-full max-w-md max-h-[90vh] bg-card rounded-xl shadow-xl border border-border overflow-hidden flex flex-col"
+        <div
+          className="w-full max-w-md max-h-[90vh] bg-card rounded-xl shadow-xl border border-border overflow-hidden flex flex-col animate-in zoom-in-95 fade-in duration-150"
           onClick={(e) => e.stopPropagation()}
         >
           {/* Header */}
@@ -284,9 +277,8 @@ export function AuthModal({ isOpen, onClose, defaultMode = "signin" }: AuthModal
               )}
             </div>
           </div>
-        </motion.div>
-      </motion.div>
-    </AnimatePresence>
+        </div>
+      </div>
   );
 
   // Use portal to render at document body level, escaping navbar's stacking context

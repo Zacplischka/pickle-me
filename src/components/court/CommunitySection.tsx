@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { Star, MessageCircle, AlertTriangle, Camera, Plus, Pencil, Trash2 } from "lucide-react";
 import { useAuth } from "@/lib/contexts/AuthContext";
-import { AuthModal } from "@/components/auth/AuthModal";
+import { useModals } from "@/lib/contexts/ModalContext";
 import { ReviewForm } from "./ReviewForm";
 import { CommentForm } from "./CommentForm";
 import { ReportIssueForm } from "./ReportIssueForm";
@@ -23,7 +23,6 @@ type Tab = "reviews" | "comments" | "photos";
 
 export function CommunitySection({ courtId, reviews, comments }: CommunitySectionProps) {
   const [activeTab, setActiveTab] = useState<Tab>("reviews");
-  const [showAuthModal, setShowAuthModal] = useState(false);
   const [showReviewForm, setShowReviewForm] = useState(false);
   const [showReportForm, setShowReportForm] = useState(false);
   const [showPhotoUpload, setShowPhotoUpload] = useState(false);
@@ -33,6 +32,7 @@ export function CommunitySection({ courtId, reviews, comments }: CommunitySectio
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
 
   const { user } = useAuth();
+  const { openAuthModal } = useModals();
 
   const handleDelete = async (feedbackId: string, userId: string) => {
     if (confirmDeleteId !== feedbackId) {
@@ -54,7 +54,7 @@ export function CommunitySection({ courtId, reviews, comments }: CommunitySectio
 
   const handleAction = (action: () => void) => {
     if (!user) {
-      setShowAuthModal(true);
+      openAuthModal();
     } else {
       action();
     }
@@ -225,7 +225,7 @@ export function CommunitySection({ courtId, reviews, comments }: CommunitySectio
           <>
             <CommentForm
               courtId={courtId}
-              onAuthRequired={() => setShowAuthModal(true)}
+              onAuthRequired={() => openAuthModal()}
               editComment={editingComment}
               onCancelEdit={() => setEditingComment(null)}
             />
@@ -311,7 +311,6 @@ export function CommunitySection({ courtId, reviews, comments }: CommunitySectio
       </div>
 
       {/* Modals */}
-      <AuthModal isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} />
       <ReviewForm
         isOpen={showReviewForm || !!editingReview}
         onClose={() => {
