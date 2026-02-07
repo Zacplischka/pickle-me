@@ -3,10 +3,7 @@
 import { useState } from "react";
 import { X, AlertTriangle, Loader2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/contexts/AuthContext";
-import { updateProfile } from "@/lib/supabase/profile";
-import { signOut } from "@/lib/supabase/auth";
 import { Button } from "@/components/ui/Button";
 
 export function DeleteAccount() {
@@ -15,7 +12,6 @@ export function DeleteAccount() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const router = useRouter();
   const { user } = useAuth();
 
   const handleDelete = async (e: React.FormEvent) => {
@@ -31,22 +27,17 @@ export function DeleteAccount() {
     setLoading(true);
     setError(null);
 
-    // Soft delete: anonymize the profile
-    const result = await updateProfile(user.id, {
-      display_name: "Deleted User",
-      avatar_url: null,
-      email_preferences: null,
-    });
+    const res = await fetch("/api/account/delete", { method: "POST" });
+    const data = await res.json();
 
-    if (result.error) {
-      setError(result.error);
+    if (!res.ok) {
+      setError(data.error || "Failed to delete account");
       setLoading(false);
       return;
     }
 
-    // Sign out and redirect
-    await signOut();
-    router.push("/");
+    // Redirect to home (user is now signed out server-side)
+    window.location.href = "/";
   };
 
   return (
