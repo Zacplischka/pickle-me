@@ -43,3 +43,6 @@ screenshots/
 
 # worktrees
 .worktrees/
+!.env.example
+!docs/screenshots/
+!docs/screenshots/**

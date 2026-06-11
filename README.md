@@ -1,125 +1,90 @@
-# MyPickle.me
+# MyPickle
 
-**Victoria's most comprehensive pickleball court directory**
+**Victoria's pickleball court directory — every venue on one interactive map, kept honest by the players who use them.**
 
-Live site: [https://mypickle.me](https://mypickle.me)
+<p align="center">
+  <a href="https://mypickle.me"><img src="https://img.shields.io/badge/live-mypickle.me-2ea44f" alt="Live site"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue" alt="MIT license"></a>
+  <img src="https://img.shields.io/badge/Next.js-16-black" alt="Next.js 16">
+</p>
 
----
+<p align="center">
+  <a href="https://mypickle.me">Live site</a> ·
+  <a href="#features">Features</a> ·
+  <a href="#tech-stack">Tech stack</a> ·
+  <a href="#data-pipeline">Data pipeline</a> ·
+  <a href="#local-development">Local development</a>
+</p>
 
-## About
-
-MyPickle.me helps players discover indoor and outdoor pickleball courts across Victoria, Australia. Whether you're a beginner looking for your first game or a seasoned player searching for new venues, MyPickle.me makes it easy to find courts near you with detailed information including ratings, opening hours, court surfaces, accessibility features, and booking options.
-
-Built by the community for the community, the platform connects Victorian pickleball enthusiasts with 50+ venues—from dedicated pickleball centres to tennis clubs and recreation facilities.
+<p align="center">
+  <img src="docs/screenshots/search-map.png" width="800" alt="Search view: clustered markers for 85 Victorian courts on an interactive map, with filters and a court list panel">
+</p>
 
 ## Features
 
-- Interactive map with court locations and clustering
-- Heat map preview showing court density
-- Search courts by suburb or postcode with Google Places autocomplete
-- Court detail pages with ratings, reviews, opening hours, photos
-- Filter by indoor/outdoor, surface type, accessibility
-- User authentication (Google, email/password via Supabase Auth)
-- User profiles with activity history
-- Favorite courts and quick access
-- Photo uploads for courts
-- Community court submissions
-- Admin dashboard for managing submissions and content
-- Mobile-friendly responsive design with loading states
+- **Interactive court map** — every venue in Victoria with marker clustering and a density heat map, with filtering by court type, suburb and facilities.
+- **Crowd-sourced ratings, reviews and photos** — signed-in players rate courts, write reviews, comment, and upload photos; favourites sync to your profile.
+- **Court detail pages** — surface, court count, line markings, accessibility features, opening hours, and booking/contact actions per venue.
+- **Community submissions** — anyone can list a new court (`/list-court`); submissions land in a password-gated admin dashboard for review.
+- **Suburb landing pages** — `/courts/[suburb]` SEO pages with internal linking, plus `sitemap.ts` and `robots.ts` for search indexing.
+- **Auth-gated contributions** — Supabase Auth (Google or email/password) protects reviews, photos, favourites and submissions.
+- **Dark/light theme** — system-aware toggle via `next-themes`.
 
-## Tech Stack
+<p align="center">
+  <img src="docs/screenshots/home.png" width="410" alt="Home page hero with court search">
+  <img src="docs/screenshots/court-detail.png" width="410" alt="Court detail page: amenities, surface, court count, and community reviews">
+</p>
 
-- **Framework:** Next.js 16 (App Router)
-- **UI:** React 19, Tailwind CSS
-- **Database:** Supabase (PostgreSQL)
-- **Maps:** Leaflet with react-leaflet
-- **Deployment:** Vercel
+## Tech stack
 
-## Getting Started
+| Layer | Choice |
+|---|---|
+| Framework | [Next.js](https://nextjs.org) 16 (App Router) + React 19 + TypeScript 5 |
+| Styling | Tailwind CSS v4, `next-themes`, `lucide-react` |
+| Database & auth | [Supabase](https://supabase.com) (Postgres + Auth, `@supabase/ssr`) |
+| Maps | Leaflet 1.9 + react-leaflet 5, `react-leaflet-cluster`, `leaflet.heat` |
+| Enrichment | Google Places API (opening hours, photos, place data) |
+| Hosting | Vercel |
 
-### Prerequisites
+## Data pipeline
 
-- Node.js 18+
-- npm or yarn
-- Supabase account
-- Google Places API key (for court enrichment)
+The directory isn't hand-typed — it's seeded and enriched from source data:
 
-### Installation
+1. **Source CSV** — [`victoria_pickleball_courts_updated.csv`](victoria_pickleball_courts_updated.csv) holds 85 Victorian venues with surface, court count and notes.
+2. **Seed** — `npm run seed` loads the CSV into Supabase ([`scripts/seed-courts.ts`](scripts/seed-courts.ts)).
+3. **Enrich** — `npm run enrich` matches each venue against the Google Places API and fills in opening hours, photos and place metadata ([`scripts/enrich-courts.ts`](scripts/enrich-courts.ts)).
+
+Community reviews, photos and new-court submissions then layer player knowledge on top of the seeded base.
+
+## Local development
+
+> [!NOTE]
+> The Supabase schema isn't committed to this repo, so a fresh clone can't stand up the database on its own — local runs need your own Supabase project with the expected tables. **The [live site](https://mypickle.me) is the primary demo.**
+
+Prerequisites: Node.js 20+ (required by Next.js 16) and a Supabase project.
 
 ```bash
-# Clone the repository
-git clone https://github.com/your-username/pickle-me.git
+git clone https://github.com/Zacplischka/pickle-me.git
 cd pickle-me
-
-# Install dependencies
 npm install
 
-# Set up environment variables
-cp .env.example .env.local
-# Edit .env.local with your values
-
-# Start development server
-npm run dev
+cp .env.example .env.local   # then fill in your values
+npm run dev                  # http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) to view the app.
-
-### Environment Variables
-
-Create a `.env.local` file with:
-
-```
-NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
-SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
-GOOGLE_PLACES_API_KEY=your_google_places_key
-ADMIN_PASSWORD=your_admin_password
-```
-
-## Scripts
+All required variables are listed in [`.env.example`](.env.example): Supabase URL/keys, Google Places keys (needed for the enrich script and place autocomplete), the public site URL, and the admin dashboard password.
 
 ```bash
-npm run dev       # Start development server
-npm run build     # Production build
-npm run lint      # Run ESLint
-npm run seed      # Seed courts to Supabase
-npm run enrich    # Enrich courts with Google Places data
-```
-
-## Project Structure
-
-```
-src/
-├── app/                    # Next.js pages and API routes
-│   ├── admin/             # Admin dashboard
-│   ├── api/               # API routes (admin, places)
-│   ├── court/[id]/        # Court detail page
-│   ├── profile/           # User profile pages
-│   ├── search/            # Court search with map
-│   └── settings/          # User settings
-├── components/
-│   ├── admin/             # Admin components
-│   ├── auth/              # Authentication (modal, menu)
-│   ├── court/             # Court detail components
-│   ├── home/              # Hero, heat map preview
-│   ├── layout/            # Navbar, Footer
-│   ├── map/               # Map components (client-side)
-│   ├── profile/           # Profile components
-│   ├── search/            # Search and filter components
-│   ├── settings/          # Settings forms
-│   └── ui/                # UI primitives
-└── lib/
-    ├── contexts/          # React contexts (auth, courts)
-    ├── supabase/          # Database clients and queries
-    └── types/             # TypeScript types
-
-scripts/                   # Seed and enrichment scripts
+npm run lint     # eslint
+npm run build    # production build
+npm run seed     # CSV → Supabase (needs service-role key)
+npm run enrich   # Google Places enrichment (needs Places key)
 ```
 
 ## Deployment
 
-The app is deployed on [Vercel](https://vercel.com) with a [Supabase](https://supabase.com) PostgreSQL database.
+Deployed on [Vercel](https://vercel.com) with the canonical domain [mypickle.me](https://mypickle.me). Push to `main` deploys; environment variables are configured in the Vercel project.
 
 ## License
 
-MIT
+[MIT](LICENSE) © Zac Plischka
